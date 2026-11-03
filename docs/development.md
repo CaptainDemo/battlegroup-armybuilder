@@ -80,6 +80,13 @@ it does not use (the M02 shell still ships without zod in its bundle).
 
 ## Domain contracts (M03)
 
+M04 adds `npm run check:catalogs` and an independent partial Classic JSON release
+under `packages/catalogs/classic-coldwar/public/`. The normal production build
+runs this data gate before Vite. Only this explicit public directory is copied;
+the Web adapter loads exact indexed identities and verifies SHA-256 before parsing.
+See [M04 acceptance](implementation/m04-acceptance.md) for the covered entries,
+purchase contexts and failure states. Test fixtures are not runtime catalogs.
+
 Pure TypeScript + Zod contracts and structural validation live in
 `packages/core/src`:
 

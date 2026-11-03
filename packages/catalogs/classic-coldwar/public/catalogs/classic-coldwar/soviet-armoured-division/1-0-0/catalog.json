@@ -1,0 +1,1312 @@
+{
+  "moduleContract": "classic/1",
+  "catalog": {
+    "manifest": {
+      "identity": {
+        "rulesetId": "classic-coldwar",
+        "catalogId": "soviet-armoured-division-v4_1",
+        "catalogRevision": "1.0.0"
+      },
+      "schemaVersion": "catalog-shell/1",
+      "rulesRevision": "cw-draft6+sov-v4.1",
+      "baseEdition": "Unofficial Battlegroup: Cold War Draft 6 + Soviet Armoured Division V4.1",
+      "sources": [
+        {
+          "documentId": "SOV",
+          "title": "SOVIET ARMOURED DIVISION BATTLEGROUP V4.1",
+          "filePath": "references/SOVIET ARMOURED DIVISION BATTLEGROUP V4.1.pdf",
+          "sha256": "a53afd517f693f7a9d5f2424a9a181c2ae5987ccb265fa6eb0e1ab238a83e03b",
+          "pdfPageCount": 21,
+          "printedPageOffset": 0,
+          "authority": "unofficial-community",
+          "reviewStatus": "selected-pages-reviewed",
+          "errataApplication": "none-declared"
+        },
+        {
+          "documentId": "CW",
+          "title": "Unofficial Battlegroup CW Rules — Draft 6",
+          "filePath": "references/Unofficial Battlegroup CW Rules. - Draft 6pdf.pdf",
+          "sha256": "56595a4c83a35e6acf5242800361285381a16b0f44846331c7c26f2c5bda0b1b",
+          "pdfPageCount": 58,
+          "printedPageOffset": 0,
+          "authority": "unofficial-community",
+          "reviewStatus": "selected-pages-reviewed",
+          "errataApplication": "none-declared"
+        },
+        {
+          "documentId": "BASE",
+          "title": "Battlegroup rulebook",
+          "filePath": "references/battlegroup rulebook.pdf",
+          "sha256": "0d40ccd81747641ae7e930bed816d9987903e7f6dc3659e26945e67d9cee645f",
+          "pdfPageCount": 66,
+          "printedPageOffset": -1,
+          "authority": "official",
+          "reviewStatus": "selected-pages-reviewed",
+          "errataApplication": "not-applicable"
+        }
+      ],
+      "errataSummary": {
+        "declaredErrataIds": [],
+        "applicationStatus": "none-declared"
+      },
+      "coverage": {
+        "status": "partial",
+        "note": "First 10 M01 core purchases only. Formation/member structure and transport identities are recorded; combat stats and complete weapon loadouts are unverified."
+      }
+    },
+    "armyLists": [
+      {
+        "armyListId": "soviet-armoured-division-v4_1",
+        "rulesetId": "classic-coldwar",
+        "nation": "Soviet",
+        "name": "Soviet Armoured Division (V4.1)",
+        "structure": {
+          "sections": [
+            {
+              "sectionId": "hq",
+              "name": "HQ",
+              "parentSectionId": null,
+              "directlyPurchasable": true
+            },
+            {
+              "sectionId": "motor-rifle",
+              "name": "Motor Rifle",
+              "parentSectionId": null,
+              "directlyPurchasable": true
+            },
+            {
+              "sectionId": "tank",
+              "name": "Tanks",
+              "parentSectionId": null,
+              "directlyPurchasable": true
+            },
+            {
+              "sectionId": "reconnaissance",
+              "name": "Reconnaissance",
+              "parentSectionId": null,
+              "directlyPurchasable": true
+            },
+            {
+              "sectionId": "specialist",
+              "name": "Specialist",
+              "parentSectionId": null,
+              "directlyPurchasable": true
+            },
+            {
+              "sectionId": "artillery",
+              "name": "Artillery",
+              "parentSectionId": null,
+              "directlyPurchasable": true
+            },
+            {
+              "sectionId": "engineer",
+              "name": "Engineer",
+              "parentSectionId": null,
+              "directlyPurchasable": true
+            },
+            {
+              "sectionId": "logistics",
+              "name": "Logistics",
+              "parentSectionId": null,
+              "directlyPurchasable": true
+            },
+            {
+              "sectionId": "additional-fire-support",
+              "name": "Additional Fire Support",
+              "parentSectionId": null,
+              "directlyPurchasable": true
+            }
+          ]
+        },
+        "note": "Partial Soviet Armoured Division V4.1: only declared purchases are enabled."
+      }
+    ],
+    "profiles": [
+      {
+        "localId": "t72a",
+        "name": "T-72A",
+        "stats": {
+          "frontArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "sideArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "rearArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "topArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "hits": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          }
+        },
+        "sourceRefs": [
+          {
+            "documentId": "SOV",
+            "pdfPage": 6
+          }
+        ]
+      },
+      {
+        "localId": "t72b",
+        "name": "T-72B",
+        "stats": {
+          "frontArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "sideArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "rearArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "topArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "hits": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          }
+        },
+        "sourceRefs": [
+          {
+            "documentId": "SOV",
+            "pdfPage": 6
+          }
+        ]
+      },
+      {
+        "localId": "bmp1",
+        "name": "BMP-1",
+        "stats": {
+          "frontArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "sideArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "rearArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "topArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "hits": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          }
+        },
+        "sourceRefs": [
+          {
+            "documentId": "SOV",
+            "pdfPage": 2
+          }
+        ]
+      },
+      {
+        "localId": "bmp1p",
+        "name": "BMP-1P",
+        "stats": {
+          "frontArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "sideArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "rearArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "topArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "hits": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          }
+        },
+        "sourceRefs": [
+          {
+            "documentId": "SOV",
+            "pdfPage": 2
+          }
+        ]
+      },
+      {
+        "localId": "bmp1k",
+        "name": "BMP-1K",
+        "stats": {
+          "frontArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "sideArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "rearArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "topArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "hits": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          }
+        },
+        "sourceRefs": [
+          {
+            "documentId": "SOV",
+            "pdfPage": 1
+          }
+        ]
+      },
+      {
+        "localId": "brdm2",
+        "name": "BRDM-2",
+        "stats": {
+          "frontArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "sideArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "rearArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "topArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "hits": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          }
+        },
+        "sourceRefs": [
+          {
+            "documentId": "SOV",
+            "pdfPage": 10
+          }
+        ]
+      },
+      {
+        "localId": "zsu234",
+        "name": "ZSU-23-4",
+        "stats": {
+          "frontArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "sideArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "rearArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "topArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "hits": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          }
+        },
+        "sourceRefs": [
+          {
+            "documentId": "SOV",
+            "pdfPage": 12
+          }
+        ]
+      },
+      {
+        "localId": "gaz66",
+        "name": "GAZ-66",
+        "stats": {
+          "frontArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "sideArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "rearArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "topArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "hits": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          }
+        },
+        "sourceRefs": [
+          {
+            "documentId": "SOV",
+            "pdfPage": 2
+          }
+        ]
+      },
+      {
+        "localId": "mtlb",
+        "name": "MTLB",
+        "stats": {
+          "frontArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "sideArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "rearArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "topArmour": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          },
+          "hits": {
+            "state": "unknown",
+            "reason": "AFV combat attributes not verified; see M01 scope."
+          }
+        },
+        "sourceRefs": [
+          {
+            "documentId": "SOV",
+            "pdfPage": 2
+          }
+        ]
+      }
+    ],
+    "entries": [
+      {
+        "localId": "fhq",
+        "name": "Forward Headquarters",
+        "kind": "formation",
+        "armyListIds": [
+          "soviet-armoured-division-v4_1"
+        ],
+        "sectionIds": [
+          "hq"
+        ],
+        "baseCost": {
+          "points": {
+            "state": "known",
+            "value": 20
+          },
+          "br": {
+            "state": "known",
+            "value": 3
+          }
+        },
+        "baseTraining": {
+          "state": "known",
+          "value": "r"
+        },
+        "composition": {
+          "state": "known",
+          "root": {
+            "nodeId": "fhq",
+            "role": "formation",
+            "quantity": 1,
+            "children": [
+              {
+                "nodeId": "command-group",
+                "role": "hq-staff",
+                "quantity": 3
+              },
+              {
+                "nodeId": "transport",
+                "role": "transport",
+                "profileLocalId": "bmp1k",
+                "quantity": 1
+              }
+            ]
+          }
+        },
+        "optionGroupIds": [],
+        "resourceGrants": [
+          {
+            "resourceKind": "army-support-choice",
+            "scope": "army",
+            "capacity": 1,
+            "eligibleCategories": [
+              "logistics",
+              "additional-fire-support"
+            ],
+            "note": "C09: Logistics or Additional Fire Support — one of the two, not both (rule execution is M07)."
+          }
+        ],
+        "tags": [
+          "unique",
+          "officer",
+          "senior-officer"
+        ],
+        "sourceRefs": [
+          {
+            "documentId": "SOV",
+            "pdfPage": 1
+          },
+          {
+            "documentId": "BASE",
+            "pdfPage": 48,
+            "printedPage": 47,
+            "note": "Senior Officer also counts as an Officer; see C22."
+          }
+        ]
+      },
+      {
+        "localId": "t72-platoon",
+        "name": "T-72 MBT Platoon",
+        "kind": "formation",
+        "armyListIds": [
+          "soviet-armoured-division-v4_1"
+        ],
+        "sectionIds": [
+          "tank"
+        ],
+        "baseCost": {
+          "points": {
+            "state": "known",
+            "value": 180
+          },
+          "br": {
+            "state": "known",
+            "value": 7
+          }
+        },
+        "baseTraining": {
+          "state": "known",
+          "value": "r"
+        },
+        "composition": {
+          "state": "known",
+          "root": {
+            "nodeId": "platoon",
+            "role": "formation",
+            "quantity": 1,
+            "children": [
+              {
+                "nodeId": "platoon-command",
+                "role": "platoon-command",
+                "profileLocalId": "t72a",
+                "quantity": 1
+              },
+              {
+                "nodeId": "ordinary-1",
+                "role": "ordinary-1",
+                "profileLocalId": "t72a",
+                "quantity": 1
+              },
+              {
+                "nodeId": "ordinary-2",
+                "role": "ordinary-2",
+                "profileLocalId": "t72a",
+                "quantity": 1
+              }
+            ]
+          }
+        },
+        "optionGroupIds": [
+          "t72-platoon-upgrades"
+        ],
+        "resourceGrants": [
+          {
+            "resourceKind": "army-support-choice",
+            "scope": "army",
+            "capacity": 4,
+            "eligibleCategories": [
+              "reconnaissance",
+              "engineer",
+              "logistics",
+              "specialist"
+            ],
+            "note": "C08"
+          }
+        ],
+        "sourceRefs": [
+          {
+            "documentId": "SOV",
+            "pdfPage": 6
+          }
+        ]
+      },
+      {
+        "localId": "bmp1-platoon",
+        "name": "BMP-1 Motor Rifle Platoon",
+        "kind": "formation",
+        "armyListIds": [
+          "soviet-armoured-division-v4_1"
+        ],
+        "sectionIds": [
+          "motor-rifle"
+        ],
+        "baseCost": {
+          "points": {
+            "state": "known",
+            "value": 95
+          },
+          "br": {
+            "state": "known",
+            "value": 8
+          }
+        },
+        "baseTraining": {
+          "state": "known",
+          "value": "r"
+        },
+        "composition": {
+          "state": "known",
+          "root": {
+            "nodeId": "platoon",
+            "role": "formation",
+            "quantity": 1,
+            "children": [
+              {
+                "nodeId": "command-squad",
+                "role": "squad",
+                "quantity": 1,
+                "children": [
+                  {
+                    "nodeId": "transport",
+                    "role": "transport",
+                    "profileLocalId": "bmp1",
+                    "quantity": 1
+                  }
+                ]
+              },
+              {
+                "nodeId": "assistant-squad",
+                "role": "squad",
+                "quantity": 1,
+                "children": [
+                  {
+                    "nodeId": "transport",
+                    "role": "transport",
+                    "profileLocalId": "bmp1",
+                    "quantity": 1
+                  }
+                ]
+              },
+              {
+                "nodeId": "rifle-squad",
+                "role": "squad",
+                "quantity": 1,
+                "children": [
+                  {
+                    "nodeId": "transport",
+                    "role": "transport",
+                    "profileLocalId": "bmp1",
+                    "quantity": 1
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "optionGroupIds": [
+          "bmp1-upgrades"
+        ],
+        "resourceGrants": [
+          {
+            "resourceKind": "army-support-choice",
+            "scope": "army",
+            "capacity": 4,
+            "eligibleCategories": [
+              "reconnaissance",
+              "engineer",
+              "specialist"
+            ],
+            "note": "C07"
+          },
+          {
+            "resourceKind": "platoon-support-slots",
+            "scope": "parent-formation",
+            "capacity": 4,
+            "note": "C02"
+          }
+        ],
+        "sourceRefs": [
+          {
+            "documentId": "SOV",
+            "pdfPage": 2
+          }
+        ]
+      },
+      {
+        "localId": "bmp1-platoon-medic",
+        "name": "Combat Medic",
+        "kind": "single",
+        "armyListIds": [
+          "soviet-armoured-division-v4_1"
+        ],
+        "sectionIds": [
+          "motor-rifle"
+        ],
+        "baseCost": {
+          "points": {
+            "state": "known",
+            "value": 8
+          },
+          "br": {
+            "state": "known",
+            "value": 0
+          }
+        },
+        "baseTraining": {
+          "state": "known",
+          "value": "i"
+        },
+        "composition": {
+          "state": "known",
+          "root": {
+            "nodeId": "medic",
+            "role": "medic",
+            "quantity": 1,
+            "children": [
+              {
+                "nodeId": "medic-team",
+                "role": "medic",
+                "quantity": 1
+              }
+            ]
+          }
+        },
+        "optionGroupIds": [],
+        "resourceConsumptions": [
+          {
+            "resourceKind": "platoon-support-slots",
+            "amount": 1
+          }
+        ],
+        "tags": [
+          "medic"
+        ],
+        "sourceRefs": [
+          {
+            "documentId": "SOV",
+            "pdfPage": 2
+          }
+        ]
+      },
+      {
+        "localId": "bmp1-platoon-fire-support",
+        "name": "Fire Support Section",
+        "kind": "single",
+        "armyListIds": [
+          "soviet-armoured-division-v4_1"
+        ],
+        "sectionIds": [
+          "motor-rifle"
+        ],
+        "baseCost": {
+          "points": {
+            "state": "known",
+            "value": 25
+          },
+          "br": {
+            "state": "known",
+            "value": 1
+          }
+        },
+        "baseTraining": {
+          "state": "known",
+          "value": "r"
+        },
+        "composition": {
+          "state": "known",
+          "root": {
+            "nodeId": "fire-support",
+            "role": "fire-support",
+            "quantity": 1,
+            "children": [
+              {
+                "nodeId": "gun-group-1",
+                "role": "weapon-team",
+                "quantity": 2
+              },
+              {
+                "nodeId": "gun-group-2",
+                "role": "weapon-team",
+                "quantity": 2
+              },
+              {
+                "nodeId": "transport",
+                "role": "transport",
+                "profileLocalId": "bmp1",
+                "quantity": 1
+              }
+            ]
+          }
+        },
+        "optionGroupIds": [],
+        "resourceConsumptions": [
+          {
+            "resourceKind": "platoon-support-slots",
+            "amount": 1
+          }
+        ],
+        "sourceRefs": [
+          {
+            "documentId": "SOV",
+            "pdfPage": 2
+          }
+        ]
+      },
+      {
+        "localId": "bmp1-platoon-agl",
+        "name": "AGL Section",
+        "kind": "single",
+        "armyListIds": [
+          "soviet-armoured-division-v4_1"
+        ],
+        "sectionIds": [
+          "motor-rifle"
+        ],
+        "baseCost": {
+          "points": {
+            "state": "known",
+            "value": 18
+          },
+          "br": {
+            "state": "known",
+            "value": 1
+          }
+        },
+        "baseTraining": {
+          "state": "known",
+          "value": "r"
+        },
+        "composition": {
+          "state": "known",
+          "root": {
+            "nodeId": "agl",
+            "role": "agl",
+            "quantity": 1,
+            "children": [
+              {
+                "nodeId": "agl-team",
+                "role": "weapon-team",
+                "quantity": 3
+              },
+              {
+                "nodeId": "transport",
+                "role": "transport",
+                "profileLocalId": "bmp1",
+                "quantity": 1
+              }
+            ]
+          }
+        },
+        "optionGroupIds": [],
+        "resourceConsumptions": [
+          {
+            "resourceKind": "platoon-support-slots",
+            "amount": 1
+          }
+        ],
+        "sourceRefs": [
+          {
+            "documentId": "SOV",
+            "pdfPage": 2
+          }
+        ]
+      },
+      {
+        "localId": "bmp1-platoon-mortar",
+        "name": "Heavy Mortar Team",
+        "kind": "single",
+        "armyListIds": [
+          "soviet-armoured-division-v4_1"
+        ],
+        "sectionIds": [
+          "motor-rifle"
+        ],
+        "baseCost": {
+          "points": {
+            "state": "known",
+            "value": 40
+          },
+          "br": {
+            "state": "known",
+            "value": 1
+          }
+        },
+        "baseTraining": {
+          "state": "known",
+          "value": "r"
+        },
+        "composition": {
+          "state": "known",
+          "root": {
+            "nodeId": "mortar",
+            "role": "mortar",
+            "quantity": 1,
+            "children": [
+              {
+                "nodeId": "mortar-team",
+                "role": "weapon-team",
+                "quantity": 3
+              },
+              {
+                "nodeId": "transport",
+                "role": "transport",
+                "profileLocalId": "gaz66",
+                "quantity": 1
+              }
+            ]
+          }
+        },
+        "optionGroupIds": [
+          "bmp1-mortar-upgrades"
+        ],
+        "resourceConsumptions": [
+          {
+            "resourceKind": "platoon-support-slots",
+            "amount": 1
+          }
+        ],
+        "sourceRefs": [
+          {
+            "documentId": "SOV",
+            "pdfPage": 2,
+            "note": "May swap its GAZ-66 for an MTLB (+5)."
+          }
+        ]
+      },
+      {
+        "localId": "brdm2-recon",
+        "name": "BRDM-2 Armoured Car",
+        "kind": "single",
+        "armyListIds": [
+          "soviet-armoured-division-v4_1"
+        ],
+        "sectionIds": [
+          "reconnaissance"
+        ],
+        "baseCost": {
+          "points": {
+            "state": "known",
+            "value": 12
+          },
+          "br": {
+            "state": "known",
+            "value": 1
+          }
+        },
+        "baseTraining": {
+          "state": "known",
+          "value": "r"
+        },
+        "composition": {
+          "state": "known",
+          "root": {
+            "nodeId": "brdm2",
+            "role": "armoured-car",
+            "profileLocalId": "brdm2",
+            "quantity": 1
+          }
+        },
+        "optionGroupIds": [],
+        "resourceConsumptions": [
+          {
+            "resourceKind": "army-support-choice",
+            "category": "reconnaissance",
+            "amount": 1,
+            "note": "Consumes one explicitly granted army support choice (C07)."
+          }
+        ],
+        "tags": [
+          "scout",
+          "mortar-spotter"
+        ],
+        "sourceRefs": [
+          {
+            "documentId": "SOV",
+            "pdfPage": 10
+          }
+        ]
+      },
+      {
+        "localId": "zsu23-4",
+        "name": "ZSU-23-4 SP AA Gun",
+        "kind": "single",
+        "armyListIds": [
+          "soviet-armoured-division-v4_1"
+        ],
+        "sectionIds": [
+          "specialist"
+        ],
+        "baseCost": {
+          "points": {
+            "state": "known",
+            "value": 35
+          },
+          "br": {
+            "state": "known",
+            "value": 2
+          }
+        },
+        "baseTraining": {
+          "state": "known",
+          "value": "i"
+        },
+        "composition": {
+          "state": "known",
+          "root": {
+            "nodeId": "zsu",
+            "role": "sp-aa",
+            "profileLocalId": "zsu234",
+            "quantity": 1
+          }
+        },
+        "optionGroupIds": [],
+        "resourceConsumptions": [
+          {
+            "resourceKind": "army-support-choice",
+            "category": "specialist",
+            "amount": 1
+          }
+        ],
+        "sourceRefs": [
+          {
+            "documentId": "SOV",
+            "pdfPage": 12
+          }
+        ]
+      },
+      {
+        "localId": "artillery-request-priority3",
+        "name": "Off-Table Artillery Support Request (3rd Priority)",
+        "kind": "tactical-resource",
+        "armyListIds": [
+          "soviet-armoured-division-v4_1"
+        ],
+        "sectionIds": [
+          "additional-fire-support"
+        ],
+        "baseCost": {
+          "points": {
+            "state": "known",
+            "value": 5
+          },
+          "br": {
+            "state": "known",
+            "value": 0
+          }
+        },
+        "baseTraining": {
+          "state": "not_applicable",
+          "reason": "off-table fire support request: no training concept"
+        },
+        "composition": {
+          "state": "no-entities",
+          "reason": "Off-table fire support request: no deployed models; future random units are battle state."
+        },
+        "optionGroupIds": [],
+        "resourceConsumptions": [
+          {
+            "resourceKind": "army-support-choice",
+            "category": "additional-fire-support",
+            "amount": 1
+          }
+        ],
+        "sourceRefs": [
+          {
+            "documentId": "SOV",
+            "pdfPage": 13
+          }
+        ]
+      }
+    ],
+    "optionGroups": [
+      {
+        "localId": "t72-platoon-upgrades",
+        "name": "T-72 platoon upgrades",
+        "scope": "selection",
+        "selectionLimit": {
+          "kind": "unlimited"
+        },
+        "options": [
+          {
+            "localId": "platoon-to-b",
+            "name": "Upgrade all three tanks to T-72B",
+            "target": {
+              "kind": "whole-selection"
+            },
+            "effects": [
+              {
+                "kind": "model-replacement",
+                "fromProfileLocalId": "t72a",
+                "toProfileLocalId": "t72b"
+              }
+            ],
+            "chargeMode": "once",
+            "costDelta": {
+              "points": {
+                "state": "known",
+                "value": 30
+              },
+              "br": {
+                "state": "known",
+                "value": 0
+              }
+            },
+            "ownLimit": {
+              "kind": "limited",
+              "max": 1
+            },
+            "sourceRefs": [
+              {
+                "documentId": "SOV",
+                "pdfPage": 6
+              }
+            ]
+          },
+          {
+            "localId": "kmt",
+            "name": "KMT mine plough on one tank",
+            "target": {
+              "kind": "member-slots",
+              "nodePaths": [
+                [
+                  "platoon-command"
+                ],
+                [
+                  "ordinary-1"
+                ],
+                [
+                  "ordinary-2"
+                ]
+              ]
+            },
+            "effects": [
+              {
+                "kind": "tag-grant",
+                "tag": "kmt"
+              }
+            ],
+            "chargeMode": "per-target",
+            "costDelta": {
+              "points": {
+                "state": "known",
+                "value": 5
+              },
+              "br": {
+                "state": "known",
+                "value": 0
+              }
+            },
+            "ownLimit": {
+              "kind": "limited",
+              "max": 1
+            },
+            "sourceRefs": [
+              {
+                "documentId": "SOV",
+                "pdfPage": 6
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "localId": "bmp1-upgrades",
+        "name": "BMP-1 upgrades",
+        "scope": "selection",
+        "selectionLimit": {
+          "kind": "unlimited"
+        },
+        "options": [
+          {
+            "localId": "all-bmp1-to-p",
+            "name": "Upgrade all BMP-1 to BMP-1P (+5 each)",
+            "target": {
+              "kind": "scope-selector",
+              "selectorId": "all-bmp1-transports",
+              "description": "All BMP-1 in the formation, including every sub-formation and purchased Platoon Support Option transports; each target once.",
+              "includeSubFormations": true,
+              "matchProfileLocalIds": [
+                "bmp1"
+              ]
+            },
+            "effects": [
+              {
+                "kind": "model-replacement",
+                "fromProfileLocalId": "bmp1",
+                "toProfileLocalId": "bmp1p"
+              }
+            ],
+            "chargeMode": "per-target",
+            "costDelta": {
+              "points": {
+                "state": "known",
+                "value": 5
+              },
+              "br": {
+                "state": "known",
+                "value": 0
+              }
+            },
+            "ownLimit": {
+              "kind": "limited",
+              "max": 12
+            },
+            "sourceRefs": [
+              {
+                "documentId": "SOV",
+                "pdfPage": 2
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "localId": "bmp1-mortar-upgrades",
+        "name": "Heavy Mortar Team transport swap",
+        "scope": "selection",
+        "selectionLimit": {
+          "kind": "unlimited"
+        },
+        "options": [
+          {
+            "localId": "mortar-to-mtlb",
+            "name": "Replace GAZ-66 with MTLB (+5)",
+            "target": {
+              "kind": "member-slots",
+              "nodePaths": [
+                [
+                  "transport"
+                ]
+              ]
+            },
+            "effects": [
+              {
+                "kind": "model-replacement",
+                "fromProfileLocalId": "gaz66",
+                "toProfileLocalId": "mtlb"
+              }
+            ],
+            "chargeMode": "per-target",
+            "costDelta": {
+              "points": {
+                "state": "known",
+                "value": 5
+              },
+              "br": {
+                "state": "known",
+                "value": 0
+              }
+            },
+            "ownLimit": {
+              "kind": "limited",
+              "max": 1
+            },
+            "sourceRefs": [
+              {
+                "documentId": "SOV",
+                "pdfPage": 2
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "purchases": [
+    {
+      "kind": "top-level",
+      "entryId": "fhq"
+    },
+    {
+      "kind": "top-level",
+      "entryId": "t72-platoon"
+    },
+    {
+      "kind": "top-level",
+      "entryId": "bmp1-platoon"
+    },
+    {
+      "kind": "attachment",
+      "entryId": "bmp1-platoon-medic",
+      "parentEntryIds": [
+        "bmp1-platoon"
+      ]
+    },
+    {
+      "kind": "attachment",
+      "entryId": "bmp1-platoon-fire-support",
+      "parentEntryIds": [
+        "bmp1-platoon"
+      ]
+    },
+    {
+      "kind": "attachment",
+      "entryId": "bmp1-platoon-agl",
+      "parentEntryIds": [
+        "bmp1-platoon"
+      ]
+    },
+    {
+      "kind": "attachment",
+      "entryId": "bmp1-platoon-mortar",
+      "parentEntryIds": [
+        "bmp1-platoon"
+      ]
+    },
+    {
+      "kind": "top-level",
+      "entryId": "brdm2-recon"
+    },
+    {
+      "kind": "top-level",
+      "entryId": "zsu23-4"
+    },
+    {
+      "kind": "top-level",
+      "entryId": "artillery-request-priority3"
+    }
+  ],
+  "coverage": {
+    "omitted": [
+      "other armies and rulesets",
+      "companies and other tank types",
+      "unlisted upgrades and complete weapon profiles",
+      "A05 and A06 ambiguous combinations"
+    ],
+    "note": "Data coverage is partial. No game-rule implementation is asserted by this release."
+  }
+}

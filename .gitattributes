@@ -1,0 +1,2 @@
+# Immutable catalog fingerprints must survive Windows checkouts unchanged.
+packages/catalogs/** text eol=lf

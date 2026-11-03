@@ -1,0 +1,17 @@
+{
+  "indexVersion": 1,
+  "releases": [
+    {
+      "identity": {
+        "rulesetId": "classic-coldwar",
+        "catalogId": "soviet-armoured-division-v4_1",
+        "catalogRevision": "1.0.0"
+      },
+      "label": "Soviet Armoured Division V4.1 · initial coverage",
+      "assetPath": "catalogs/classic-coldwar/soviet-armoured-division/1-0-0/catalog.json",
+      "sha256": "5e66f1e6f0cde7e67293534b86f27939b31f027902f7db101d6b29e06812866b",
+      "rulesRevision": "cw-draft6+sov-v4.1",
+      "moduleContract": "classic/1"
+    }
+  ]
+}

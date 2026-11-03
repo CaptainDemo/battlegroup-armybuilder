@@ -19,6 +19,7 @@ export * from './contracts/values';
 export * from './contracts/source';
 export * from './contracts/versioning';
 export * from './contracts/catalog';
+export * from './contracts/catalogIndex';
 export * from './contracts/roster';
 export * from './contracts/evaluation';
 export * from './validation/integrityIssue';

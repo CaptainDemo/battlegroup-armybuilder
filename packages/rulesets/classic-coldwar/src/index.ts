@@ -1,4 +1,5 @@
 import { corePackageId } from '@battlegroup/core';
+export { classicCatalogReleaseSchema, type ClassicCatalogRelease } from './releaseSchema';
 import { classicCatalogShellSchema, classicGameSizeSchema, classicRosterDocumentSchema } from './classicSchema';
 import type { ClassicCatalogShell, ClassicRosterDocument } from './classicSchema';
 import { classicTrainingLevelLabels, classicTrainingLevelSchema, isClassicTrainingLevel } from './training';
