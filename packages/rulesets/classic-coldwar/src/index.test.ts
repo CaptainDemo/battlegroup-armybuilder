@@ -1,0 +1,15 @@
+import { describe, expect, it } from 'vitest';
+import { corePackageId } from '@battlegroup/core';
+import { classicColdWarRuleset } from './index';
+
+describe('@battlegroup/classic-coldwar entry (M02 boundary)', () => {
+  it('imports in a DOM-free Node environment together with core', () => {
+    expect(classicColdWarRuleset.id).toBe('classic-coldwar');
+    expect(classicColdWarRuleset.corePackageId).toBe(corePackageId);
+  });
+
+  it('reports honest planning status without rule engine functions', () => {
+    expect(classicColdWarRuleset.status).toBe('planned');
+    expect(classicColdWarRuleset.label).toBe('Classic Cold War');
+  });
+});

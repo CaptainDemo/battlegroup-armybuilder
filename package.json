@@ -1,0 +1,32 @@
+{
+  "name": "battlegroup-armybuilder",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Free community web roster editor for Battlegroup cold-war rulesets. Classic Cold War first; engineering shell stage (M02).",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12",
+    "npm": ">=10"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/core",
+    "packages/rulesets/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @battlegroup/web",
+    "build": "npm run build --workspace @battlegroup/web",
+    "preview": "npm run preview --workspace @battlegroup/web",
+    "typecheck": "tsc --noEmit -p packages/core/tsconfig.json && tsc --noEmit -p packages/rulesets/classic-coldwar/tsconfig.json && tsc --noEmit -p apps/web/tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "npm run build && playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^22.20.5",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  }
+}

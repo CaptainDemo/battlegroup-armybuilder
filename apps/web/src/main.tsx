@@ -1,0 +1,18 @@
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { App } from './app/App';
+import { t } from './i18n';
+import './styles.css';
+
+const container = document.getElementById('root');
+if (!container) {
+  throw new Error('Root container #root is missing from index.html');
+}
+
+document.title = t('app.title');
+
+createRoot(container).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+);

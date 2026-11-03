@@ -1,0 +1,8 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/rulesets/classic-coldwar" },
+    { "path": "./apps/web" }
+  ]
+}
