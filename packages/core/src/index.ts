@@ -25,3 +25,4 @@ export * from './contracts/evaluation';
 export * from './validation/integrityIssue';
 export * from './validation/catalogRelations';
 export * from './validation/rosterRelations';
+export * from './roster/commands';
