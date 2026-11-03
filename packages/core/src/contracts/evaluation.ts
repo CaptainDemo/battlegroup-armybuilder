@@ -2,15 +2,14 @@ import type { CatalogIdentity, RulesetId } from './primitives';
 import type { CompositionNode } from './catalog';
 import type { RosterDocument } from './roster';
 import type { SourceReference } from './source';
-import type { TrackedValue } from './values';
+import type { TrackedValue, TrackedToken } from './values';
 import type { VersionIdentity } from './versioning';
 
 /**
  * Evaluation and availability RESULT protocols (docs/architecture.md §5).
  *
- * M03 defines these shapes only. There is deliberately no evaluate, pricing
- * or game-legality function anywhere in this package: implementing them is
- * M06 (generic evaluation) and M07 (ruleset rules). A ruleset module that
+ * M03 introduced these shapes. M06 now supplies generic evaluation/pricing;
+ * concrete game rules remain in ruleset modules (M07). A ruleset module that
  * claims to implement `RulesetModule` returns these objects; the shapes make
  * honest reporting (unknown data, partial coverage) representable.
  */
@@ -35,9 +34,14 @@ export interface EvaluationIdentity {
 }
 
 /** Expanded composition of one selection, produced by evaluation — never stored on the roster. */
+export type EvaluatedCompositionNode = Omit<CompositionNode,'children'> & {
+  children?:EvaluatedCompositionNode[] | undefined;
+  training?:TrackedToken;
+  tags?:string[];
+};
 export interface ExpandedSelectionComposition {
   readonly selectionId: string;
-  readonly node: CompositionNode;
+  readonly node: EvaluatedCompositionNode;
 }
 
 /**
@@ -158,7 +162,7 @@ export interface CompatibilityResult {
 /**
  * Protocol that a ruleset module implements. Declared here so the web app can
  * depend on the interface, not on a concrete module. No implementation of
- * this interface exists in M03. The evaluation context type is intentionally
+ * this interface existed in M03. The evaluation context type is intentionally
  * left open (`unknown`) until the M04 loader defines the resolved-context
  * contract; implementations must not narrow it to something web-specific.
  */

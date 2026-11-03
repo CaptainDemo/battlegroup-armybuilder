@@ -26,3 +26,6 @@ export * from './validation/integrityIssue';
 export * from './validation/catalogRelations';
 export * from './validation/rosterRelations';
 export * from './roster/commands';
+export * from './evaluation/evaluate';
+export * from './evaluation/targets';
+export * from './evaluation/resources';

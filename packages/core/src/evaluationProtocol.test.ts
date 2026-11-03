@@ -108,12 +108,13 @@ describe('protocol shapes are plain data', () => {
   });
 });
 
-describe('core exports no pseudo-engine', () => {
-  it('the public surface exposes no evaluate/calculate/pricing entry point', () => {
+describe('generic evaluation has an explicit public entry point', () => {
+  it('exports the M06 evaluator without placeholder game engines', () => {
     // Names that would announce a callable engine; schema/type names such as
     // optionChargeModeSchema (a charge-mode enum) are deliberately fine.
     const forbidden = /^(evaluate|calculate|price|total|legality|isLegal|validateGame)/i;
     for (const key of Object.keys(coreExports)) {
+      if (key === 'evaluateRoster') { expect(coreExports.evaluateRoster).toBeTypeOf('function'); continue; }
       expect(key, `export "${key}" looks like an engine entry point`).not.toMatch(forbidden);
     }
   });

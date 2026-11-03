@@ -6,9 +6,9 @@ and configure options, see Points and Battle Rating (BR) with list validation,
 save and restore rosters, and export or print them.
 
 **Current status: early development.** M02 supplies the web shell and build
-tooling; M03 adds domain contracts, Zod schemas and structural/reference
-checks ([acceptance](docs/implementation/m03-acceptance.md)). Roster editing,
-points/BR calculation, game-rule evaluation, storage and printing are
+tooling; M03 adds domain contracts and schemas; M04–M06 add the initial Classic
+JSON catalog, pure editing commands and generic evaluation/pricing.
+The browser roster editor, concrete game-rule checks, storage and printing are
 **not implemented yet** — see the
 [roadmap](docs/implementation_modules.md) and the in-app `#/roadmap` page.
 

@@ -80,6 +80,14 @@ it does not use (the M02 shell still ships without zod in its bundle).
 
 ## Domain contracts (M03)
 
+M05 exports `createRosterDocument` and `executeRosterCommands`: pure atomic edits
+with caller-provided ids/revisions and explicit invalidation notices. M06 exports
+`evaluateRoster`, `resolveChoiceTargets` and `allocateResources`: one deterministic
+derived snapshot with live selectors, charges, capacity matching and coverage.
+The catalog must already be validated. Concrete game checks arrive in M07;
+M06 always retains a game-rule coverage gap. See the [M05](implementation/m05-acceptance.md)
+and [M06](implementation/m06-acceptance.md) acceptance records.
+
 M04 adds `npm run check:catalogs` and an independent partial Classic JSON release
 under `packages/catalogs/classic-coldwar/public/`. The normal production build
 runs this data gate before Vite. Only this explicit public directory is copied;

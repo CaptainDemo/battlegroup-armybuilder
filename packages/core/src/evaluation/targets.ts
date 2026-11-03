@@ -1,0 +1,31 @@
+import type { CatalogShell, CompositionNode, Option } from '../contracts/catalog';
+import type { OptionChoice, OptionChoiceTarget, RosterDocument } from '../contracts/roster';
+
+/** Rebuilds declarative all targets from the current purchase tree, never from cached totals. */
+export function resolveChoiceTargets(document:RosterDocument,catalog:CatalogShell,selectionId:string,option:Option,choice:OptionChoice):OptionChoiceTarget[] {
+  if (option.target.kind!=='scope-selector') return uniqueTargets(choice.targets);
+  const selector = option.target;
+  const ids = new Set([selectionId]);
+  if (selector.includeSubFormations) {
+    let changed = true;
+    while(changed){changed=false;for(const selection of document.selections) if(selection.parentSelectionId && ids.has(selection.parentSelectionId) && !ids.has(selection.selectionId)){ids.add(selection.selectionId);changed=true;}}
+  }
+  const targets:OptionChoiceTarget[] = [];
+  for (const selection of document.selections.filter(item=>ids.has(item.selectionId))) {
+    const entry = catalog.entries.find(item=>item.localId===selection.entryReference.localId);
+    if (entry?.composition.state!=='known') continue;
+    const visit = (node:CompositionNode,path:string[]):void => {
+      if(path.length && node.profileLocalId && selector.matchProfileLocalIds.includes(node.profileLocalId)) {
+        targets.push(selection.selectionId===selectionId?{kind:'member-path',nodePath:path}:{kind:'attachment-member',ownerSelectionId:selection.selectionId,nodePath:path});
+      }
+      if(selector.includeSubFormations || path.length===0) for(const child of node.children??[]) visit(child,[...path,child.nodeId]);
+    };
+    visit(entry.composition.root,[]);
+  }
+  return uniqueTargets(targets);
+}
+
+export function uniqueTargets(targets:readonly OptionChoiceTarget[]):OptionChoiceTarget[] {
+  const seen = new Set<string>();
+  return structuredClone(targets.filter(target=>{const key=JSON.stringify(target);if(seen.has(key)) return false;seen.add(key);return true;}));
+}
