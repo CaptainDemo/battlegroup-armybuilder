@@ -1,9 +1,10 @@
 # Development Guide
 
 Engineering setup for the Battlegroup Army Builder. This documents what is
-actually implemented as of milestone M02 (engineering and build foundation).
-Roster editing, rule evaluation, storage and printing do not exist yet; see
-[implementation modules](implementation_modules.md) for the delivery plan.
+actually implemented as of milestone M03 (domain contracts and Zod boundary
+schemas). Roster editing commands, rule evaluation, storage and printing do
+not exist yet; see [implementation modules](implementation_modules.md) for
+the delivery plan.
 
 ## Prerequisites
 
@@ -13,7 +14,7 @@ Roster editing, rule evaluation, storage and printing do not exist yet; see
 | npm | >= 10 (npm workspaces) | 10.9.7 |
 
 Do not switch package managers. The repository uses npm workspaces with a
-committed `package-lock.json`; clean installs should use `npm ci`.
+`package-lock.json`; clean installs should use `npm ci`.
 
 ## Install
 
@@ -56,24 +57,71 @@ PLAYWRIGHT_CHANNEL=chrome npm run test:e2e      # or msedge
 ```text
 apps/web (@battlegroup/web)
   ├── react / react-dom
-  ├── @battlegroup/core
-  └── @battlegroup/classic-coldwar ──> @battlegroup/core
+  ├── @battlegroup/core ────────────────> zod (pure schema library)
+  └── @battlegroup/classic-coldwar ──> @battlegroup/core + zod (declared directly)
 ```
 
 Rules enforced today (checked by
 `packages/core/src/dependencyBoundary.test.ts`):
 
-- `@battlegroup/core` declares no dependencies at all — no React, no DOM, no
-  ruleset imports, no browser storage.
-- A ruleset module depends only on core. Ruleset modules never depend on each
+- `@battlegroup/core` declares exactly one runtime dependency: `zod` (M03).
+  No React, no DOM, no ruleset imports, no browser storage.
+- A ruleset module depends on core and declares `zod` directly when it
+  imports it — no reliance on hoisting. Ruleset modules never depend on each
   other or on the web app.
 - Only `apps/web` composes ruleset modules.
 - Core and ruleset packages must stay importable from plain Node without a
   DOM; their tests run in Vitest's `node` environment to prove it.
 
 Internal packages consume TypeScript sources directly (`main`/`exports` point
-at `src/index.ts`), so Vite and Vitest compile them on the fly. There is no
-separate build step for `packages/*` yet, and none is needed for M02.
+at `src/index.ts`), so Vite and Vitest compile them on the fly. Both packages
+declare `"sideEffects": false`, so the web bundle tree-shakes the schema code
+it does not use (the M02 shell still ships without zod in its bundle).
+
+## Domain contracts (M03)
+
+Pure TypeScript + Zod contracts and structural validation live in
+`packages/core/src`:
+
+| Area | Entry points |
+| --- | --- |
+| Identity & references | `contracts/primitives.ts` — `CatalogIdentity`, `EntryReference`, `rulesetIds` |
+| Value states | `contracts/values.ts` — `TrackedValue` (`known`/`unknown`/`not_applicable`), `QuantityLimit`, `CostDelta` |
+| Sources & errata | `contracts/source.ts` — `SourceDocument` (authority / review / errata status separate), `SourceReference` (PDF page vs printed page) |
+| Versions | `contracts/versioning.ts` — `CATALOG_SCHEMA_VERSION`, `ROSTER_FORMAT_VERSION`, `CatalogManifest` |
+| Catalog shell | `contracts/catalog.ts` — sections tree, `UnitEntry` + composition (known / no-entities / pending), `OptionGroup`/`Option`, resource grants & consumptions |
+| Roster document | `contracts/roster.ts` — `RosterDocument`, selections with stable member paths, budget and game size stored independently |
+| Evaluation protocol | `contracts/evaluation.ts` — result-shape interfaces only (`Evaluation`, `Availability`, `RulesetModule`); there is intentionally no evaluate/pricing function yet |
+| Integrity checks | `validation/catalogRelations.ts`, `validation/rosterRelations.ts` — reference/relationship checks taking an explicit catalog; distinct from game rules |
+
+`packages/core/src/samples/` holds **synthetic contract-test fixtures** (three
+same-name ruleset catalogs proving isolation, plus the M01-facts Classic
+catalog and the 23 account-shaped roster documents). They are test data, not
+a publishable catalog.
+
+Member paths address the selection's static composition. Purchased attachments
+use an `attachment-member` target carrying `ownerSelectionId` and its own
+relative node path; reordering identical purchases cannot retarget an option.
+Only scope-selector options can address attachments, not options restricted
+to declared static member slots. The document's edit `revision` is copied to
+`Evaluation.identity.inputRevision`; it is distinct from catalog revisions
+and the future storage concurrency revision.
+
+`UnitEntry.baseTraining` carries an opaque tracked token per purchase context;
+Classic validates known levels as i/r/v/e. The Classic catalog and roster
+schemas also reject foreign ruleset identities. Entry, profile, option and
+errata source references are checked against the manifest's document registry.
+See [the contract guide](implementation/m03-contracts.md) and
+[M03 acceptance](implementation/m03-acceptance.md) for exact coverage.
+
+The Classic-specific schema boundary lives in
+`packages/rulesets/classic-coldwar/src`: training levels `i/r/v/e`
+(`training.ts`), tracked combat stats that stay honestly unknown until
+verified (`profiles.ts`), and the Classic catalog/roster refinements
+(`classicSchema.ts`, e.g. game sizes squad/platoon/company/battalion).
+
+See [M03 contracts](implementation/m03-contracts.md) for the full public API,
+the schema-vs-relationship check division, and the 23-account mapping.
 
 ## Web shell notes
 
@@ -95,8 +143,10 @@ separate build step for `packages/*` yet, and none is needed for M02.
 ## Tests
 
 - **Unit (Vitest):** `packages/core` and
-  `packages/rulesets/classic-coldwar` — package importability in Node, and
-  the dependency boundaries above. Config: `vitest.config.ts` (root).
+  `packages/rulesets/classic-coldwar` — contract schema shape checks,
+  catalog/roster relationship integrity positives and negatives, three-ruleset
+  isolation, the Classic schema boundary, and the dependency boundaries
+  above. Config: `vitest.config.ts` (root).
 - **Browser (Playwright):** `tests/e2e/web-shell.spec.ts` — home page load,
   hash-route navigation, direct deep links, not-found fallback, and
   small-viewport layout without horizontal overflow. Config:
@@ -125,4 +175,9 @@ python tools/data-import/check_m01_fixtures.py
 
 It verifies source fingerprints and arithmetic in the manual fixture
 accounts. It is not a rule engine and is unaffected by this repository's npm
-setup.
+setup. On machines where `python` resolves to the Windows Store stub (exit
+code 49, no output), run it through the local uv interpreter instead:
+
+```bash
+uv run --python 3.12 python tools/data-import/check_m01_fixtures.py
+```

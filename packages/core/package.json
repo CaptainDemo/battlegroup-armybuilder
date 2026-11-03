@@ -2,12 +2,17 @@
   "name": "@battlegroup/core",
   "version": "0.1.0",
   "private": true,
-  "description": "Ruleset-agnostic core: shared contracts and pure roster tooling. M02 only establishes the importable package boundary; domain contracts land with M03.",
+  "description": "Ruleset-agnostic core: shared contracts, Zod boundary schemas and pure structural/reference validation. Rule evaluation itself lives in later milestones.",
   "license": "MIT",
   "type": "module",
+  "sideEffects": false,
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./samples": "./src/samples/index.ts"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
   }
 }

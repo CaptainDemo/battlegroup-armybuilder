@@ -5,9 +5,11 @@ rulesets. The goal flow is: pick a ruleset / nation / army list, buy formations
 and configure options, see Points and Battle Rating (BR) with list validation,
 save and restore rosters, and export or print them.
 
-**Current status: early development.** The web shell, build tooling and test
-harness exist (milestone M02). Roster editing, points/BR calculation, rule
-checks, storage and printing are **not implemented yet** — see the
+**Current status: early development.** M02 supplies the web shell and build
+tooling; M03 adds domain contracts, Zod schemas and structural/reference
+checks ([acceptance](docs/implementation/m03-acceptance.md)). Roster editing,
+points/BR calculation, game-rule evaluation, storage and printing are
+**not implemented yet** — see the
 [roadmap](docs/implementation_modules.md) and the in-app `#/roadmap` page.
 
 The first ruleset in scope is **Classic Cold War** (Unofficial Battlegroup:
@@ -39,7 +41,7 @@ list and details:
 
 ```text
 apps/web/                            Web shell: React + TypeScript + Vite, hash routing
-packages/core/                       Ruleset-agnostic core (M03 contracts land there)
+packages/core/                       Domain contracts, Zod schemas and integrity checks
 packages/rulesets/classic-coldwar/   Classic Cold War ruleset module (rules from M07)
 packages/catalogs/                   Versioned game data per ruleset (later milestone)
 tests/fixtures/                      Manually verified source samples (read-only input)
@@ -50,7 +52,7 @@ references/                          Original PDF references; never published or
 ```
 
 Dependency direction is one-way: `apps/web` composes ruleset modules,
-ruleset modules depend on `packages/core`, and core depends on nothing.
+ruleset modules depend on `packages/core`; core's only runtime dependency is Zod.
 Game data (units, weapons, options, points) is fully isolated per ruleset.
 
 ## Documentation

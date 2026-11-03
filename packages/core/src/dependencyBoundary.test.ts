@@ -3,12 +3,17 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 /**
- * Architecture boundary checks for the M02 workspace:
+ * Architecture boundary checks for the workspace:
  * core <- rulesets <- web, one direction only.
  *
  * See docs/architecture.md §3: core must not import concrete rulesets, React,
  * browser databases or hosting platforms; ruleset modules depend on core and
  * never on each other; only the web app composes concrete ruleset modules.
+ *
+ * M03 change: core declares exactly one runtime dependency — the pure schema
+ * library `zod` — replacing the M02 zero-dependency assertion. Everything
+ * else stays forbidden. A ruleset module that imports zod directly must
+ * declare it directly (no reliance on hoisting).
  *
  * Tests run through the root vitest.config.ts, so the repository root is the
  * working directory.
@@ -51,16 +56,17 @@ function sourceImports(relativeDir: string): string[] {
 }
 
 describe('workspace dependency boundaries', () => {
-  it('core declares no dependencies of any kind', () => {
+  it('core declares exactly the pure schema dependency zod and nothing else', () => {
     const core = readManifest('packages/core/package.json');
-    expect(core.dependencies).toBeUndefined();
+    expect(Object.keys(core.dependencies ?? {})).toEqual(['zod']);
+    expect(core.dependencies?.['zod']).toMatch(/^\^?\d/);
     expect(core.peerDependencies).toBeUndefined();
     expect(core.devDependencies).toBeUndefined();
   });
 
-  it('classic-coldwar depends only on core', () => {
+  it('classic-coldwar depends only on core plus its own direct zod use', () => {
     const classic = readManifest('packages/rulesets/classic-coldwar/package.json');
-    expect(classic.dependencies ?? {}).toEqual({ '@battlegroup/core': '*' });
+    expect(Object.keys(classic.dependencies ?? {}).sort()).toEqual(['@battlegroup/core', 'zod']);
     expect(classic.peerDependencies).toBeUndefined();
   });
 
@@ -72,12 +78,21 @@ describe('workspace dependency boundaries', () => {
     expect(Object.keys(dependencies)).toContain('react');
   });
 
-  it('core and classic sources never import React, DOM or other rulesets', () => {
-    const forbidden = /^(react|react-dom|@battlegroup\/classic-coldwar|@battlegroup\/web)(\/|$)/;
+  it('core imports neither React, DOM storage, workspace packages nor rulesets', () => {
+    const forbidden = /^(react|react-dom|dexie|idb|@battlegroup\/)/;
     for (const specifier of sourceImports('packages/core/src')) {
       expect(specifier, `core imports ${specifier}`).not.toMatch(forbidden);
     }
+  });
+
+  it('classic-coldwar imports only core (incl. its samples subpath), zod, vitest and relative modules', () => {
+    const allowed = /^(@battlegroup\/core(\/samples)?|zod|vitest)$/;
+    const forbidden = /^(react|react-dom|dexie|idb|@battlegroup\/(?!core))/;
     for (const specifier of sourceImports('packages/rulesets/classic-coldwar/src')) {
+      if (specifier.startsWith('.') || specifier.startsWith('node:')) {
+        continue;
+      }
+      expect(specifier, `classic-coldwar imports ${specifier}`).toMatch(allowed);
       expect(specifier, `classic-coldwar imports ${specifier}`).not.toMatch(forbidden);
     }
   });
