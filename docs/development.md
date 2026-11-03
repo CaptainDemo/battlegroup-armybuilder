@@ -177,10 +177,24 @@ one creates a fresh edit revision. Applying name/budget/size is one command
 batch and one undo step. UI selection and small-screen panel state are separate
 from roster choices. No browser database or storage adapter is involved yet.
 
-Desktop shows Catalog / Roster / Details together. Small screens use panel
-buttons. Select a BMP platoon (or its attachment) to expose its attachment menu;
-select a purchase in the roster to configure options. Issues select the offending
-purchase, or focus the budget input for a budget problem.
+Desktop uses two columns: Roster on the left and Actions on the right. Each
+catalog section has an add button; each eligible platoon has an attachment add
+button below its nested purchases. `RosterTree.tsx` renders these destinations
+and a separate delete button on every purchase row. Deleting a parent cascades
+through its attachments and can be undone.
+
+Actions switches between `CatalogPanel.tsx` (only candidates for the chosen
+section or parent instance) and the selected purchase's details/options. Adding
+keeps the candidate list open for repeated purchases; clicking a roster unit
+switches to its details. The destination and details headings include an instance
+ordinal to distinguish identical platoons. Deleting a target parent clears its
+attachment chooser. Selection/add-destination UI state is not saved as roster data.
+
+The desktop action pane remains visible while scrolling a long roster, with
+its own scrolling for lengthy details. Small screens have only Roster / Actions
+panel buttons and a route back to the roster; no third panel is created for
+attachments. Issues select the offending purchase, or focus the budget input for
+a budget problem. See [two-column acceptance](implementation/m08-two-column-layout.md).
 
 The runtime example uses published purchase IDs and normal commands. It never
 imports manual fixture expectations or supplies precalculated totals. Coverage

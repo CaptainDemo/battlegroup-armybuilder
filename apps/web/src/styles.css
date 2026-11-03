@@ -243,14 +243,24 @@ small { display: block; color: var(--text-muted); font-size: .8rem; }
 .settings-form label { flex: 1 1 10rem; }
 .settings-form button { flex: 0 0 auto; }
 .settings-card { padding: .8rem 1rem; margin: 0; }
-.editor-grid { display: grid; grid-template-columns: minmax(14rem, .85fr) minmax(17rem, 1.2fr) minmax(18rem, 1fr); gap: 1rem; align-items: start; }
+.editor-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 1rem; align-items: start; }
 .editor-pane { padding: 1rem; }
 .editor-pane > h3:first-child { margin-top: 0; }
+#editor-actions { position: sticky; top: 1rem; max-height: calc(100dvh - 2rem); overflow: auto; scrollbar-gutter: stable; }
 .editor-tabs { display: none; }
-.catalog-section h4 { color: var(--text-muted); font-size: .8rem; text-transform: uppercase; margin-bottom: .3rem; }
+.roster-section { border-top: 1px solid var(--border); padding: .8rem 0; }
+.roster-section[data-adding='true'] { border-top-color: var(--accent); }
+.roster-section-heading h4 { margin: 0 0 .6rem; color: var(--text-muted); font-size: .85rem; text-transform: uppercase; }
+.add-slot { width: 100%; text-align: left; border-style: dashed; color: var(--link); }
+.add-slot[aria-pressed='true'] { border-color: var(--accent); }
+.action-toolbar { display: flex; flex-wrap: wrap; gap: .5rem; }
+.action-toolbar:has(button:not(.mobile-roster-back)) { margin-bottom: .8rem; }
+.mobile-roster-back { display: none; }
 .catalog-item { display: flex; flex-direction: column; align-items: start; gap: .3rem; padding: .75rem 0; border-bottom: 1px solid var(--border); font-size: .9rem; }
 .purchase-branch { margin-bottom: .5rem; }
-.purchase-card { display: flex; flex-direction: column; width: 100%; text-align: left; padding: .75rem; }
+.purchase-row { display: flex; gap: .4rem; align-items: stretch; }
+.purchase-card { display: flex; flex: 1; min-width: 0; flex-direction: column; text-align: left; padding: .75rem; }
+.purchase-remove { align-self: center; flex: 0 0 auto; padding: .45rem .6rem; font-size: .8rem; color: var(--text-muted); }
 .purchase-card span { font-size: .8rem; color: var(--text-muted); }
 .purchase-card[aria-pressed='true'] { border-color: var(--accent); box-shadow: inset 3px 0 var(--accent); }
 .purchase-children { padding-left: .8rem; border-left: 1px solid var(--border); margin-top: .4rem; }
@@ -268,12 +278,15 @@ details ul { padding-left: 1rem; }
 .roster-library { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: 1rem; }
 .library-item { padding: .8rem; border: 1px solid var(--border); border-radius: var(--radius); }
 .library-item h3 { margin-top: 0; }
-@media (max-width: 950px) {
+@media (max-width: 760px) {
   .editor-grid { grid-template-columns: minmax(0, 1fr); }
   .editor-tabs { display: flex; gap: .4rem; }
   .editor-tabs button { flex: 1; }
   .editor-tabs button[aria-pressed='true'] { background: var(--accent); color: var(--accent-contrast); }
   .editor-pane[data-active='false'] { display: none; }
+  #editor-actions { position: static; max-height: none; overflow: visible; scrollbar-gutter: auto; }
+  .mobile-roster-back { display: inline-block; }
+  .action-toolbar { margin-bottom: .8rem; }
   .totals-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .metric strong { font-size: 1.25rem; }
 }
