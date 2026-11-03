@@ -8,6 +8,7 @@ dist/
 # Test artifacts
 test-results/
 playwright-report/
+.playwright-cli/
 coverage/
 
 # Local evidence, caches and collaboration scratch space

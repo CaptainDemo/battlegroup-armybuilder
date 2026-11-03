@@ -9,8 +9,10 @@ save and restore rosters, and export or print them.
 tooling; M03 adds domain contracts and schemas; M04–M06 add the initial Classic
 JSON catalog, pure editing commands and generic evaluation/pricing.
 M07 adds scoped Classic rule checks and availability reasons.
-The browser roster editor, storage and printing are
-**not implemented yet** — see the
+M08 connects a browser editor: create session rosters, purchase formations and
+attachments, configure options, inspect totals and problems, and undo/redo.
+**Refreshing or closing the page discards these session rosters.** Local storage,
+import/export and printing are not implemented yet — see the
 [roadmap](docs/implementation_modules.md) and the in-app `#/roadmap` page.
 
 The first ruleset in scope is **Classic Cold War** (Unofficial Battlegroup:
@@ -24,8 +26,8 @@ Requires Node.js >= 22.12 (verified with 22.22.2) and npm >= 10 (verified with
 10.9.7).
 
 ```bash
-npm install          # install workspace dependencies (creates package-lock.json usage)
-npm run dev          # start the Vite dev server for the web shell
+npm ci               # install the locked workspace dependencies
+npm run dev          # start the Vite dev server
 ```
 
 Other commands — see [docs/development.md](docs/development.md) for the full
@@ -38,16 +40,22 @@ list and details:
 | `npm run build` | Static production build of the web app (`apps/web/dist`) |
 | `npm run test:e2e` | Build, then run Playwright checks against the built app |
 
+Open the app and choose **Create roster** or **Create the 398 Points / 23 BR
+example**. Only the initial Classic Soviet list is available (10 purchase entries,
+including four attachments); combat attributes and overall rule coverage remain
+partial. See [M08 acceptance](docs/implementation/m08-acceptance.md) for the tested
+desktop and small-screen editing flows.
+
 ## Repository layout
 
 ```text
-apps/web/                            Web shell: React + TypeScript + Vite, hash routing
-packages/core/                       Domain contracts, Zod schemas and integrity checks
+apps/web/                            React editor, catalog adapter, session history, hash routing
+packages/core/                       Contracts, atomic commands, pricing and evaluation utilities
 packages/rulesets/classic-coldwar/   Classic Cold War ruleset module (rules from M07)
-packages/catalogs/                   Versioned game data per ruleset (later milestone)
+packages/catalogs/                   Independent versioned Classic JSON release and index
 tests/fixtures/                      Manually verified source samples (read-only input)
 tests/e2e/                           Browser checks for the web shell
-tools/data-import/                   Data checking scripts (Python, stdlib only)
+tools/data-import/                   Catalog publishing checks and Python fixture checker
 docs/                                Design, data verification and delivery records
 references/                          Original PDF references; never published or bundled
 ```

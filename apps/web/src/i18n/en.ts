@@ -10,27 +10,12 @@ export const en = {
   },
   nav: {
     home: 'My Rosters',
+    editor: 'Editor',
     roadmap: 'Roadmap',
-  },
-  status: {
-    bannerTitle: 'Early development — planning stage',
-    bannerBody:
-      'This page is an engineering shell (milestone M02). Roster building, points and battle-rating calculation, and rule checks are not implemented yet.',
   },
   home: {
     myRostersTitle: 'My Rosters',
-    myRostersEmpty:
-      'No rosters yet. Local roster storage arrives with milestone M09; this build does not save anything.',
     createTitle: 'Create a roster',
-    createBody:
-      'Roster creation opens once the Classic Cold War sample list is connected to a rule engine (milestone M07).',
-    coverageTitle: 'Planned data coverage',
-    coverageIntro: 'First ruleset in scope:',
-    coverageSample:
-      'Sample list: Soviet Armoured Division V4.1. A manually verified baseline of 398 points / 23 battle rating exists in project fixtures; it is not wired to an engine yet.',
-    coverageStatus: 'Ruleset module status: planned — no catalogue data is loaded yet.',
-    coverageIsolation:
-      'Classic Cold War, AirLand and NORTHAG keep their game data fully separate. Only code and UI are shared.',
   },
   roadmap: {
     title: 'Roadmap',
@@ -42,9 +27,41 @@ export const en = {
     m02Status:
       'Delivered: this web shell, npm workspaces, type checks, unit tests, browser checks and a static build.',
     m03Label: 'M03–M07 — Domain contracts, catalogue, commands, evaluation, Classic rules',
-    m03Status: 'Planned: not started. No roster editing or rule evaluation exists yet.',
-    m08Label: 'M08–M12 — Web editing, storage, import/export, print, deployment',
-    m08Status: 'Planned: not started.',
+    m03Status: 'Delivered: versioned Classic data, atomic editing commands, pricing and scoped Classic checks. Coverage remains partial.',
+    m08Label: 'M08 — Web roster editing',
+    m08Status: 'Delivered: session rosters, purchases, options, totals, issue navigation and undo/redo. Refreshing the page clears the session.',
+    m09Label: 'M09–M12 — Storage, import/export, print, deployment',
+    m09Status: 'Planned: not started.',
+  },
+  editor: {
+    preview: 'Classic preview — session only',
+    sessionOnly: 'Rosters stay in this open page only. Refreshing or closing it discards them. Local saving arrives in M09.',
+    sessionBadge: 'Not saved to disk',
+    loading: 'Loading the Classic catalog…', ready: 'Classic catalog ready.',
+    loadFailed: 'Catalog verification failed in this browser. Retry loading the catalog.',
+    omittedOptions: 'Certain Restricted/Unique upgrades and MANPADS combinations await clarification.',
+    retry: 'Retry catalog loading', updated: 'Roster updated.', created: 'Roster created.',
+    emptyLibrary: 'No rosters in this session. Create one below or open the example.',
+    emptyRoster: 'Your roster is empty. Add a formation from the catalog.',
+    open: 'Open', deleteRoster: 'Discard roster',
+    exampleName: 'Soviet sample roster', createExample: 'Create the 398 Points / 23 BR example',
+    coverageTitle: 'Available data',
+    coverageBody: 'Classic Cold War · Soviet Armoured Division V4.1. Ten purchase entries are available, including four platoon attachments. Rule and profile coverage is partial; this preview cannot certify a complete legal army.',
+    noRoster: 'Create or open a roster first', back: 'Back to My Rosters',
+    catalogVersion: 'Catalog', points: 'Points', br: 'Battle rating', remaining: 'Budget remaining',
+    checks: 'Rule checks', violations: 'Issues found', incomplete: 'Partial coverage',
+    knownSubtotal: 'Known subtotal', unknown: 'Unknown', notApplicable: 'Not applicable',
+    charges: 'Price breakdown', baseCost: 'Base price (fixed members included)', support: 'Support use & statistics',
+    undo: 'Undo', redo: 'Redo', copy: 'Copy formation', remove: 'Remove formation',
+    catalog: 'Catalog', roster: 'Roster', details: 'Details & checks', panels: 'Editor panels',
+    search: 'Search units', add: 'Add', attachments: 'Platoon attachments',
+    chooseParent: 'Select a platoon to see its attachments.',
+    chooseSelection: 'Select a purchased formation to configure it.',
+    composition: 'Current composition', noEntities: 'This purchase has no on-table entities.',
+    attributesUnknown: 'Combat attributes have not been verified for this release. Unknown values are not zero.',
+    sources: 'Sources', problems: 'Problems', noProblems: 'No violations found within implemented checks. Coverage is partial.',
+    coverage: 'Check coverage', target: 'target', name: 'Roster name', ruleset: 'Ruleset', army: 'Army list',
+    budget: 'Points budget', gameSize: 'Game size', create: 'Create roster', applySettings: 'Apply settings',
   },
   notFound: {
     title: 'Page not found',

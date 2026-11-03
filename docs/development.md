@@ -1,10 +1,10 @@
 # Development Guide
 
 Engineering setup for the Battlegroup Army Builder. This documents what is
-actually implemented as of milestone M03 (domain contracts and Zod boundary
-schemas). Roster editing commands, rule evaluation, storage and printing do
-not exist yet; see [implementation modules](implementation_modules.md) for
-the delivery plan.
+actually implemented through milestone M08: contracts, versioned catalog,
+atomic editing commands, evaluation, Classic rules and the browser editor.
+Storage, import/export and printing remain future work; see
+[implementation modules](implementation_modules.md) for the delivery plan.
 
 ## Prerequisites
 
@@ -31,7 +31,7 @@ symlinks (`node_modules/@battlegroup/*` point at `packages/` and `apps/`).
 | --- | --- |
 | `npm run dev` | Vite dev server for the web shell (hash routing at `http://localhost:5173`) |
 | `npm run typecheck` | `tsc --noEmit` for `packages/core`, `packages/rulesets/classic-coldwar` and `apps/web` in sequence |
-| `npm test` | Vitest run — unit tests under `packages/*/src`, executed in a Node environment without a DOM |
+| `npm test` | Vitest run — core, ruleset, Web adapters/session and catalog release tests, without a DOM |
 | `npm run test:watch` | Same tests in watch mode |
 | `npm run build` | Static production build into `apps/web/dist` |
 | `npm run preview` | Preview server for the built app |
@@ -76,7 +76,7 @@ Rules enforced today (checked by
 Internal packages consume TypeScript sources directly (`main`/`exports` point
 at `src/index.ts`), so Vite and Vitest compile them on the fly. Both packages
 declare `"sideEffects": false`, so the web bundle tree-shakes the schema code
-it does not use (the M02 shell still ships without zod in its bundle).
+it does not use. The current editor includes Zod for catalog boundary checks.
 
 ## Domain contracts (M03)
 
@@ -158,9 +158,33 @@ the schema-vs-relationship check division, and the 23-account mapping.
 - **Asset base path:** set `VITE_BASE` (for example `VITE_BASE=/armybuilder/`
   in `apps/web/.env.production`) to build for a sub-path deployment. See
   `apps/web/vite.config.ts`.
-- **Honesty in the UI:** the shell explicitly labels itself as an engineering
-  milestone; do not add screens that imply roster functionality exists before
-  the matching module (M07+) lands.
+- **Honesty in the UI:** show partial data/rule coverage and the session-only
+  state. No local save is promised before M09 is implemented and verified.
+
+## Browser editing (M08)
+
+The `#/` route manages multiple rosters within the open page. Create an empty
+Classic Soviet roster or use the 398 Points / 23 BR example. `#/editor` shows
+the active roster; a direct link with no session offers a route back to creation.
+The workspace stays mounted during hash navigation, so visiting Roadmap does
+not discard drafts. Refreshing or closing the page does discard them.
+
+`features/roster-editor/RosterWorkspace.tsx` composes the exact catalog release,
+M05 commands and M07 evaluation/availability. The UI reads totals, composition,
+charges and issues from one evaluation whose `inputRevision` must match the
+active document. `session.ts` keeps at most 50 undo/redo snapshots; restoring
+one creates a fresh edit revision. Applying name/budget/size is one command
+batch and one undo step. UI selection and small-screen panel state are separate
+from roster choices. No browser database or storage adapter is involved yet.
+
+Desktop shows Catalog / Roster / Details together. Small screens use panel
+buttons. Select a BMP platoon (or its attachment) to expose its attachment menu;
+select a purchase in the roster to configure options. Issues select the offending
+purchase, or focus the budget input for a budget problem.
+
+The runtime example uses published purchase IDs and normal commands. It never
+imports manual fixture expectations or supplies precalculated totals. Coverage
+and verified browser flows are recorded in [M08 acceptance](implementation/m08-acceptance.md).
 
 ## Tests
 

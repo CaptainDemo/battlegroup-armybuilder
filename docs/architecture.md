@@ -1,6 +1,6 @@
 # Battlegroup Army Builder 架构设计
 
-版本：0.3。日期：2026-11-03。状态：工程壳、领域契约、首批目录、纯编辑命令及通用评估已实现（M02–M06）；Classic专属规则、网页编辑器和其余用户流程仍待后续模块，无网站部署。实际入口见[开发说明](development.md)，基础契约沿革见[M03说明](implementation/m03-contracts.md)。
+版本：0.4。日期：2026-11-03。状态：工程壳、领域契约、首批目录、纯编辑命令、通用评估、Classic专属规则及网页编辑器已实现（M02–M08）。目前为会话内编辑；本地保存、导入导出、打印和部署仍待后续模块。实际入口见[开发说明](development.md)，基础契约沿革见[M03说明](implementation/m03-contracts.md)，最新交互验收见[M08记录](implementation/m08-acceptance.md)。
 
 本文描述系统边界、模块依赖、领域模型和运行流程。[技术方案](technical_plan.md)记录产品目标与总体路线，[实现模块与交付计划](implementation_modules.md)将本文拆成可验收任务。本文细化并更新技术方案中的初步接口与平铺数据示例；具体游戏数值仍以已核对的来源为准。
 

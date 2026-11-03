@@ -1,0 +1,1137 @@
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import {
+  createRosterDocument,
+  executeRosterCommands,
+  resolveChoiceTargets,
+  resolveCompositionPath,
+  type RosterCommand,
+  type RosterDocument,
+  type RosterSelection,
+  type Option,
+  type OptionChoice,
+  type TrackedValue,
+  type EvaluatedCompositionNode,
+} from '@battlegroup/core';
+import {
+  evaluateClassicRoster,
+  getClassicEntryAvailability,
+  type ClassicCatalogRelease,
+} from '@battlegroup/classic-coldwar';
+import {
+  catalogIndex,
+  loadCatalog,
+  type CatalogLoadResult,
+} from '../../adapters/catalog/catalogLoader';
+import { t } from '../../i18n';
+import {
+  makeSession,
+  moveHistory,
+  recordEdit,
+  type EditorSession,
+} from './session';
+
+interface WorkspaceState {
+  sessions: EditorSession[];
+  activeId: string | null;
+  selectedId: string | null;
+  notice: string;
+}
+export interface WorkspaceProps {
+  editor: boolean;
+  hidden: boolean;
+}
+const id = (): string => crypto.randomUUID();
+const value = (tracked: TrackedValue): string =>
+  tracked.state === 'known'
+    ? String(tracked.value)
+    : t(
+        tracked.state === 'not_applicable'
+          ? 'editor.notApplicable'
+          : 'editor.unknown',
+      );
+const delta = (tracked: TrackedValue): string =>
+  tracked.state === 'known'
+    ? `${tracked.value >= 0 ? '+' : ''}${tracked.value}`
+    : t('editor.unknown');
+
+export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
+  const [load, setLoad] = useState<CatalogLoadResult | null>(null);
+  const [retry, setRetry] = useState(0);
+  const [state, setState] = useState<WorkspaceState>({
+    sessions: [],
+    activeId: null,
+    selectedId: null,
+    notice: '',
+  });
+  const [search, setSearch] = useState('');
+  const [tab, setTab] = useState('roster');
+  useEffect(() => {
+    let cancelled = false;
+    const identity = catalogIndex.releases[0]?.identity;
+    if (identity)
+      void loadCatalog(identity)
+        .then((result) => {
+          if (!cancelled) setLoad(result);
+        })
+        .catch(() => {
+          if (!cancelled) setLoad({status: 'invalid-data', reason: t('editor.loadFailed')});
+        });
+    return () => {
+      cancelled = true;
+    };
+  }, [retry]);
+  const release = load?.status === 'ready' ? load.release : null;
+  const session = state.sessions.find(
+    (item) => item.document.rosterId === state.activeId,
+  );
+  const roster = session?.document;
+  const evaluation = useMemo(
+    () => (roster && release ? evaluateClassicRoster(roster, release) : null),
+    [roster, release],
+  );
+  const currentEvaluation =
+    evaluation && evaluation.identity.inputRevision === roster?.revision
+      ? evaluation
+      : null;
+  const selected = roster?.selections.find(
+    (item) => item.selectionId === state.selectedId,
+  );
+  const selectedEntry = release?.catalog.entries.find(
+    (item) => item.localId === selected?.entryReference.localId,
+  );
+  useEffect(() => {
+    if (editor && !hidden && state.selectedId)
+      window.document
+        .getElementById('selection-' + state.selectedId)
+        ?.scrollIntoView({ block: 'nearest' });
+  }, [editor, hidden, state.selectedId, tab]);
+
+  function edit(commands: readonly RosterCommand[], selectId?: string): void {
+    if (!release) return;
+    const revision = id();
+    setState((current) => {
+      const active = current.sessions.find(
+        (item) => item.document.rosterId === current.activeId,
+      );
+      if (!active) return current;
+      const result = executeRosterCommands(
+        active.document,
+        commands,
+        release!,
+        revision,
+      );
+      if (!result.ok)
+        return {
+          ...current,
+          notice: result.problems.map((problem) => problem.message).join(' '),
+        };
+      const desired = selectId ?? current.selectedId;
+      const selectedId = result.document.selections.some(
+        (item) => item.selectionId === desired,
+      )
+        ? desired
+        : (result.document.selections[0]?.selectionId ?? null);
+      return {
+        ...current,
+        sessions: current.sessions.map((item) =>
+          item === active ? recordEdit(item, result.document) : item,
+        ),
+        selectedId,
+        notice: result.notices.length
+          ? result.notices.map((notice) => notice.message).join(' ')
+          : t('editor.updated'),
+      };
+    });
+  }
+
+  function create(
+    name: string,
+    budget: number,
+    size: string,
+    example = false,
+  ): void {
+    if (!release) return;
+    const created = createRosterDocument(
+      {
+        rosterId: id(),
+        revision: id(),
+        name,
+        catalogRef: release.catalog.manifest.identity,
+        armyListId: release.catalog.armyLists[0]!.armyListId,
+        settings: { budgetPoints: budget, gameSizeId: size, optionalRules: [] },
+      },
+      release,
+    );
+    if (!created.ok) {
+      setState((current) => ({
+        ...current,
+        notice: created.problems.map((problem) => problem.message).join(' '),
+      }));
+      return;
+    }
+    let document = created.document;
+    if (example) {
+      const plan = [
+        'fhq',
+        't72-platoon',
+        'bmp1-platoon',
+        'bmp1-platoon-medic',
+        'bmp1-platoon-fire-support',
+        'bmp1-platoon-agl',
+        'brdm2-recon',
+        'zsu23-4',
+        'artillery-request-priority3',
+      ];
+      const ids = plan.map(() => id());
+      const commands: RosterCommand[] = plan.map((entryId, i) => {
+        const entry = release!.catalog.entries.find(
+          (item) => item.localId === entryId,
+        )!;
+        const attachment =
+          release!.purchases.find((item) => item.entryId === entryId)!.kind ===
+          'attachment';
+        return {
+          kind: 'add',
+          selection: {
+            selectionId: ids[i]!,
+            entryReference: { ...document.catalogRef, localId: entryId },
+            parentSelectionId: attachment ? ids[2]! : null,
+            ...(!attachment ? { sectionId: entry.sectionIds[0]! } : {}),
+            optionChoices: [],
+          },
+        };
+      });
+      const populated = executeRosterCommands(
+        document,
+        commands,
+        release,
+        id(),
+      );
+      if (!populated.ok) {
+        setState((current) => ({
+          ...current,
+          notice: populated.problems
+            .map((problem) => problem.message)
+            .join(' '),
+        }));
+        return;
+      }
+      document = populated.document;
+    }
+    setState((current) => ({
+      ...current,
+      sessions: [...current.sessions, makeSession(document)],
+      activeId: document.rosterId,
+      selectedId: document.selections[0]?.selectionId ?? null,
+      notice: t('editor.created'),
+    }));
+    setTab('roster');
+    window.location.hash = '/editor';
+  }
+
+  function add(entryId: string, parent?: RosterSelection): void {
+    if (!release || !roster) return;
+    const entry = release.catalog.entries.find(
+      (item) => item.localId === entryId,
+    )!;
+    const selectionId = id();
+    edit(
+      [
+        {
+          kind: 'add',
+          selection: {
+            selectionId,
+            entryReference: { ...roster.catalogRef, localId: entryId },
+            parentSelectionId: parent?.selectionId ?? null,
+            ...(!parent ? { sectionId: entry.sectionIds[0]! } : {}),
+            optionChoices: [],
+          },
+        },
+      ],
+      selectionId,
+    );
+    setTab('roster');
+  }
+
+  function toggleOption(
+    groupId: string,
+    option: Option,
+    enabled: boolean,
+    nodePath?: string[],
+  ): void {
+    if (!selected || !selectedEntry || !roster || !release) return;
+    const choice: OptionChoice = {
+      optionGroupLocalId: groupId,
+      optionLocalId: option.localId,
+      targets:
+        option.target.kind === 'whole-selection'
+          ? [{ kind: 'whole-selection' }]
+          : option.target.kind === 'member-slots'
+            ? [
+                {
+                  kind: 'member-path',
+                  nodePath: nodePath ?? option.target.nodePaths[0]!,
+                },
+              ]
+            : [],
+    };
+    if (option.target.kind === 'scope-selector')
+      choice.targets = resolveChoiceTargets(
+        roster,
+        release.catalog,
+        selected.selectionId,
+        option,
+        choice,
+      );
+    const choices = selected.optionChoices.filter(
+      (item) =>
+        item.optionGroupLocalId !== groupId ||
+        item.optionLocalId !== option.localId,
+    );
+    if (enabled) choices.push(choice);
+    edit([{ kind: 'options', selectionId: selected.selectionId, choices }]);
+  }
+
+  function history(direction: 'undo' | 'redo'): void {
+    const revision = id();
+    setState((current) => {
+      const active = current.sessions.find(
+        (item) => item.document.rosterId === current.activeId,
+      );
+      if (!active) return current;
+      const next = moveHistory(active, direction, revision);
+      return {
+        ...current,
+        sessions: current.sessions.map((item) =>
+          item === active ? next : item,
+        ),
+        selectedId: next.document.selections.some(
+          (item) => item.selectionId === current.selectedId,
+        )
+          ? current.selectedId
+          : (next.document.selections[0]?.selectionId ?? null),
+        notice: t('editor.updated'),
+      };
+    });
+  }
+
+  const attachmentParent = selected?.parentSelectionId
+    ? roster?.selections.find(
+        (item) => item.selectionId === selected.parentSelectionId,
+      )
+    : selected;
+  const totals = currentEvaluation?.totals;
+  return (
+    <div hidden={hidden} className="page workspace">
+      <section className="preview-note">
+        <strong>{t('editor.preview')}</strong>
+        <span>{t('editor.sessionOnly')}</span>
+      </section>
+      <p role="status" className="workspace-notice">
+        {state.notice ||
+          (!load
+            ? t('editor.loading')
+            : load.status !== 'ready'
+              ? load.reason
+              : t('editor.ready'))}
+      </p>
+      {load && load.status !== 'ready' && (
+        <button
+          type="button"
+          onClick={() => {
+            setLoad(null);
+            setRetry((value) => value + 1);
+          }}
+        >
+          {t('editor.retry')}
+        </button>
+      )}
+      {!editor ? (
+        <>
+          <section className="card">
+            <h2>{t('home.myRostersTitle')}</h2>
+            {!state.sessions.length && (
+              <p className="muted">{t('editor.emptyLibrary')}</p>
+            )}
+            <div className="roster-library">
+              {state.sessions.map((item) => (
+                <article className="library-item" key={item.document.rosterId}>
+                  <h3>{item.document.name}</h3>
+                  <p>
+                    {item.document.settings.budgetPoints} {t('editor.points')} ·{' '}
+                    {item.document.settings.gameSizeId}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setState((current) => ({
+                        ...current,
+                        activeId: item.document.rosterId,
+                        selectedId:
+                          item.document.selections[0]?.selectionId ?? null,
+                      }));
+                      window.location.hash = '/editor';
+                    }}
+                  >
+                    {t('editor.open')}
+                  </button>{' '}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setState((current) => ({
+                        ...current,
+                        sessions: current.sessions.filter(
+                          (session) =>
+                            session.document.rosterId !==
+                            item.document.rosterId,
+                        ),
+                        activeId:
+                          current.activeId === item.document.rosterId
+                            ? null
+                            : current.activeId,
+                      }))
+                    }
+                  >
+                    {t('editor.deleteRoster')}
+                  </button>
+                </article>
+              ))}
+            </div>
+          </section>
+          <section className="card">
+            <h2>{t('home.createTitle')}</h2>
+            <CreateForm disabled={!release} onCreate={create} />
+            <button
+              type="button"
+              disabled={!release}
+              onClick={() =>
+                create(t('editor.exampleName'), 500, 'platoon', true)
+              }
+            >
+              {t('editor.createExample')}
+            </button>
+          </section>
+          <section className="card">
+            <h2>{t('editor.coverageTitle')}</h2>
+            <p>{t('editor.coverageBody')}</p>
+            {release?.coverage.omitted.map((text) => (
+              <p className="muted" key={text}>
+                {text === 'A05 and A06 ambiguous combinations' ? t('editor.omittedOptions') : text}
+              </p>
+            ))}
+          </section>
+        </>
+      ) : !roster || !release ? (
+        <section className="card">
+          <h2>{t('editor.noRoster')}</h2>
+          <a href="#/">{t('editor.back')}</a>
+        </section>
+      ) : (
+        <>
+          <div className="editor-heading">
+            <div>
+              <p className="eyebrow">Classic Cold War · Soviet · V4.1</p>
+              <h2>{roster.name}</h2>
+              <p className="muted">
+                {t('editor.catalogVersion')} {roster.catalogRef.catalogRevision}{' '}
+                · {t('editor.sessionBadge')}
+              </p>
+            </div>
+            <div className="toolbar">
+              <a href="#/">{t('editor.back')}</a>
+              <button
+                type="button"
+                disabled={!session?.past.length}
+                onClick={() => history('undo')}
+              >
+                {t('editor.undo')}
+              </button>
+              <button
+                type="button"
+                disabled={!session?.future.length}
+                onClick={() => history('redo')}
+              >
+                {t('editor.redo')}
+              </button>
+            </div>
+          </div>
+          <div className="totals-strip">
+            <Metric
+              label={t('editor.points')}
+              amount={
+                totals
+                  ? (totals.points.complete
+                      ? ''
+                      : t('editor.knownSubtotal') + ' ') +
+                    totals.points.knownSubtotal
+                  : '—'
+              }
+            />
+            <Metric
+              label={t('editor.br')}
+              amount={
+                totals
+                  ? (totals.br.complete
+                      ? ''
+                      : t('editor.knownSubtotal') + ' ') +
+                    totals.br.knownSubtotal
+                  : '—'
+              }
+            />
+            <Metric
+              label={t('editor.remaining')}
+              amount={
+                totals?.points.complete
+                  ? String(
+                      roster.settings.budgetPoints -
+                        totals.points.knownSubtotal,
+                    )
+                  : '—'
+              }
+            />
+            <div
+              className={
+                'metric ' +
+                (currentEvaluation?.legality === 'violations-confirmed'
+                  ? 'metric--error'
+                  : '')
+              }
+            >
+              <span>{t('editor.checks')}</span>
+              <strong>
+                {t(
+                  currentEvaluation?.legality === 'violations-confirmed'
+                    ? 'editor.violations'
+                    : 'editor.incomplete',
+                )}
+              </strong>
+            </div>
+          </div>
+          <SettingsForm
+            key={roster.revision}
+            document={roster}
+            onApply={(name, patch) =>
+              edit([
+                { kind: 'rename', name },
+                { kind: 'settings', patch },
+              ])
+            }
+          />
+          <nav className="editor-tabs" aria-label={t('editor.panels')}>
+            {['catalog', 'roster', 'details'].map((value) => (
+              <button
+                type="button"
+                key={value}
+                aria-pressed={tab === value}
+                onClick={() => setTab(value)}
+              >
+                {t('editor.' + value)}
+              </button>
+            ))}
+          </nav>
+          <div className="editor-grid">
+            <section
+              className="card editor-pane"
+              data-active={tab === 'catalog'}
+              aria-label={t('editor.catalog')}
+            >
+              <h3>{t('editor.catalog')}</h3>
+              <label>
+                {t('editor.search')}
+                <input
+                  type="search"
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                />
+              </label>
+              {release.catalog.armyLists[0]!.structure.sections.map(
+                (section) => {
+                  const entries = release.catalog.entries.filter(
+                    (entry) =>
+                      entry.sectionIds.includes(section.sectionId) &&
+                      release.purchases.some(
+                        (item) =>
+                          item.entryId === entry.localId &&
+                          item.kind === 'top-level',
+                      ) &&
+                      entry.name.toLowerCase().includes(search.toLowerCase()),
+                  );
+                  return entries.length ? (
+                    <div className="catalog-section" key={section.sectionId}>
+                      <h4>{section.name}</h4>
+                      {entries.map((entry) => {
+                        const available = getClassicEntryAvailability(
+                          roster,
+                          release,
+                          entry.localId,
+                        );
+                        return (
+                          <article className="catalog-item" key={entry.localId}>
+                            <strong>{entry.name}</strong>
+                            <small>
+                              {value(entry.baseCost.points)}{' '}
+                              {t('editor.points')} / {value(entry.baseCost.br)}{' '}
+                              BR
+                            </small>
+                            <button
+                              type="button"
+                              aria-label={t('editor.add') + ' ' + entry.name}
+                              disabled={available.status === 'blocked'}
+                              onClick={() => add(entry.localId)}
+                            >
+                              {t('editor.add')}
+                            </button>
+                            {available.status !== 'allowed' && (
+                              <small>
+                                {available.reasons
+                                  .map((reason) => reason.message)
+                                  .join(' ')}
+                              </small>
+                            )}
+                          </article>
+                        );
+                      })}
+                    </div>
+                  ) : null;
+                },
+              )}
+              <h4>{t('editor.attachments')}</h4>
+              <p className="muted">
+                {attachmentParent
+                  ? release.catalog.entries.find(
+                      (entry) =>
+                        entry.localId ===
+                        attachmentParent.entryReference.localId,
+                    )?.name
+                  : t('editor.chooseParent')}
+              </p>
+              {attachmentParent &&
+                release.purchases
+                  .filter(
+                    (item) =>
+                      item.kind === 'attachment' &&
+                      item.parentEntryIds.includes(
+                        attachmentParent.entryReference.localId,
+                      ) && release.catalog.entries.find(entry => entry.localId === item.entryId)!.name.toLowerCase().includes(search.toLowerCase()),
+                  )
+                  .map((access) => {
+                    const entry = release.catalog.entries.find(
+                      (item) => item.localId === access.entryId,
+                    )!;
+                    const available = getClassicEntryAvailability(
+                      roster,
+                      release,
+                      entry.localId,
+                      { parentSelectionId: attachmentParent.selectionId },
+                    );
+                    return (
+                      <article className="catalog-item" key={entry.localId}>
+                        <strong>{entry.name}</strong>
+                        <small>
+                          {value(entry.baseCost.points)} {t('editor.points')} /{' '}
+                          {value(entry.baseCost.br)} BR
+                        </small>
+                        <button
+                          type="button"
+                          aria-label={t('editor.add') + ' ' + entry.name}
+                          disabled={available.status === 'blocked'}
+                          onClick={() => add(entry.localId, attachmentParent)}
+                        >
+                          {t('editor.add')}
+                        </button>
+                        {available.status !== 'allowed' && (
+                          <small>
+                            {available.reasons
+                              .map((reason) => reason.message)
+                              .join(' ')}
+                          </small>
+                        )}
+                      </article>
+                    );
+                  })}
+            </section>
+            <section
+              className="card editor-pane"
+              data-active={tab === 'roster'}
+              aria-label={t('editor.roster')}
+            >
+              <h3>{t('editor.roster')}</h3>
+              {!roster.selections.length && (
+                <p className="muted">{t('editor.emptyRoster')}</p>
+              )}
+              {roster.selections
+                .filter((selection) => selection.parentSelectionId === null)
+                .map((selection, index) => (
+                  <PurchaseTree
+                    key={selection.selectionId}
+                    selection={selection}
+                    document={roster}
+                    release={release}
+                    selectedId={state.selectedId}
+                    ordinal={index + 1}
+                    onSelect={(selectionId) => {
+                      setState((current) => ({
+                        ...current,
+                        selectedId: selectionId,
+                      }));
+                      setTab('details');
+                    }}
+                  />
+                ))}
+            </section>
+            <section
+              className="card editor-pane"
+              data-active={tab === 'details'}
+              aria-label={t('editor.details')}
+            >
+              <h3>{t('editor.details')}</h3>
+              {selected && selectedEntry ? (
+                <>
+                  <h4>{selectedEntry.name}</h4>
+                  <div className="toolbar">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const ids = new Set([selected.selectionId]);
+                        let added = true;
+                        while (added) {
+                          added = false;
+                          for (const item of roster.selections)
+                            if (
+                              item.parentSelectionId &&
+                              ids.has(item.parentSelectionId) &&
+                              !ids.has(item.selectionId)
+                            ) {
+                              ids.add(item.selectionId);
+                              added = true;
+                            }
+                        }
+                        edit([
+                          {
+                            kind: 'copy',
+                            selectionId: selected.selectionId,
+                            ids: Object.fromEntries(
+                              [...ids].map((old) => [old, id()]),
+                            ),
+                          },
+                        ]);
+                      }}
+                    >
+                      {t('editor.copy')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        edit([
+                          { kind: 'remove', selectionId: selected.selectionId },
+                        ])
+                      }
+                    >
+                      {t('editor.remove')}
+                    </button>
+                  </div>
+                  {selectedEntry.optionGroupIds.map((groupId) => {
+                    const group = release.catalog.optionGroups.find(
+                      (item) => item.localId === groupId,
+                    )!;
+                    return (
+                      <fieldset key={groupId}>
+                        <legend>{group.name}</legend>
+                        {group.options.map((option) => {
+                          const choice = selected.optionChoices.find(
+                            (item) =>
+                              item.optionGroupLocalId === groupId &&
+                              item.optionLocalId === option.localId,
+                          );
+                          return (
+                            <div className="option-row" key={option.localId}>
+                              <label className="checkbox-label">
+                                <input
+                                  type="checkbox"
+                                  checked={!!choice}
+                                  onChange={(event) =>
+                                    toggleOption(
+                                      groupId,
+                                      option,
+                                      event.target.checked,
+                                    )
+                                  }
+                                />
+                                <span>
+                                  {option.name}
+                                  <small>
+                                    {delta(option.costDelta.points)}{' '}
+                                    {t('editor.points')} /{' '}
+                                    {delta(option.costDelta.br)} BR
+                                  </small>
+                                </span>
+                              </label>
+                              {option.target.kind === 'member-slots' && (
+                                <select
+                                  aria-label={
+                                    option.name + ' ' + t('editor.target')
+                                  }
+                                  disabled={!choice}
+                                  value={
+                                    choice?.targets[0]?.kind === 'member-path'
+                                      ? choice.targets[0].nodePath.join('/')
+                                      : option.target.nodePaths[0]!.join('/')
+                                  }
+                                  onChange={(event) =>
+                                    toggleOption(
+                                      groupId,
+                                      option,
+                                      true,
+                                      event.target.value.split('/'),
+                                    )
+                                  }
+                                >
+                                  {option.target.nodePaths.map((path, index) => (
+                                    <option
+                                      key={path.join('/')}
+                                      value={path.join('/')}
+                                    >
+                                      {resolveCompositionPath(
+                                        selectedEntry,
+                                        path,
+                                      )?.role.replaceAll('-', ' ')} · {index + 1}
+                                    </option>
+                                  ))}
+                                </select>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </fieldset>
+                    );
+                  })}
+                  <h4>{t('editor.charges')}</h4>
+                  <ul className="charge-list">
+                    {currentEvaluation?.chargeLines
+                      .filter(
+                        (line) => line.selectionId === selected.selectionId,
+                      )
+                      .map((line) => (
+                        <li key={line.chargeLineId}>
+                          {line.optionChoiceRef
+                            ? release.catalog.optionGroups
+                                .find(
+                                  (group) =>
+                                    group.localId ===
+                                    line.optionChoiceRef?.optionGroupLocalId,
+                                )
+                                ?.options.find(
+                                  (option) =>
+                                    option.localId ===
+                                    line.optionChoiceRef?.optionLocalId,
+                                )?.name
+                            : t('editor.baseCost')}{' '}
+                          · {line.chargedUnits} × · {value(line.points)}{' '}
+                          {t('editor.points')} / {value(line.br)} BR
+                        </li>
+                      ))}
+                  </ul>
+                  <h4>{t('editor.composition')}</h4>
+                  {currentEvaluation?.composition.find(
+                    (item) => item.selectionId === selected.selectionId,
+                  ) ? (
+                    <CompositionTree
+                      node={
+                        currentEvaluation.composition.find(
+                          (item) => item.selectionId === selected.selectionId,
+                        )!.node
+                      }
+                      release={release}
+                    />
+                  ) : (
+                    <p>
+                      {selectedEntry.composition.state === 'no-entities'
+                        ? t('editor.noEntities')
+                        : t('editor.unknown')}
+                    </p>
+                  )}
+                  <p className="muted">{t('editor.attributesUnknown')}</p>
+                  <h4>{t('editor.sources')}</h4>
+                  <ul>
+                    {selectedEntry.sourceRefs.map((source, index) => (
+                      <li key={index}>
+                        {
+                          release.catalog.manifest.sources.find(
+                            (item) => item.documentId === source.documentId,
+                          )?.title
+                        }{' '}
+                        · PDF {source.pdfPage ?? '—'}
+                        {source.printedPage !== undefined &&
+                        source.printedPage !== source.pdfPage
+                          ? ` (${source.printedPage})`
+                          : ''}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                <p className="muted">{t('editor.chooseSelection')}</p>
+              )}
+              <h3>{t('editor.problems')}</h3>
+              {!currentEvaluation?.issues.length && (
+                <p>{t('editor.noProblems')}</p>
+              )}
+              <ul className="issue-list">
+                {currentEvaluation?.issues.map((issue, index) => (
+                  <li key={index}>
+                    <button
+                      type="button"
+                      className="issue-link"
+                      onClick={() => {
+                        if (issue.selectionId) {
+                          setState((current) => ({
+                            ...current,
+                            selectedId: issue.selectionId!,
+                          }));
+                          setTab('roster');
+                        } else
+                          window.document
+                            .getElementById('budget-input')
+                            ?.focus();
+                      }}
+                    >
+                      <strong>{issue.ruleId}</strong> {issue.message}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <details>
+                <summary>{t('editor.support')}</summary>
+                <ul>
+                  {currentEvaluation?.resources.map((resource, index) => (
+                    <li key={index}>
+                      {resource.resourceKind} · {resource.scope}:{' '}
+                      {resource.consumed} / {value(resource.capacity)}
+                    </li>
+                  ))}
+                  {currentEvaluation?.statistics.map((stat) => (
+                    <li key={stat.statId}>
+                      {stat.label}: {stat.value}
+                    </li>
+                  ))}
+                </ul>
+              </details>
+              <details>
+                <summary>{t('editor.coverage')}</summary>
+                <ul>
+                  {currentEvaluation?.coverage.map((check, index) => (
+                    <li key={index}>
+                      {check.checkId}: {check.status.replaceAll('-', ' ')}
+                      {check.note ? ' — ' + check.note : ''}
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            </section>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function CreateForm({
+  disabled,
+  onCreate,
+}: {
+  disabled: boolean;
+  onCreate: (name: string, budget: number, size: string) => void;
+}) {
+  const submit = (event: FormEvent<HTMLFormElement>): void => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    onCreate(
+      String(data.get('name')),
+      Number(data.get('budget')),
+      String(data.get('size')),
+    );
+  };
+  return (
+    <form className="settings-form" onSubmit={submit}>
+      <label>
+        {t('editor.name')}
+        <input name="name" required defaultValue="New Soviet roster" />
+      </label>
+      <label>
+        {t('editor.ruleset')}
+        <select disabled>
+          <option>Classic Cold War</option>
+        </select>
+      </label>
+      <label>
+        {t('editor.army')}
+        <select disabled>
+          <option>Soviet Armoured Division V4.1</option>
+        </select>
+      </label>
+      <label>
+        {t('editor.budget')}
+        <input
+          name="budget"
+          type="number"
+          min="1"
+          required
+          defaultValue="500"
+        />
+      </label>
+      <label>
+        {t('editor.gameSize')}
+        <SizeSelect name="size" defaultValue="platoon" />
+      </label>
+      <button type="submit" disabled={disabled}>
+        {t('editor.create')}
+      </button>
+    </form>
+  );
+}
+function SizeSelect(props: { name: string; defaultValue: string }) {
+  return (
+    <select {...props}>
+      {['squad', 'platoon', 'company', 'battalion'].map((size) => (
+        <option key={size} value={size}>
+          {size}
+        </option>
+      ))}
+    </select>
+  );
+}
+function SettingsForm({
+  document,
+  onApply,
+}: {
+  document: RosterDocument;
+  onApply: (name: string, patch: Partial<RosterDocument['settings']>) => void;
+}) {
+  return (
+    <form
+      className="settings-form card settings-card"
+      onSubmit={(event) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        onApply(String(data.get('roster-name')), {
+          budgetPoints: Number(data.get('budget')),
+          gameSizeId: String(data.get('size')),
+        });
+      }}
+    >
+      <label>
+        {t('editor.name')}
+        <input name="roster-name" required defaultValue={document.name} />
+      </label>
+      <label>
+        {t('editor.budget')}
+        <input
+          id="budget-input"
+          name="budget"
+          type="number"
+          min="1"
+          required
+          defaultValue={document.settings.budgetPoints}
+        />
+      </label>
+      <label>
+        {t('editor.gameSize')}
+        <SizeSelect name="size" defaultValue={document.settings.gameSizeId} />
+      </label>
+      <button type="submit">{t('editor.applySettings')}</button>
+    </form>
+  );
+}
+function Metric({ label, amount }: { label: string; amount: string }) {
+  return (
+    <div className="metric">
+      <span>{label}</span>
+      <strong
+        data-testid={
+          label === 'Points'
+            ? 'points-total'
+            : label === 'Battle rating'
+              ? 'br-total'
+              : undefined
+        }
+      >
+        {amount}
+      </strong>
+    </div>
+  );
+}
+function PurchaseTree({
+  selection,
+  document,
+  release,
+  selectedId,
+  ordinal,
+  onSelect,
+}: {
+  selection: RosterSelection;
+  document: RosterDocument;
+  release: ClassicCatalogRelease;
+  selectedId: string | null;
+  ordinal: number;
+  onSelect: (id: string) => void;
+}) {
+  const entry = release.catalog.entries.find(
+    (item) => item.localId === selection.entryReference.localId,
+  )!;
+  return (
+    <div className="purchase-branch">
+      <button
+        type="button"
+        id={'selection-' + selection.selectionId}
+        className="purchase-card"
+        aria-pressed={selectedId === selection.selectionId}
+        onClick={() => onSelect(selection.selectionId)}
+      >
+        <strong>
+          {entry.name} · {ordinal}
+        </strong>
+        <span>
+          {value(entry.baseCost.points)} {t('editor.points')} /{' '}
+          {value(entry.baseCost.br)} BR
+        </span>
+      </button>
+      <div className="purchase-children">
+        {document.selections
+          .filter((item) => item.parentSelectionId === selection.selectionId)
+          .map((child, index) => (
+            <PurchaseTree
+              key={child.selectionId}
+              selection={child}
+              document={document}
+              release={release}
+              selectedId={selectedId}
+              ordinal={index + 1}
+              onSelect={onSelect}
+            />
+          ))}
+      </div>
+    </div>
+  );
+}
+function CompositionTree({
+  node,
+  release,
+}: {
+  node: EvaluatedCompositionNode;
+  release: ClassicCatalogRelease;
+}) {
+  return (
+    <ul className="composition-tree">
+      <li>
+        {node.quantity} ×{' '}
+        {release.catalog.profiles.find(
+          (profile) => profile.localId === node.profileLocalId,
+        )?.name ?? node.role.replaceAll('-', ' ')}
+        {node.training?.state === 'known' ? ' · ' + node.training.value : ''}
+        {node.children?.map((child) => (
+          <CompositionTree key={child.nodeId} node={child} release={release} />
+        ))}
+      </li>
+    </ul>
+  );
+}

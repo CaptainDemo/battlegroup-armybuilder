@@ -7,11 +7,11 @@ import { expect, test } from '@playwright/test';
  */
 
 test.describe('web shell', () => {
-  test('loads the home page with the planning-stage banner', async ({ page }) => {
+  test('loads the home page with the session-only preview notice', async ({ page }) => {
     await page.goto('/');
     await expect(page).toHaveTitle('Battlegroup Army Builder');
     await expect(page.getByRole('heading', { level: 1, name: 'Battlegroup Army Builder' })).toBeVisible();
-    await expect(page.getByRole('heading', { level: 2, name: 'Early development — planning stage' })).toBeVisible();
+    await expect(page.getByText('Classic preview — session only', { exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { level: 2, name: 'My Rosters' })).toBeVisible();
   });
 

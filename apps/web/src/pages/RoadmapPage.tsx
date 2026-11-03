@@ -10,6 +10,7 @@ const milestones: readonly Milestone[] = [
   { labelKey: 'roadmap.m02Label', statusKey: 'roadmap.m02Status' },
   { labelKey: 'roadmap.m03Label', statusKey: 'roadmap.m03Status' },
   { labelKey: 'roadmap.m08Label', statusKey: 'roadmap.m08Status' },
+  { labelKey: 'roadmap.m09Label', statusKey: 'roadmap.m09Status' },
 ];
 
 export function RoadmapPage() {

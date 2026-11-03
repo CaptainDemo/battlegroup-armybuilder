@@ -1,5 +1,4 @@
-/* Battlegroup Army Builder — M02 shell styles.
-   Desktop-first single column; small screens tighten spacing and wrap the nav. */
+/* Shared shell and roster workspace. */
 
 :root {
   color-scheme: light dark;
@@ -16,7 +15,7 @@
   --status-text: #5c4a12;
   --link: #35502c;
   --radius: 10px;
-  --content-width: 60rem;
+  --content-width: 90rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -214,6 +213,69 @@ body {
 
 a {
   color: var(--link);
+}
+
+[hidden] { display: none !important; }
+button, input, select { font: inherit; }
+button { padding: .5rem .8rem; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); cursor: pointer; min-height: 44px; }
+button:hover:not(:disabled) { border-color: var(--accent); }
+button:disabled { opacity: .5; cursor: default; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+input, select { display: block; width: 100%; min-width: 0; padding: .5rem; border: 1px solid var(--border); border-radius: 5px; background: var(--surface); color: var(--text); }
+label { display: block; font-size: .9rem; }
+small { display: block; color: var(--text-muted); font-size: .8rem; }
+.workspace { gap: 1rem; }
+.workspace > *, .editor-grid > *, .settings-form > * { min-width: 0; }
+.workspace { overflow-wrap: anywhere; }
+.preview-note { display: flex; flex-wrap: wrap; gap: .25rem 1rem; background: var(--status-bg); border: 1px solid var(--status-border); color: var(--status-text); border-radius: var(--radius); padding: .7rem 1rem; font-size: .9rem; }
+.workspace-notice { margin: 0; color: var(--text-muted); font-size: .85rem; }
+.editor-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; }
+.editor-heading h2 { margin: 0; font-size: 1.6rem; }
+.editor-heading p { margin: .2rem 0; }
+.eyebrow { text-transform: uppercase; letter-spacing: .08em; font-size: .75rem; color: var(--text-muted); }
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.totals-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .75rem; }
+.metric { display: flex; flex-direction: column; padding: .75rem 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.metric span { color: var(--text-muted); font-size: .85rem; }
+.metric strong { font-size: 1.5rem; }
+.metric--error { border-color: #b8543d; }
+.settings-form { display: flex; flex-wrap: wrap; align-items: end; gap: .8rem; margin-bottom: 1rem; }
+.settings-form label { flex: 1 1 10rem; }
+.settings-form button { flex: 0 0 auto; }
+.settings-card { padding: .8rem 1rem; margin: 0; }
+.editor-grid { display: grid; grid-template-columns: minmax(14rem, .85fr) minmax(17rem, 1.2fr) minmax(18rem, 1fr); gap: 1rem; align-items: start; }
+.editor-pane { padding: 1rem; }
+.editor-pane > h3:first-child { margin-top: 0; }
+.editor-tabs { display: none; }
+.catalog-section h4 { color: var(--text-muted); font-size: .8rem; text-transform: uppercase; margin-bottom: .3rem; }
+.catalog-item { display: flex; flex-direction: column; align-items: start; gap: .3rem; padding: .75rem 0; border-bottom: 1px solid var(--border); font-size: .9rem; }
+.purchase-branch { margin-bottom: .5rem; }
+.purchase-card { display: flex; flex-direction: column; width: 100%; text-align: left; padding: .75rem; }
+.purchase-card span { font-size: .8rem; color: var(--text-muted); }
+.purchase-card[aria-pressed='true'] { border-color: var(--accent); box-shadow: inset 3px 0 var(--accent); }
+.purchase-children { padding-left: .8rem; border-left: 1px solid var(--border); margin-top: .4rem; }
+fieldset { min-width: 0; margin: 1rem 0; border: 1px solid var(--border); border-radius: 6px; padding: .6rem; }
+legend { font-size: .9rem; }
+.option-row { padding: .3rem 0; }
+.checkbox-label { display: flex; align-items: start; gap: .6rem; }
+.checkbox-label input { width: 1.1rem; height: 1.1rem; flex: 0 0 1.1rem; margin-top: .2rem; }
+.composition-tree { padding-left: 1.1rem; font-size: .85rem; }
+.issue-list { padding-left: 1rem; }
+.issue-link { border: 0; padding: .3rem 0; text-align: left; font-size: .85rem; color: var(--link); text-decoration: underline; }
+details { font-size: .85rem; }
+summary { cursor: pointer; }
+details ul { padding-left: 1rem; }
+.roster-library { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: 1rem; }
+.library-item { padding: .8rem; border: 1px solid var(--border); border-radius: var(--radius); }
+.library-item h3 { margin-top: 0; }
+@media (max-width: 950px) {
+  .editor-grid { grid-template-columns: minmax(0, 1fr); }
+  .editor-tabs { display: flex; gap: .4rem; }
+  .editor-tabs button { flex: 1; }
+  .editor-tabs button[aria-pressed='true'] { background: var(--accent); color: var(--accent-contrast); }
+  .editor-pane[data-active='false'] { display: none; }
+  .totals-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .metric strong { font-size: 1.25rem; }
 }
 
 /* Small screens: keep a single readable column with comfortable tap targets. */

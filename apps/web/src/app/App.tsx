@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 import { t } from '../i18n';
-import { HomePage } from '../pages/HomePage';
+import { RosterWorkspace } from '../features/roster-editor/RosterWorkspace';
 import { NotFoundPage } from '../pages/NotFoundPage';
 import { RoadmapPage } from '../pages/RoadmapPage';
 import { findRoute, routes } from './routes';
@@ -9,8 +9,6 @@ import { useHashPath } from './hashRouter';
 export function App(): ReactElement {
   const path = useHashPath();
   const activeRoute = findRoute(path);
-
-  const page: ReactElement = activeRoute?.id === 'roadmap' ? <RoadmapPage /> : activeRoute?.id === 'home' ? <HomePage /> : <NotFoundPage />;
 
   return (
     <div className="app-shell">
@@ -35,7 +33,10 @@ export function App(): ReactElement {
         </div>
       </header>
 
-      <main className="app-main" id="main">{page}</main>
+      <main className="app-main" id="main">
+        <RosterWorkspace editor={activeRoute?.id === 'editor'} hidden={activeRoute?.id !== 'home' && activeRoute?.id !== 'editor'} />
+        {activeRoute?.id === 'roadmap' ? <RoadmapPage /> : !activeRoute ? <NotFoundPage /> : null}
+      </main>
 
       <footer className="app-footer">
         <p>{t('footer.license')}</p>
