@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Test artifacts
+test-results/
+playwright-report/
+coverage/
+
+# Local evidence, caches and collaboration scratch space
+.tmp/
+
+# Local source material; never committed or published
+/references/

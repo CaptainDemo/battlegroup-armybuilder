@@ -1,0 +1,1871 @@
+{
+  "format": "m01-manual-calibration-v1",
+  "date": "2026-10-30",
+  "rulesetId": "classic-coldwar",
+  "sourceManifest": "m01-sources.json",
+  "notRuntimeCatalog": true,
+  "notFinalRosterSchema": true,
+  "interpretations": [
+    "Points-only options have a known zero BR delta (user clarification A09); missing base BR remains unknown.",
+    "Known fixed members are included in parent purchase price.",
+    "Top-level support allocations are evidence, not a required player UI interaction."
+  ],
+  "cases": [
+    {
+      "id": "B01",
+      "kind": "roster_subset",
+      "lines": [
+        {
+          "selectionId": "hq",
+          "entryId": "fhq",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 20,
+          "unitBr": 3,
+          "sourceId": "SOV",
+          "pdfPage": 1
+        },
+        {
+          "selectionId": "tank",
+          "entryId": "t72-platoon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 180,
+          "unitBr": 7,
+          "sourceId": "SOV",
+          "pdfPage": 6
+        },
+        {
+          "selectionId": "inf",
+          "entryId": "bmp1-platoon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 95,
+          "unitBr": 8,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "medic",
+          "entryId": "bmp1-platoon-medic",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 8,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "fs",
+          "entryId": "bmp1-platoon-fire-support",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 25,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "agl",
+          "entryId": "bmp1-platoon-agl",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 18,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "recon",
+          "entryId": "brdm2-recon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 12,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 10
+        },
+        {
+          "selectionId": "aa",
+          "entryId": "zsu23-4",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 35,
+          "unitBr": 2,
+          "sourceId": "SOV",
+          "pdfPage": 12
+        },
+        {
+          "selectionId": "request",
+          "entryId": "artillery-request-priority3",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 5,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 13
+        }
+      ],
+      "expectedTotals": {
+        "points": 398,
+        "br": 23
+      },
+      "expectedViolations": [],
+      "budget": 500,
+      "gameSize": "platoon",
+      "supportAllocations": [
+        {
+          "producerSelectionId": "inf",
+          "consumerSelectionId": "recon",
+          "category": "reconnaissance",
+          "count": 1
+        },
+        {
+          "producerSelectionId": "tank",
+          "consumerSelectionId": "aa",
+          "category": "specialist",
+          "count": 1
+        },
+        {
+          "producerSelectionId": "hq",
+          "consumerSelectionId": "request",
+          "category": "additional-fire-support",
+          "count": 1
+        }
+      ],
+      "expectedLegality": "undetermined",
+      "unresolved": [
+        "A08"
+      ],
+      "manualAuxiliaryStatistics": {
+        "officers": 1,
+        "scoutWeight": 1,
+        "sourceRefs": [
+          {
+            "sourceId": "BASE",
+            "pdfPage": 49
+          },
+          {
+            "sourceId": "SOV",
+            "pdfPage": 1
+          },
+          {
+            "sourceId": "SOV",
+            "pdfPage": 10
+          }
+        ],
+        "status": "manual_expectation_not_implemented"
+      },
+      "manualGlobalSupportGrants": [
+        {
+          "producerSelectionId": "inf",
+          "capacity": 4,
+          "ruleId": "C07"
+        },
+        {
+          "producerSelectionId": "tank",
+          "capacity": 4,
+          "ruleId": "C08"
+        },
+        {
+          "producerSelectionId": "hq",
+          "capacity": 1,
+          "ruleId": "C09"
+        }
+      ],
+      "manualLocalSupportUsage": {
+        "parentSelectionId": "inf",
+        "capacity": 4,
+        "used": 3,
+        "ruleId": "C02"
+      }
+    },
+    {
+      "id": "B02",
+      "kind": "roster_subset",
+      "lines": [
+        {
+          "selectionId": "hq",
+          "entryId": "fhq",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 20,
+          "unitBr": 3,
+          "sourceId": "SOV",
+          "pdfPage": 1
+        },
+        {
+          "selectionId": "tank",
+          "entryId": "t72-platoon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 180,
+          "unitBr": 7,
+          "sourceId": "SOV",
+          "pdfPage": 6
+        },
+        {
+          "selectionId": "inf",
+          "entryId": "bmp1-platoon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 95,
+          "unitBr": 8,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "medic",
+          "entryId": "bmp1-platoon-medic",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 8,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "fs",
+          "entryId": "bmp1-platoon-fire-support",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 25,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "agl",
+          "entryId": "bmp1-platoon-agl",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 18,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "recon",
+          "entryId": "brdm2-recon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 12,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 10
+        },
+        {
+          "selectionId": "aa",
+          "entryId": "zsu23-4",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 35,
+          "unitBr": 2,
+          "sourceId": "SOV",
+          "pdfPage": 12
+        },
+        {
+          "selectionId": "request",
+          "entryId": "artillery-request-priority3",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 5,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 13
+        },
+        {
+          "selectionId": "medic2",
+          "entryId": "bmp1-platoon-medic",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 8,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        }
+      ],
+      "expectedTotals": {
+        "points": 406,
+        "br": 23
+      },
+      "expectedViolations": [
+        "C02"
+      ],
+      "budget": 500,
+      "gameSize": "platoon",
+      "supportAllocations": [
+        {
+          "producerSelectionId": "inf",
+          "consumerSelectionId": "recon",
+          "category": "reconnaissance",
+          "count": 1
+        },
+        {
+          "producerSelectionId": "tank",
+          "consumerSelectionId": "aa",
+          "category": "specialist",
+          "count": 1
+        },
+        {
+          "producerSelectionId": "hq",
+          "consumerSelectionId": "request",
+          "category": "additional-fire-support",
+          "count": 1
+        }
+      ],
+      "expectedLegality": "invalid",
+      "unresolved": [
+        "A08"
+      ],
+      "manualGlobalSupportGrants": [
+        {
+          "producerSelectionId": "inf",
+          "capacity": 4,
+          "ruleId": "C07"
+        },
+        {
+          "producerSelectionId": "tank",
+          "capacity": 4,
+          "ruleId": "C08"
+        },
+        {
+          "producerSelectionId": "hq",
+          "capacity": 1,
+          "ruleId": "C09"
+        }
+      ],
+      "manualLocalSupportUsage": {
+        "parentSelectionId": "inf",
+        "capacity": 4,
+        "used": 4,
+        "ruleId": "C02"
+      }
+    },
+    {
+      "id": "B03",
+      "kind": "roster_subset",
+      "lines": [
+        {
+          "selectionId": "hq",
+          "entryId": "fhq",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 20,
+          "unitBr": 3,
+          "sourceId": "SOV",
+          "pdfPage": 1
+        },
+        {
+          "selectionId": "tank",
+          "entryId": "t72-platoon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 180,
+          "unitBr": 7,
+          "sourceId": "SOV",
+          "pdfPage": 6
+        },
+        {
+          "selectionId": "inf",
+          "entryId": "bmp1-platoon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 95,
+          "unitBr": 8,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "medic",
+          "entryId": "bmp1-platoon-medic",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 8,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "fs",
+          "entryId": "bmp1-platoon-fire-support",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 25,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "agl",
+          "entryId": "bmp1-platoon-agl",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 18,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "recon",
+          "entryId": "brdm2-recon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 12,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 10
+        },
+        {
+          "selectionId": "aa",
+          "entryId": "zsu23-4",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 35,
+          "unitBr": 2,
+          "sourceId": "SOV",
+          "pdfPage": 12
+        },
+        {
+          "selectionId": "request",
+          "entryId": "artillery-request-priority3",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 5,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 13
+        }
+      ],
+      "expectedTotals": {
+        "points": 398,
+        "br": 23
+      },
+      "expectedViolations": [
+        "C01"
+      ],
+      "budget": 397,
+      "gameSize": "platoon",
+      "supportAllocations": [
+        {
+          "producerSelectionId": "inf",
+          "consumerSelectionId": "recon",
+          "category": "reconnaissance",
+          "count": 1
+        },
+        {
+          "producerSelectionId": "tank",
+          "consumerSelectionId": "aa",
+          "category": "specialist",
+          "count": 1
+        },
+        {
+          "producerSelectionId": "hq",
+          "consumerSelectionId": "request",
+          "category": "additional-fire-support",
+          "count": 1
+        }
+      ],
+      "expectedLegality": "invalid",
+      "unresolved": [
+        "A08"
+      ],
+      "manualGlobalSupportGrants": [
+        {
+          "producerSelectionId": "inf",
+          "capacity": 4,
+          "ruleId": "C07"
+        },
+        {
+          "producerSelectionId": "tank",
+          "capacity": 4,
+          "ruleId": "C08"
+        },
+        {
+          "producerSelectionId": "hq",
+          "capacity": 1,
+          "ruleId": "C09"
+        }
+      ],
+      "manualLocalSupportUsage": {
+        "parentSelectionId": "inf",
+        "capacity": 4,
+        "used": 3,
+        "ruleId": "C02"
+      }
+    },
+    {
+      "id": "B04",
+      "kind": "roster_subset",
+      "lines": [
+        {
+          "selectionId": "tank",
+          "entryId": "t72-platoon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 180,
+          "unitBr": 7,
+          "sourceId": "SOV",
+          "pdfPage": 6
+        },
+        {
+          "selectionId": "inf",
+          "entryId": "bmp1-platoon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 95,
+          "unitBr": 8,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "medic",
+          "entryId": "bmp1-platoon-medic",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 8,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "fs",
+          "entryId": "bmp1-platoon-fire-support",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 25,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "agl",
+          "entryId": "bmp1-platoon-agl",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 18,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "recon",
+          "entryId": "brdm2-recon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 12,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 10
+        },
+        {
+          "selectionId": "aa",
+          "entryId": "zsu23-4",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 35,
+          "unitBr": 2,
+          "sourceId": "SOV",
+          "pdfPage": 12
+        },
+        {
+          "selectionId": "request",
+          "entryId": "artillery-request-priority3",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 5,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 13
+        }
+      ],
+      "expectedTotals": {
+        "points": 378,
+        "br": 20
+      },
+      "expectedViolations": [
+        "C09"
+      ],
+      "budget": 500,
+      "gameSize": "platoon",
+      "supportAllocations": [
+        {
+          "producerSelectionId": "inf",
+          "consumerSelectionId": "recon",
+          "category": "reconnaissance",
+          "count": 1
+        },
+        {
+          "producerSelectionId": "tank",
+          "consumerSelectionId": "aa",
+          "category": "specialist",
+          "count": 1
+        }
+      ],
+      "unfundedSelections": [
+        "request"
+      ],
+      "expectedLegality": "invalid",
+      "unresolved": [
+        "A08"
+      ],
+      "manualGlobalSupportGrants": [
+        {
+          "producerSelectionId": "inf",
+          "capacity": 4,
+          "ruleId": "C07"
+        },
+        {
+          "producerSelectionId": "tank",
+          "capacity": 4,
+          "ruleId": "C08"
+        }
+      ],
+      "manualLocalSupportUsage": {
+        "parentSelectionId": "inf",
+        "capacity": 4,
+        "used": 3,
+        "ruleId": "C02"
+      }
+    },
+    {
+      "id": "L01",
+      "kind": "local_calibration",
+      "lines": [
+        {
+          "selectionId": "tank",
+          "entryId": "t72-platoon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 180,
+          "unitBr": 7,
+          "sourceId": "SOV",
+          "pdfPage": 6
+        },
+        {
+          "selectionId": "model",
+          "entryId": "option/t72-platoon-to-b",
+          "parentSelectionId": "tank",
+          "quantity": 1,
+          "unitPoints": 30,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 6
+        },
+        {
+          "selectionId": "plough",
+          "entryId": "option/t72-kmt",
+          "parentSelectionId": "tank",
+          "quantity": 1,
+          "unitPoints": 5,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 6,
+          "targetPath": [
+            "tank-2"
+          ]
+        }
+      ],
+      "expectedTotals": {
+        "points": 215,
+        "br": 7
+      },
+      "expectedViolations": [],
+      "expectedLegality": "not_assessed",
+      "notes": "All 3 tanks become T-72B; one member receives KMT. Points-only options do not change BR (A09 resolved)."
+    },
+    {
+      "id": "L02",
+      "kind": "local_calibration",
+      "lines": [
+        {
+          "selectionId": "tank",
+          "entryId": "t62-platoon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 75,
+          "unitBr": 6,
+          "sourceId": "SOV",
+          "pdfPage": 7
+        },
+        {
+          "selectionId": "model",
+          "entryId": "option/t62-platoon-to-m",
+          "parentSelectionId": "tank",
+          "quantity": 1,
+          "unitPoints": 30,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 7
+        },
+        {
+          "selectionId": "atgm",
+          "entryId": "option/one-t62m-bastion",
+          "parentSelectionId": "tank",
+          "quantity": 1,
+          "unitPoints": 20,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 7,
+          "targetPath": [
+            "tank-2"
+          ]
+        },
+        {
+          "selectionId": "training",
+          "entryId": "option/t62-platoon-regular",
+          "parentSelectionId": "tank",
+          "quantity": 1,
+          "unitPoints": 20,
+          "unitBr": 3,
+          "sourceId": "SOV",
+          "pdfPage": 7
+        }
+      ],
+      "expectedTotals": {
+        "points": 145,
+        "br": 9
+      },
+      "expectedViolations": [],
+      "expectedLegality": "not_assessed",
+      "notes": "Training i -> r. Does not settle global Unique identity (A05)."
+    },
+    {
+      "id": "L03",
+      "kind": "local_calibration",
+      "lines": [
+        {
+          "selectionId": "inf",
+          "entryId": "bmp2-platoon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 130,
+          "unitBr": 12,
+          "sourceId": "SOV",
+          "pdfPage": 4
+        },
+        {
+          "selectionId": "fs",
+          "entryId": "bmp2-platoon-fire-support",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 45,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 4
+        }
+      ],
+      "expectedTotals": {
+        "points": 175,
+        "br": 13
+      },
+      "expectedViolations": [],
+      "expectedLegality": "not_assessed",
+      "notes": "Independent platoon context."
+    },
+    {
+      "id": "L04",
+      "kind": "local_calibration",
+      "lines": [
+        {
+          "selectionId": "company",
+          "entryId": "bmp2-company",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 380,
+          "unitBr": 35,
+          "sourceId": "SOV",
+          "pdfPage": 5
+        },
+        {
+          "selectionId": "fs",
+          "entryId": "bmp2-company-platoon-fire-support",
+          "parentSelectionId": "company",
+          "quantity": 1,
+          "unitPoints": 40,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 5,
+          "note": "Targets included platoon-1; do not charge its base price again.",
+          "targetPath": [
+            "platoon-1"
+          ]
+        }
+      ],
+      "expectedTotals": {
+        "points": 420,
+        "br": 36
+      },
+      "expectedViolations": [],
+      "expectedLegality": "not_assessed",
+      "notes": "One support selection of included platoon-1; second-section option excluded."
+    },
+    {
+      "id": "L05",
+      "kind": "local_calibration",
+      "lines": [
+        {
+          "selectionId": "company",
+          "entryId": "bmp1-company",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 275,
+          "unitBr": 25,
+          "sourceId": "SOV",
+          "pdfPage": 3
+        },
+        {
+          "selectionId": "medic1",
+          "entryId": "bmp1-company-platoon-medic",
+          "parentSelectionId": "company",
+          "quantity": 1,
+          "unitPoints": 8,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 3,
+          "note": "Included platoon-1",
+          "targetPath": [
+            "platoon-1"
+          ]
+        },
+        {
+          "selectionId": "medic2",
+          "entryId": "bmp1-company-platoon-medic",
+          "parentSelectionId": "company",
+          "quantity": 1,
+          "unitPoints": 8,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 3,
+          "note": "Included platoon-2",
+          "targetPath": [
+            "platoon-2"
+          ]
+        }
+      ],
+      "expectedTotals": {
+        "points": 291,
+        "br": 25
+      },
+      "expectedViolations": [],
+      "expectedLegality": "not_assessed",
+      "notes": "Two different local scopes. Fixed child platoons are not extra purchases."
+    },
+    {
+      "id": "L06",
+      "kind": "local_calibration",
+      "lines": [
+        {
+          "selectionId": "inf",
+          "entryId": "bmp1-platoon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 95,
+          "unitBr": 8,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "transport",
+          "entryId": "option/base-bmp1-to-p",
+          "parentSelectionId": "inf",
+          "quantity": 3,
+          "unitPoints": 5,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 2,
+          "targetPaths": [
+            [
+              "command-squad",
+              "transport"
+            ],
+            [
+              "assistant-squad",
+              "transport"
+            ],
+            [
+              "rifle-squad",
+              "transport"
+            ]
+          ]
+        }
+      ],
+      "expectedTotals": {
+        "points": 110,
+        "br": 8
+      },
+      "expectedViolations": [],
+      "expectedLegality": "not_assessed",
+      "notes": "Three basic transports because no attachments selected; all also includes purchased support BMPs (A03 resolved)."
+    },
+    {
+      "id": "L07",
+      "kind": "local_calibration",
+      "lines": [
+        {
+          "selectionId": "eng",
+          "entryId": "combat-engineers",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 25,
+          "unitBr": 3,
+          "sourceId": "SOV",
+          "pdfPage": 11
+        },
+        {
+          "selectionId": "transport",
+          "entryId": "option/engineer-btr80",
+          "parentSelectionId": "eng",
+          "quantity": 1,
+          "unitPoints": 0,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 11
+        }
+      ],
+      "expectedTotals": {
+        "points": 25,
+        "br": 3
+      },
+      "expectedViolations": [],
+      "expectedLegality": "not_assessed",
+      "notes": "Replace one transport, do not append it."
+    },
+    {
+      "id": "L08",
+      "kind": "local_calibration",
+      "lines": [
+        {
+          "selectionId": "ambulance",
+          "entryId": "ambulance",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 20,
+          "unitBr": 2,
+          "sourceId": "SOV",
+          "pdfPage": 11
+        },
+        {
+          "selectionId": "downgrade",
+          "entryId": "option/ambulance-heavy-truck",
+          "parentSelectionId": "ambulance",
+          "quantity": 1,
+          "unitPoints": -5,
+          "unitBr": -1,
+          "sourceId": "SOV",
+          "pdfPage": 11
+        }
+      ],
+      "expectedTotals": {
+        "points": 15,
+        "br": 1
+      },
+      "expectedViolations": [],
+      "expectedLegality": "not_assessed",
+      "notes": "Restricted not automatically removed; training remains i."
+    },
+    {
+      "id": "L09",
+      "kind": "local_calibration",
+      "lines": [
+        {
+          "selectionId": "barrage",
+          "entryId": "timed122",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 25,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 15
+        }
+      ],
+      "expectedTotals": {
+        "points": 25,
+        "br": 0
+      },
+      "expectedViolations": [],
+      "expectedLegality": "not_assessed",
+      "notes": "Pre-registered target included; ToT support cost zero (CW p28). No deployed gun models."
+    },
+    {
+      "id": "L10",
+      "kind": "local_calibration",
+      "lines": [
+        {
+          "selectionId": "company",
+          "entryId": "t72-company",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 600,
+          "unitBr": 25,
+          "sourceId": "SOV",
+          "pdfPage": 6
+        },
+        {
+          "selectionId": "model",
+          "entryId": "option/t72-company-b1-per-tank",
+          "parentSelectionId": "company",
+          "quantity": 10,
+          "unitPoints": 10,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 6
+        }
+      ],
+      "expectedTotals": {
+        "points": 700,
+        "br": 25
+      },
+      "expectedViolations": [],
+      "expectedLegality": "not_assessed",
+      "notes": "A01 resolved: 10 T-72A upgraded to 10 T-72B1; 1 company commander, 3 platoon commanders, 6 ordinary tanks.",
+      "expectedComposition": [
+        {
+          "profileId": "classic-coldwar/t72b1",
+          "role": "company-command",
+          "count": 1
+        },
+        {
+          "profileId": "classic-coldwar/t72b1",
+          "role": "platoon-command",
+          "count": 3
+        },
+        {
+          "profileId": "classic-coldwar/t72b1",
+          "role": "ordinary",
+          "count": 6
+        }
+      ]
+    },
+    {
+      "id": "S01",
+      "kind": "support_scope_calibration",
+      "lines": [
+        {
+          "selectionId": "inf",
+          "entryId": "bmp1-platoon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 95,
+          "unitBr": 8,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "medic",
+          "entryId": "bmp1-platoon-medic",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 8,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "fs",
+          "entryId": "bmp1-platoon-fire-support",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 25,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "agl",
+          "entryId": "bmp1-platoon-agl",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 18,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "mortar",
+          "entryId": "bmp1-platoon-mortar",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 40,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "recon1",
+          "entryId": "brdm2-recon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 12,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 10
+        },
+        {
+          "selectionId": "recon2",
+          "entryId": "brdm2-recon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 12,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 10
+        },
+        {
+          "selectionId": "recon3",
+          "entryId": "brdm2-recon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 12,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 10
+        },
+        {
+          "selectionId": "recon4",
+          "entryId": "brdm2-recon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 12,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 10
+        }
+      ],
+      "expectedTotals": {
+        "points": 234,
+        "br": 15
+      },
+      "expectedViolations": [],
+      "expectedLegality": "not_assessed",
+      "manualGlobalSupportGrants": [
+        {
+          "producerSelectionId": "inf",
+          "capacity": 4,
+          "ruleId": "C07"
+        }
+      ],
+      "manualLocalSupportUsage": {
+        "parentSelectionId": "inf",
+        "capacity": 4,
+        "used": 4,
+        "ruleId": "C02"
+      },
+      "notes": "Four local Platoon Support Options and four global Recon purchases use independent capacities; a fifth global Recon violates C07 only."
+    },
+    {
+      "id": "S02",
+      "kind": "support_scope_calibration",
+      "lines": [
+        {
+          "selectionId": "inf",
+          "entryId": "bmp1-platoon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 95,
+          "unitBr": 8,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "medic",
+          "entryId": "bmp1-platoon-medic",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 8,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "fs",
+          "entryId": "bmp1-platoon-fire-support",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 25,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "agl",
+          "entryId": "bmp1-platoon-agl",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 18,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "mortar",
+          "entryId": "bmp1-platoon-mortar",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 40,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "recon1",
+          "entryId": "brdm2-recon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 12,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 10
+        },
+        {
+          "selectionId": "recon2",
+          "entryId": "brdm2-recon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 12,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 10
+        },
+        {
+          "selectionId": "recon3",
+          "entryId": "brdm2-recon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 12,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 10
+        },
+        {
+          "selectionId": "recon4",
+          "entryId": "brdm2-recon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 12,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 10
+        },
+        {
+          "selectionId": "recon5",
+          "entryId": "brdm2-recon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 12,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 10
+        }
+      ],
+      "expectedTotals": {
+        "points": 246,
+        "br": 16
+      },
+      "expectedViolations": [
+        "C07"
+      ],
+      "expectedLegality": "invalid",
+      "manualGlobalSupportGrants": [
+        {
+          "producerSelectionId": "inf",
+          "capacity": 4,
+          "ruleId": "C07"
+        }
+      ],
+      "manualLocalSupportUsage": {
+        "parentSelectionId": "inf",
+        "capacity": 4,
+        "used": 4,
+        "ruleId": "C02"
+      },
+      "notes": "Four local Platoon Support Options and four global Recon purchases use independent capacities; a fifth global Recon violates C07 only."
+    },
+    {
+      "id": "F01",
+      "kind": "clarified_rule_calibration",
+      "lines": [
+        {
+          "selectionId": "company",
+          "entryId": "bmp1-company",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 275,
+          "unitBr": 25,
+          "sourceId": "SOV",
+          "pdfPage": 3
+        },
+        {
+          "selectionId": "fs",
+          "entryId": "bmp1-company-platoon-fire-support",
+          "parentSelectionId": "company",
+          "quantity": 1,
+          "unitPoints": 25,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 3,
+          "targetPath": [
+            "platoon-1"
+          ]
+        },
+        {
+          "selectionId": "agl",
+          "entryId": "bmp1-company-platoon-agl",
+          "parentSelectionId": "company",
+          "quantity": 1,
+          "unitPoints": 35,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 3,
+          "targetPath": [
+            "platoon-2"
+          ]
+        },
+        {
+          "selectionId": "upgrade",
+          "entryId": "option/all-bmp1-to-p",
+          "parentSelectionId": "company",
+          "quantity": 12,
+          "unitPoints": 5,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 2,
+          "targetPaths": [
+            [
+              "command-squad",
+              "transport"
+            ],
+            [
+              "platoon-1",
+              "squad-1",
+              "transport"
+            ],
+            [
+              "platoon-1",
+              "squad-2",
+              "transport"
+            ],
+            [
+              "platoon-1",
+              "squad-3",
+              "transport"
+            ],
+            [
+              "platoon-2",
+              "squad-1",
+              "transport"
+            ],
+            [
+              "platoon-2",
+              "squad-2",
+              "transport"
+            ],
+            [
+              "platoon-2",
+              "squad-3",
+              "transport"
+            ],
+            [
+              "platoon-3",
+              "squad-1",
+              "transport"
+            ],
+            [
+              "platoon-3",
+              "squad-2",
+              "transport"
+            ],
+            [
+              "platoon-3",
+              "squad-3",
+              "transport"
+            ],
+            [
+              "platoon-1",
+              "fire-support-1",
+              "transport"
+            ],
+            [
+              "platoon-2",
+              "agl",
+              "transport"
+            ]
+          ]
+        }
+      ],
+      "expectedTotals": {
+        "points": 395,
+        "br": 27
+      },
+      "expectedViolations": [],
+      "expectedLegality": "not_assessed",
+      "notes": "A03/A09: 10 company basic BMPs plus 2 purchased support BMPs, 12 targets charged once each.",
+      "expectedTargetCount": 12
+    },
+    {
+      "id": "F02",
+      "kind": "clarified_rule_calibration",
+      "lines": [
+        {
+          "selectionId": "company",
+          "entryId": "bmp2-company",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 380,
+          "unitBr": 35,
+          "sourceId": "SOV",
+          "pdfPage": 5
+        },
+        {
+          "selectionId": "fs1",
+          "entryId": "bmp2-company-platoon-fire-support",
+          "parentSelectionId": "company",
+          "quantity": 1,
+          "unitPoints": 40,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 5,
+          "targetPath": [
+            "platoon-1"
+          ]
+        },
+        {
+          "selectionId": "fs2",
+          "entryId": "option/bmp2-company-second-fire-support",
+          "parentSelectionId": "company",
+          "quantity": 1,
+          "unitPoints": 35,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 5,
+          "targetPath": [
+            "platoon-1"
+          ]
+        },
+        {
+          "selectionId": "medic",
+          "entryId": "bmp2-company-platoon-medic",
+          "parentSelectionId": "company",
+          "quantity": 1,
+          "unitPoints": 8,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 5,
+          "targetPath": [
+            "platoon-1"
+          ]
+        },
+        {
+          "selectionId": "mortar",
+          "entryId": "bmp2-company-platoon-mortar",
+          "parentSelectionId": "company",
+          "quantity": 1,
+          "unitPoints": 40,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 5,
+          "targetPath": [
+            "platoon-1"
+          ]
+        }
+      ],
+      "expectedTotals": {
+        "points": 503,
+        "br": 38
+      },
+      "expectedViolations": [],
+      "expectedLegality": "not_assessed",
+      "notes": "A04: first and second Fire Support each consume one of the same platoon four local slots.",
+      "manualLocalSupportUsage": {
+        "parentSelectionId": "company",
+        "targetPath": [
+          "platoon-1"
+        ],
+        "capacity": 4,
+        "used": 4,
+        "ruleId": "C03"
+      }
+    },
+    {
+      "id": "F03",
+      "kind": "clarified_rule_calibration",
+      "lines": [
+        {
+          "selectionId": "company",
+          "entryId": "bmp2-company",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 380,
+          "unitBr": 35,
+          "sourceId": "SOV",
+          "pdfPage": 5
+        },
+        {
+          "selectionId": "fs1",
+          "entryId": "bmp2-company-platoon-fire-support",
+          "parentSelectionId": "company",
+          "quantity": 1,
+          "unitPoints": 40,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 5,
+          "targetPath": [
+            "platoon-1"
+          ]
+        },
+        {
+          "selectionId": "fs2",
+          "entryId": "option/bmp2-company-second-fire-support",
+          "parentSelectionId": "company",
+          "quantity": 1,
+          "unitPoints": 35,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 5,
+          "targetPath": [
+            "platoon-1"
+          ]
+        },
+        {
+          "selectionId": "medic",
+          "entryId": "bmp2-company-platoon-medic",
+          "parentSelectionId": "company",
+          "quantity": 1,
+          "unitPoints": 8,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 5,
+          "targetPath": [
+            "platoon-1"
+          ]
+        },
+        {
+          "selectionId": "mortar",
+          "entryId": "bmp2-company-platoon-mortar",
+          "parentSelectionId": "company",
+          "quantity": 1,
+          "unitPoints": 40,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 5,
+          "targetPath": [
+            "platoon-1"
+          ]
+        },
+        {
+          "selectionId": "agl",
+          "entryId": "bmp2-company-platoon-agl",
+          "parentSelectionId": "company",
+          "quantity": 1,
+          "unitPoints": 35,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 5,
+          "targetPath": [
+            "platoon-1"
+          ]
+        }
+      ],
+      "expectedTotals": {
+        "points": 538,
+        "br": 39
+      },
+      "expectedViolations": [
+        "C03"
+      ],
+      "expectedLegality": "invalid",
+      "notes": "A04: first and second Fire Support each consume one of the same platoon four local slots.",
+      "manualLocalSupportUsage": {
+        "parentSelectionId": "company",
+        "targetPath": [
+          "platoon-1"
+        ],
+        "capacity": 4,
+        "used": 5,
+        "ruleId": "C03"
+      }
+    },
+    {
+      "id": "F04",
+      "kind": "clarified_rule_calibration",
+      "lines": [
+        {
+          "selectionId": "hq",
+          "entryId": "fhq",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 20,
+          "unitBr": 3,
+          "sourceId": "SOV",
+          "pdfPage": 1
+        },
+        {
+          "selectionId": "tank",
+          "entryId": "t72-platoon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 180,
+          "unitBr": 7,
+          "sourceId": "SOV",
+          "pdfPage": 6
+        },
+        {
+          "selectionId": "inf",
+          "entryId": "bmp1-platoon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 95,
+          "unitBr": 8,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "medic",
+          "entryId": "bmp1-platoon-medic",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 8,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "fs",
+          "entryId": "bmp1-platoon-fire-support",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 25,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "agl",
+          "entryId": "bmp1-platoon-agl",
+          "parentSelectionId": "inf",
+          "quantity": 1,
+          "unitPoints": 18,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 2
+        },
+        {
+          "selectionId": "recon",
+          "entryId": "brdm2-recon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 12,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 10
+        },
+        {
+          "selectionId": "aa",
+          "entryId": "zsu23-4",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 35,
+          "unitBr": 2,
+          "sourceId": "SOV",
+          "pdfPage": 12
+        },
+        {
+          "selectionId": "request",
+          "entryId": "artillery-request-priority3",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 5,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 13
+        },
+        {
+          "selectionId": "pt76",
+          "entryId": "pt76b-recon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 17,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 10
+        }
+      ],
+      "expectedTotals": {
+        "points": 415,
+        "br": 24
+      },
+      "expectedViolations": [
+        "C16"
+      ],
+      "expectedLegality": "invalid",
+      "notes": "Standalone PT-76B excludes the T-72 platoon."
+    },
+    {
+      "id": "F05",
+      "kind": "clarified_rule_calibration",
+      "lines": [
+        {
+          "selectionId": "company",
+          "entryId": "t72-company",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 600,
+          "unitBr": 25,
+          "sourceId": "SOV",
+          "pdfPage": 6
+        },
+        {
+          "selectionId": "pt76",
+          "entryId": "pt76b-recon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 17,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 10
+        }
+      ],
+      "expectedTotals": {
+        "points": 617,
+        "br": 26
+      },
+      "expectedViolations": [
+        "C16"
+      ],
+      "expectedLegality": "invalid",
+      "notes": "PT-76 also excludes non-T-62 tank companies."
+    },
+    {
+      "id": "F06",
+      "kind": "clarified_rule_calibration",
+      "lines": [
+        {
+          "selectionId": "tank",
+          "entryId": "additional-t72a",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 60,
+          "unitBr": 3,
+          "sourceId": "SOV",
+          "pdfPage": 7
+        },
+        {
+          "selectionId": "pt76",
+          "entryId": "pt76b-recon",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 17,
+          "unitBr": 1,
+          "sourceId": "SOV",
+          "pdfPage": 10
+        }
+      ],
+      "expectedTotals": {
+        "points": 77,
+        "br": 4
+      },
+      "expectedViolations": [
+        "C16"
+      ],
+      "expectedLegality": "invalid",
+      "notes": "PT-76 also excludes non-T-62 individual tank additions."
+    },
+    {
+      "id": "F07",
+      "kind": "clarified_rule_calibration",
+      "lines": [
+        {
+          "selectionId": "command",
+          "entryId": "recon-command",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 22,
+          "unitBr": 2,
+          "sourceId": "SOV",
+          "pdfPage": 10
+        },
+        {
+          "selectionId": "transport",
+          "entryId": "option/recon-command-pt76b",
+          "parentSelectionId": "command",
+          "quantity": 1,
+          "unitPoints": 0,
+          "unitBr": 0,
+          "sourceId": "SOV",
+          "pdfPage": 10
+        },
+        {
+          "selectionId": "tank",
+          "entryId": "additional-t72a",
+          "parentSelectionId": null,
+          "quantity": 1,
+          "unitPoints": 60,
+          "unitBr": 3,
+          "sourceId": "SOV",
+          "pdfPage": 7
+        }
+      ],
+      "expectedTotals": {
+        "points": 82,
+        "br": 5
+      },
+      "expectedViolations": [
+        "C16"
+      ],
+      "expectedLegality": "invalid",
+      "notes": "PT-76 trigger through Recon Command transport; Points-only free swap keeps BR unchanged."
+    }
+  ],
+  "reviewNotes": [
+    "2026-10-30: Base-rulebook relevant chapters reviewed; A08 narrowed, A02 still unresolved. No change to 14 expected totals or violation assertions.",
+    "Classic BR experience includes i/r/v/e (BASE PDF44, CW PDF29). Ordinary fire-support requests are distinct from NORTHAG reinforcement request counts (BASE PDF40).",
+    "2026-10-30 USER CORRECTION: A02 resolved. Support units are global eligible-category purchases; Platoon Support Options are independent local attachments. Previous A02-unresolved note superseded. S01/S02 added.",
+    "2026-10-30: User resolved A01/A03/A04/A07/A09. F01-F07 added; original B/L/S totals unchanged. Earlier provisional notes superseded."
+  ],
+  "rulesClarifications": [
+    {
+      "id": "A02",
+      "status": "resolved",
+      "authority": "direct_user_clarification",
+      "date": "2026-10-30",
+      "globalSupport": "Use explicit formation grant, no extra +1 or repeated grants from included platoons.",
+      "localSupport": "Own Platoon Support Options; separate cap, no global consumption or new grants.",
+      "eligibility": "Use corresponding army-list category eligibility, not every category for every formation."
+    },
+    {
+      "id": "A01",
+      "status": "resolved",
+      "authority": "direct_user_clarification",
+      "date": "2026-10-30",
+      "resolution": "T-72 company is 10 T-72A; T-80B summary is a typo."
+    },
+    {
+      "id": "A03",
+      "status": "resolved",
+      "authority": "direct_user_clarification",
+      "date": "2026-10-30",
+      "resolution": "All includes matching BMPs across all child platoons and purchased Platoon Support Options; each target once."
+    },
+    {
+      "id": "A04",
+      "status": "resolved",
+      "authority": "direct_user_clarification",
+      "date": "2026-10-30",
+      "resolution": "Second Fire Support Section consumes another one of the four local slots."
+    },
+    {
+      "id": "A07",
+      "status": "resolved",
+      "authority": "direct_user_clarification",
+      "date": "2026-10-30",
+      "resolution": "PT-76 excludes all non-T-62 tank formations; inspect nested options too."
+    },
+    {
+      "id": "A09",
+      "status": "resolved",
+      "authority": "direct_user_clarification",
+      "date": "2026-10-30",
+      "resolution": "Points-only options have a known zero BR change."
+    }
+  ]
+}
