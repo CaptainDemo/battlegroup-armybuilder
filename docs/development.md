@@ -88,6 +88,13 @@ The catalog must already be validated. Concrete game checks arrive in M07;
 M06 always retains a game-rule coverage gap. See the [M05](implementation/m05-acceptance.md)
 and [M06](implementation/m06-acceptance.md) acceptance records.
 
+M07 now provides `evaluateClassicRoster`, `getClassicEntryAvailability` and
+`createClassicRuleset` in `@battlegroup/classic-coldwar`. It uses an explicit
+catalog/purchase context, preserves the generic snapshot, and reports remaining
+full-rule coverage gaps. The initial catalog remains limited to 10 purchases.
+See [M07 acceptance](implementation/m07-acceptance.md) for enabled checks and
+which boundary cases use synthetic data instead of published purchases.
+
 M04 adds `npm run check:catalogs` and an independent partial Classic JSON release
 under `packages/catalogs/classic-coldwar/public/`. The normal production build
 runs this data gate before Vite. Only this explicit public directory is copied;

@@ -1,5 +1,6 @@
 import { corePackageId } from '@battlegroup/core';
 export { classicCatalogReleaseSchema, type ClassicCatalogRelease } from './releaseSchema';
+export { evaluateClassicRoster, getClassicEntryAvailability, createClassicRuleset } from './rules';
 import { classicCatalogShellSchema, classicGameSizeSchema, classicRosterDocumentSchema } from './classicSchema';
 import type { ClassicCatalogShell, ClassicRosterDocument } from './classicSchema';
 import { classicTrainingLevelLabels, classicTrainingLevelSchema, isClassicTrainingLevel } from './training';
@@ -12,9 +13,9 @@ import { unverifiedStats } from './profiles';
  * Static identity for the Classic Cold War ruleset module.
  *
  * The ruleset models "Unofficial Battlegroup: Cold War" (Draft 6) with the
- * Soviet Armoured Division V4.1 list as the first sample. Rule evaluation
- * arrives with M07, so this descriptor deliberately exposes no stub rule
- * functions: nothing here should look like a working engine.
+ * Soviet Armoured Division V4.1 list as the first sample. M07 exports its
+ * evaluator separately; the descriptor remains in-development because
+ * catalog and full-rule coverage are partial.
  *
  * M03 adds the Classic schema boundary on top of the M02 descriptor:
  * training levels (i/r/v/e), tracked combat stats (unknown until verified)
@@ -38,7 +39,7 @@ export interface RulesetModuleDescriptor {
 export const classicColdWarRuleset: RulesetModuleDescriptor = {
   id: 'classic-coldwar',
   label: 'Classic Cold War',
-  status: 'planned',
+  status: 'in-development',
   corePackageId,
 };
 

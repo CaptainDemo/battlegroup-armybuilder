@@ -136,6 +136,9 @@ function checkDocument(document:RosterDocument,context:RosterCommandContext):Com
   return problems;
 }
 
+/** Reusable document/purchase-context boundary for a ruleset's evaluation entry. */
+export { checkDocument as validateRosterCommandDocument };
+
 /** Only destructive edits repair stale choices; an explicitly invalid options command is rejected. */
 function pruneChoices(document:RosterDocument,context:RosterCommandContext,notices:CommandNotice[]):void {
   for (const selection of document.selections) {

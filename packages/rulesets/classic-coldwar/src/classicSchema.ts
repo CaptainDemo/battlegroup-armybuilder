@@ -84,6 +84,9 @@ export const classicCatalogShellSchema = catalogShellSchema
 export type ClassicCatalogShell = z.output<typeof classicCatalogShellSchema>;
 
 function checkClassicRoster(roster: z.output<typeof rosterDocumentSchema>, ctx: z.RefinementCtx): void {
+  if (roster.settings.playerRoleId !== undefined && !['attacker','defender'].includes(roster.settings.playerRoleId)) {
+    ctx.addIssue({code:'custom',path:['settings','playerRoleId'],message:'Classic player role must be attacker or defender.'});
+  }
   if (roster.catalogRef.rulesetId !== 'classic-coldwar') {
     ctx.addIssue({
       code: 'custom',

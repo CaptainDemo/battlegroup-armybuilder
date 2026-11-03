@@ -8,8 +8,8 @@ describe('@battlegroup/classic-coldwar entry (M02 boundary)', () => {
     expect(classicColdWarRuleset.corePackageId).toBe(corePackageId);
   });
 
-  it('reports honest planning status without rule engine functions', () => {
-    expect(classicColdWarRuleset.status).toBe('planned');
+  it('reports partial development status while rule coverage is incomplete', () => {
+    expect(classicColdWarRuleset.status).toBe('in-development');
     expect(classicColdWarRuleset.label).toBe('Classic Cold War');
   });
 });

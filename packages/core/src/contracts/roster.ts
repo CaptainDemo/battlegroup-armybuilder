@@ -19,6 +19,7 @@ export const rosterSettingsSchema = z.strictObject({
   /** Ruleset-defined size token (e.g. Classic "platoon"). Not derived from budgetPoints. */
   gameSizeId: localIdSchema,
   scenarioId: localIdSchema.optional(),
+  playerRoleId: localIdSchema.optional(),
   optionalRules: z.array(localIdSchema),
 });
 export type RosterSettings = z.infer<typeof rosterSettingsSchema>;

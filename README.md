@@ -8,7 +8,8 @@ save and restore rosters, and export or print them.
 **Current status: early development.** M02 supplies the web shell and build
 tooling; M03 adds domain contracts and schemas; M04–M06 add the initial Classic
 JSON catalog, pure editing commands and generic evaluation/pricing.
-The browser roster editor, concrete game-rule checks, storage and printing are
+M07 adds scoped Classic rule checks and availability reasons.
+The browser roster editor, storage and printing are
 **not implemented yet** — see the
 [roadmap](docs/implementation_modules.md) and the in-app `#/roadmap` page.
 
