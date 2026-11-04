@@ -17,13 +17,15 @@ it('validates each immutable indexed release, source fingerprints and the indepe
     expect(release.catalog.manifest.identity).toEqual(row.identity);
     expect(release.catalog.manifest.rulesRevision).toBe(row.rulesRevision);
     expect(release.moduleContract).toBe(row.moduleContract);
-    expect(release.catalog.entries).toHaveLength(10);
+    const expanded=row.identity.catalogRevision==='1.1.0';
+    expect(release.catalog.entries).toHaveLength(expanded?151:10);
     for (const entry of release.catalog.entries) {
-      expect([entry.baseCost.points,entry.baseCost.br]).toEqual(prices[entry.localId]?.map(value=>({state:'known',value})));
+      if(prices[entry.localId])expect([entry.baseCost.points,entry.baseCost.br]).toEqual(prices[entry.localId]!.map(value=>({state:'known',value})));
+      else expect([entry.baseCost.points.state,entry.baseCost.br.state]).toEqual(['known','known']);
     }
     for (const source of release.catalog.manifest.sources) expect(source.sha256).toBe(evidence.sources.find(item=>item.id===source.documentId)?.sha256);
     for (const profile of release.catalog.profiles) expect(Object.values(profile.stats).every(stat=>stat.state==='unknown')).toBe(true);
-    expect(release.purchases.filter(item=>item.kind==='attachment')).toHaveLength(4);
+    if(!expanded)expect(release.purchases.filter(item=>item.kind==='attachment')).toHaveLength(4);
     expect(release.catalog.entries.find(item=>item.localId==='artillery-request-priority3')?.sectionIds).toEqual(['additional-fire-support']);
     expect(release.catalog.entries.find(item=>item.localId==='bmp1-platoon')?.resourceGrants?.find(grant=>grant.scope==='army')?.eligibleCategories).toEqual(['reconnaissance','engineer','specialist']);
     expect(release.catalog.entries.find(item=>item.localId==='t72-platoon')?.resourceGrants?.[0]?.eligibleCategories).toEqual(['reconnaissance','engineer','logistics','specialist']);

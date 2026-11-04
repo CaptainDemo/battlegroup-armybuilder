@@ -12,10 +12,16 @@ export function resolveChoiceTargets(document:RosterDocument,catalog:CatalogShel
   }
   const targets:OptionChoiceTarget[] = [];
   for (const selection of document.selections.filter(item=>ids.has(item.selectionId))) {
+    const boundary=selector.rootMemberPath??[];
+    if(selection.selectionId!==selectionId && boundary.length) {
+      let anchor=selection;
+      while(anchor.parentSelectionId && anchor.parentSelectionId!==selectionId) anchor=document.selections.find(item=>item.selectionId===anchor.parentSelectionId)!;
+      if(!boundary.every((id,i)=>anchor.targetMemberPath?.[i]===id))continue;
+    }
     const entry = catalog.entries.find(item=>item.localId===selection.entryReference.localId);
     if (entry?.composition.state!=='known') continue;
     const visit = (node:CompositionNode,path:string[]):void => {
-      if(path.length && node.profileLocalId && selector.matchProfileLocalIds.includes(node.profileLocalId)) {
+      if(path.length && (selection.selectionId!==selectionId||boundary.every((id,i)=>path[i]===id)) && node.profileLocalId && selector.matchProfileLocalIds.includes(node.profileLocalId)) {
         targets.push(selection.selectionId===selectionId?{kind:'member-path',nodePath:path}:{kind:'attachment-member',ownerSelectionId:selection.selectionId,nodePath:path});
       }
       if(selector.includeSubFormations || path.length===0) for(const child of node.children??[]) visit(child,[...path,child.nodeId]);

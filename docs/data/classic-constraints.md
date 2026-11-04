@@ -14,13 +14,13 @@
 | C08 | Tanks 的全军支援选择 | 可选分类按页首；T-80/T-72/T-64排各4、T-62排3；坦克连各9；具体数量是从相应全军支援类别购买的额度 | SOV 6–7 / 同页；2026-10-30用户澄清 | A02已解决；不解释成坦克自己的排内选项，也不把4/9再加1 |
 | C09 | HQ / Artillery 授予支援 | HQ：Logistics 或 Additional Fire Support 二选一；Artillery：Additional Fire Support | SOV 1、8 / 同页 | 主样本 HQ→5点请求；未借子编制重复授予 |
 | C10 | ToT 额外火力支援例外 | ToT 不占 Additional Support Choice；Timed122 自带预设目标，不另买10点目标 | CW 28 / 28；SOV 15 / 15 | 已目视核对；不由豁免推导第三个固定额度池 |
-| C11 | Restricted 数量阈值 | Squad 2、Platoon 3、Company 4、Battalion 5；同类多份各计数 | CW 31 / 31 | 独立条目可用；整编制升级的计数对象待解释 A05 |
-| C12 | Unique | 某类 Unique 最多一份，不是全军所有不同 Unique 合计最多一份；同时 Restricted 还消耗其额度 | BASE 49 / 48；CW 32 / 32 | 基本语义确认；同名附件／多辆升级的合并身份见 A05 |
+| C11 | Restricted 数量阈值 | Squad 2、Platoon 3、Company 4、Battalion 5；同类多份各计数 | CW 31 / 31；用户澄清 A05 | 整次升级占一份。费用仍按原表计价 |
+| C12 | Unique | 每个 Unique 组全军最多一份；同时 Restricted 还消耗其额度 | BASE 49 / 48；CW 32 / 32；SOV 7 / 7；用户澄清 A05 | T-62 连最多 3 辆 Bastion 共占一份，与独立 T-62MB 和排升级共用一组 |
 | C13 | 显式规模 | 基础规则推荐 Squad 100–350、Platoon 351–750、Company 751–1250、Battalion 1251–2000+；standard为250/500/1000/1500；命令骰使用所选规模 | BASE 11、13–14 / 10、12–13 | 预算范围是guideline，命令章节又说规模依点数决定；推荐不一致应提示并明确约定，不静默重选 |
 | C14 | 防御设施资格 | 仅 Attack-Defence 中 defender，且本类不授予支援 | SOV 9 / 9 | 边界用例；场景或身份缺失为未知，不猜测 |
-| C15 | WARPAC TOC | 只允许 Battalion；NATO 对应 Company/Battalion 不能借给苏军 | CW 32 / 32；SOV 1 / 1 | 可确认资格，主目录暂不录完整选项 |
+| C15 | WARPAC TOC | 只允许 Battalion；NATO 对应 Company/Battalion 不能借给苏军 | CW 32 / 32；SOV 1 / 1 | 苏联 TOC 与附属购买已接入 1.1.0 |
 | C16 | PT-76影响全军坦克选择 | 独立PT-76或Recon Command改PT-76后，禁用T-62系列以外所有坦克的连／排／额外单车等编制 | SOV 10 / 10；用户澄清A07 | 遍历嵌套选项和最终型号；不只筛名为Platoon的条目；T-62M/MB属T-62系列 |
-| C17 | MANPADS 与排内 SA-7 | p.3/p.5 橙色说明不能与任一所属排的 SA-7 升级同取 | SOV 3、5 / 同页 | 整 Section 还是 SA-14 升级为受限对象仍有歧义 A06 |
+| C17 | 连内 MANPADS 上限与排内 SA-7 | 每连最多一个排购买一个 SAM Section；整个 Section 与所属连任一排的 SA-7 升级互斥 | SOV 3、5 / 同页；用户澄清 A06 | SA-14 替换后仍受限；各连独立检查 |
 | C18 | 运输替换与负差额 | Engineer BTR-60PB→BTR-70/80 免费；Ambulance→Heavy Truck -5 Points / -1 BR | SOV 11 / 11 | 局部样本；保留角色规则，未证明转化为另一购买定义 |
 | C19 | 购买与游戏单位分离 | 一次购买可包含多个分别行动的unit；组成数量不等于购买次数 | BASE 8 / 7 | 已确认概念；不据此自动决定支援／Restricted计数 |
 | C20 | 火力请求类型 | Artillery栏自动通过Priority Check；Additional Fire Support需检定；获准的普通请求可重复用于后续火力，Timed Barrage一次性 | BASE 36、40 / 35、39；CW 25文字说明延用基础炮兵规则 | 静态购买与对局使用分离；不能套用NORTHAG请求次数消耗 |
@@ -32,6 +32,8 @@
 | C26 | T-72连组成修正 | 10 T-72A：1连指挥、3排指挥、6普通；600 Points / 25 BR | SOV 6 / 6；用户确认A01笔误 | 不录成T-80B，不按十辆单车BR重算 |
 | C27 | all BMP作用域 | 包含所购编制全部子排及已购Platoon Support Options中的匹配BMP；每个目标只处理一次 | SOV 2–5 / 同页；用户澄清A03 | 随附属选择变化重建目标集；每辆计价按实际数量，不重收同辆车的局部替换费 |
 | C28 | 只列Points的选项 | BR差额明确为0，原BR保持 | 用户澄清A09；具体费用仍按各条目来源 | 这是选项不改变BR，不是允许缺失的基础BR记0 |
+| C29 | BMP-1 空运转换 | 排换 1 架 Mi-8，连换 3 架；同一购买及其附件的 BMP 运输移除，人员保留 | SOV 2、3 / 同页 | 追加 Mi-8 依赖转换；被移除的运输不能同时升级 |
+| C30 | 型号限定装备 | Refleks 要求所选目标已升级为 T-80U | SOV 6 / 6 | 按逐车升级后的型号检查 |
 
 ## 计算与校验实现要求
 

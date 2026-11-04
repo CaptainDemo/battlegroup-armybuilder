@@ -24,7 +24,7 @@ export async function loadCatalog(identity:CatalogIdentity, options:{fetchCatalo
     const family = catalogIndex.releases.some(item=>item.identity.rulesetId===identity.rulesetId && item.identity.catalogId===identity.catalogId);
     return {status:family?'unsupported-version':'not-found',reason:'No application-indexed catalog at that exact identity. No fallback was used.'};
   }
-  if (entry.moduleContract !== 'classic/1' || entry.rulesRevision !== 'cw-draft6+sov-v4.1') {
+  if (!((entry.moduleContract === 'classic/1' && entry.rulesRevision === 'cw-draft6+sov-v4.1') || (entry.moduleContract === 'classic/2' && entry.rulesRevision === 'cw-draft6+sov-v4.1+formations1'))) {
     return {status:'unsupported-version',reason:'Catalog requires an unsupported module contract or rules revision.'};
   }
   const base = options.baseUrl ?? import.meta.env.BASE_URL;

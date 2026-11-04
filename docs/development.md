@@ -91,7 +91,9 @@ and [M06](implementation/m06-acceptance.md) acceptance records.
 M07 now provides `evaluateClassicRoster`, `getClassicEntryAvailability` and
 `createClassicRuleset` in `@battlegroup/classic-coldwar`. It uses an explicit
 catalog/purchase context, preserves the generic snapshot, and reports remaining
-full-rule coverage gaps. The initial catalog remains limited to 10 purchases.
+full-rule coverage gaps. The initial 10-purchase release remains pinned at
+1.0.0. New rosters use 1.1.0, which expands the Soviet V4.1 static formation
+catalog to 151 purchase records.
 See [M07 acceptance](implementation/m07-acceptance.md) for enabled checks and
 which boundary cases use synthetic data instead of published purchases.
 
@@ -177,9 +179,9 @@ one creates a fresh edit revision. Applying name/budget/size is one command
 batch and one undo step. UI selection and small-screen panel state are separate
 from roster choices. No browser database or storage adapter is involved yet.
 
-Desktop uses two columns: Roster on the left and Actions on the right. Each
-catalog section has an add button; each eligible platoon has an attachment add
-button below its nested purchases. `RosterTree.tsx` renders these destinations
+Desktop uses two columns with Roster on the left and Actions on the right. Each
+catalog section has an add button. Fixed platoons appear inside their company
+with their own support menu and purchased attachments. `RosterTree.tsx` renders these destinations
 and a separate delete button on every purchase row. Deleting a parent cascades
 through its attachments and can be undone.
 

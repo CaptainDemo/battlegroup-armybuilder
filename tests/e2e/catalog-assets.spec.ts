@@ -13,6 +13,6 @@ test('serves only indexed catalog data with its immutable fingerprint', async({p
   });
   expect(result.ok).toBe(true);
   expect(result.digest).toBe(result.expected);
-  expect(result.count).toBe(10);
+  expect(result.count).toBe(151);
   expect(result.identity).toEqual(result.expectedIdentity);
 });

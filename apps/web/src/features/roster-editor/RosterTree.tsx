@@ -2,6 +2,7 @@ import type {
   RosterDocument,
   RosterSelection,
   TrackedValue,
+  CompositionNode,
 } from '@battlegroup/core';
 import type { ClassicCatalogRelease } from '@battlegroup/classic-coldwar';
 import { t } from '../../i18n';
@@ -9,14 +10,15 @@ import { t } from '../../i18n';
 /** A UI destination, separate from the player's stored purchase tree. */
 export type AddTarget =
   | { kind: 'section'; sectionId: string }
-  | { kind: 'attachment'; parentSelectionId: string };
+  | { kind: 'attachment'; parentSelectionId: string; memberPath?: string[] };
 
 interface TreeProps {
   document: RosterDocument;
   release: ClassicCatalogRelease;
   selectedId: string | null;
+  selectedMemberPath: string[] | null;
   addTarget: AddTarget | null;
-  onSelect: (id: string) => void;
+  onSelect: (id: string, memberPath?: string[]) => void;
   onRemove: (id: string) => void;
   onAdd: (target: AddTarget) => void;
 }
@@ -114,12 +116,20 @@ function PurchaseBranch(
   )!;
   const label = entry.name + ' · ' + ordinal;
   const children = document.selections.filter(
-    (item) => item.parentSelectionId === selection.selectionId,
+    (item) =>
+      item.parentSelectionId === selection.selectionId &&
+      !item.targetMemberPath,
   );
   const hasAttachments = release.purchases.some(
     (access) =>
       access.kind === 'attachment' &&
-      access.parentEntryIds.includes(entry.localId),
+      access.parentEntryIds.includes(entry.localId) &&
+      !access.parentMemberPaths?.[entry.localId],
+  );
+  const hasPlatoonSupport = entry.resourceGrants?.some(
+    (grant) =>
+      grant.resourceKind === 'platoon-support-slots' &&
+      grant.scope === 'parent-formation',
   );
   return (
     <div className="purchase-branch">
@@ -128,7 +138,9 @@ function PurchaseBranch(
           type="button"
           id={'selection-' + selection.selectionId}
           className="purchase-card"
-          aria-pressed={selectedId === selection.selectionId}
+          aria-pressed={
+            selectedId === selection.selectionId && !props.selectedMemberPath
+          }
           onClick={() => onSelect(selection.selectionId)}
         >
           <strong>{label}</strong>
@@ -146,6 +158,18 @@ function PurchaseBranch(
           {t('editor.delete')}
         </button>
       </div>
+      {entry.composition.state === 'known' &&
+        entry.composition.root.children
+          ?.filter((node) => node.configurableSlot && node.role === 'platoon')
+          .map((member) => (
+            <FixedPlatoon
+              key={member.nodeId}
+              {...props}
+              selection={selection}
+              member={member}
+              parentLabel={label}
+            />
+          ))}
       {(children.length > 0 || hasAttachments) && (
         <div className="purchase-children">
           {children.map((child, index) => (
@@ -160,10 +184,19 @@ function PurchaseBranch(
             <button
               type="button"
               className="add-slot"
-              aria-label={t('editor.addAttachmentTo') + ' ' + label}
+              aria-label={
+                t(
+                  hasPlatoonSupport
+                    ? 'editor.addAttachmentTo'
+                    : 'editor.addAttachedUnitTo',
+                ) +
+                ' ' +
+                label
+              }
               aria-pressed={
                 addTarget?.kind === 'attachment' &&
-                addTarget.parentSelectionId === selection.selectionId
+                addTarget.parentSelectionId === selection.selectionId &&
+                !addTarget.memberPath
               }
               onClick={() =>
                 onAdd({
@@ -172,10 +205,99 @@ function PurchaseBranch(
                 })
               }
             >
-              ＋ {t('editor.addAttachment')}
+              ＋{' '}
+              {t(
+                hasPlatoonSupport
+                  ? 'editor.addAttachment'
+                  : 'editor.addAttachedUnit',
+              )}
             </button>
           )}
         </div>
+      )}
+    </div>
+  );
+}
+
+function FixedPlatoon(
+  props: TreeProps & {
+    selection: RosterSelection;
+    member: CompositionNode;
+    parentLabel: string;
+  },
+) {
+  const {
+    selection,
+    member,
+    parentLabel,
+    document,
+    release,
+    onSelect,
+    onAdd,
+    selectedId,
+    selectedMemberPath,
+    addTarget,
+  } = props;
+  const path = [member.nodeId];
+  const label = member.nodeId.replaceAll('-', ' ');
+  const children = document.selections.filter(
+    (child) =>
+      child.parentSelectionId === selection.selectionId &&
+      JSON.stringify(child.targetMemberPath) === JSON.stringify(path),
+  );
+  const hasMenu = release.purchases.some(
+    (access) =>
+      access.kind === 'attachment' &&
+      access.parentMemberPaths?.[selection.entryReference.localId]?.some(
+        (target) => JSON.stringify(target) === JSON.stringify(path),
+      ),
+  );
+  return (
+    <div className="purchase-children fixed-platoon">
+      <button
+        type="button"
+        id={'selection-' + selection.selectionId + '-member-' + path.join('-')}
+        className="purchase-card"
+        aria-label={label + ' — ' + parentLabel}
+        aria-pressed={
+          selectedId === selection.selectionId &&
+          JSON.stringify(selectedMemberPath) === JSON.stringify(path)
+        }
+        onClick={() => onSelect(selection.selectionId, path)}
+      >
+        <strong>{label}</strong>
+        <small>{t('editor.included')}</small>
+      </button>
+      {children.map((child, index) => (
+        <PurchaseBranch
+          key={child.selectionId}
+          {...props}
+          selection={child}
+          ordinal={index + 1}
+        />
+      ))}
+      {hasMenu && (
+        <button
+          type="button"
+          className="add-slot"
+          aria-label={
+            t('editor.addAttachmentTo') + ' ' + label + ' — ' + parentLabel
+          }
+          aria-pressed={
+            addTarget?.kind === 'attachment' &&
+            addTarget.parentSelectionId === selection.selectionId &&
+            JSON.stringify(addTarget.memberPath) === JSON.stringify(path)
+          }
+          onClick={() =>
+            onAdd({
+              kind: 'attachment',
+              parentSelectionId: selection.selectionId,
+              memberPath: path,
+            })
+          }
+        >
+          ＋ {t('editor.addAttachment')}
+        </button>
       )}
     </div>
   );

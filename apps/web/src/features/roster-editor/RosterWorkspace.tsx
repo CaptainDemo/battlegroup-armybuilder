@@ -2,13 +2,9 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import {
   createRosterDocument,
   executeRosterCommands,
-  resolveChoiceTargets,
-  resolveCompositionPath,
   type RosterCommand,
   type RosterDocument,
   type RosterSelection,
-  type Option,
-  type OptionChoice,
   type TrackedValue,
   type EvaluatedCompositionNode,
 } from '@battlegroup/core';
@@ -24,6 +20,7 @@ import {
 import { t } from '../../i18n';
 import { RosterTree, type AddTarget } from './RosterTree';
 import { CatalogPanel } from './CatalogPanel';
+import { OptionEditor } from './OptionEditor';
 import {
   makeSession,
   moveHistory,
@@ -35,6 +32,7 @@ interface WorkspaceState {
   sessions: EditorSession[];
   activeId: string | null;
   selectedId: string | null;
+  selectedMemberPath: string[] | null;
   notice: string;
 }
 export interface WorkspaceProps {
@@ -50,11 +48,6 @@ const value = (tracked: TrackedValue): string =>
           ? 'editor.notApplicable'
           : 'editor.unknown',
       );
-const delta = (tracked: TrackedValue): string =>
-  tracked.state === 'known'
-    ? `${tracked.value >= 0 ? '+' : ''}${tracked.value}`
-    : t('editor.unknown');
-
 export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
   const [load, setLoad] = useState<CatalogLoadResult | null>(null);
   const [retry, setRetry] = useState(0);
@@ -62,6 +55,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
     sessions: [],
     activeId: null,
     selectedId: null,
+    selectedMemberPath: null,
     notice: '',
   });
   const [search, setSearch] = useState('');
@@ -102,6 +96,13 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
   const selectedEntry = release?.catalog.entries.find(
     (item) => item.localId === selected?.entryReference.localId,
   );
+  let selectedComposition = currentEvaluation?.composition.find(
+    (item) => item.selectionId === selected?.selectionId,
+  )?.node;
+  for (const id of state.selectedMemberPath ?? [])
+    selectedComposition = selectedComposition?.children?.find(
+      (child) => child.nodeId === id,
+    );
   const selectedOrdinal =
     selected && roster
       ? roster.selections
@@ -116,9 +117,15 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
   useEffect(() => {
     if (editor && !hidden && state.selectedId)
       window.document
-        .getElementById('selection-' + state.selectedId)
+        .getElementById(
+          'selection-' +
+            state.selectedId +
+            (state.selectedMemberPath
+              ? '-member-' + state.selectedMemberPath.join('-')
+              : ''),
+        )
         ?.scrollIntoView({ block: 'nearest' });
-  }, [editor, hidden, state.selectedId, tab]);
+  }, [editor, hidden, state.selectedId, state.selectedMemberPath, tab]);
   useEffect(() => {
     if (
       addTarget?.kind === 'attachment' &&
@@ -143,7 +150,14 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
         .getElementById('editor-actions')
         ?.scrollIntoView({ block: 'start' });
     }
-  }, [editor, hidden, tab, addTarget, state.selectedId]);
+  }, [
+    editor,
+    hidden,
+    tab,
+    addTarget,
+    state.selectedId,
+    state.selectedMemberPath,
+  ]);
 
   function beginAdding(target: AddTarget): void {
     setAddTarget(target);
@@ -151,8 +165,12 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
     setTab('actions');
   }
 
-  function selectPurchase(selectionId: string): void {
-    setState((current) => ({ ...current, selectedId: selectionId }));
+  function selectPurchase(selectionId: string, memberPath?: string[]): void {
+    setState((current) => ({
+      ...current,
+      selectedId: selectionId,
+      selectedMemberPath: memberPath ?? null,
+    }));
     setAddTarget(null);
     setTab('actions');
   }
@@ -188,6 +206,8 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
           item === active ? recordEdit(item, result.document) : item,
         ),
         selectedId,
+        selectedMemberPath:
+          selectedId === current.selectedId ? current.selectedMemberPath : null,
         notice: result.notices.length
           ? result.notices.map((notice) => notice.message).join(' ')
           : t('editor.updated'),
@@ -274,6 +294,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
       sessions: [...current.sessions, makeSession(document)],
       activeId: document.rosterId,
       selectedId: document.selections[0]?.selectionId ?? null,
+      selectedMemberPath: null,
       notice: t('editor.created'),
     }));
     setAddTarget(null);
@@ -286,6 +307,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
     entryId: string,
     parent?: RosterSelection,
     sectionId?: string,
+    memberPath?: string[],
   ): void {
     if (!release || !roster) return;
     const entry = release.catalog.entries.find(
@@ -300,6 +322,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
             selectionId,
             entryReference: { ...roster.catalogRef, localId: entryId },
             parentSelectionId: parent?.selectionId ?? null,
+            ...(memberPath ? { targetMemberPath: memberPath } : {}),
             ...(!parent
               ? { sectionId: sectionId ?? entry.sectionIds[0]! }
               : {}),
@@ -310,45 +333,6 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
       selectionId,
     );
     setTab('actions');
-  }
-
-  function toggleOption(
-    groupId: string,
-    option: Option,
-    enabled: boolean,
-    nodePath?: string[],
-  ): void {
-    if (!selected || !selectedEntry || !roster || !release) return;
-    const choice: OptionChoice = {
-      optionGroupLocalId: groupId,
-      optionLocalId: option.localId,
-      targets:
-        option.target.kind === 'whole-selection'
-          ? [{ kind: 'whole-selection' }]
-          : option.target.kind === 'member-slots'
-            ? [
-                {
-                  kind: 'member-path',
-                  nodePath: nodePath ?? option.target.nodePaths[0]!,
-                },
-              ]
-            : [],
-    };
-    if (option.target.kind === 'scope-selector')
-      choice.targets = resolveChoiceTargets(
-        roster,
-        release.catalog,
-        selected.selectionId,
-        option,
-        choice,
-      );
-    const choices = selected.optionChoices.filter(
-      (item) =>
-        item.optionGroupLocalId !== groupId ||
-        item.optionLocalId !== option.localId,
-    );
-    if (enabled) choices.push(choice);
-    edit([{ kind: 'options', selectionId: selected.selectionId, choices }]);
   }
 
   function history(direction: 'undo' | 'redo'): void {
@@ -364,6 +348,11 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
         sessions: current.sessions.map((item) =>
           item === active ? next : item,
         ),
+        selectedMemberPath: next.document.selections.some(
+          (item) => item.selectionId === current.selectedId,
+        )
+          ? current.selectedMemberPath
+          : null,
         selectedId: next.document.selections.some(
           (item) => item.selectionId === current.selectedId,
         )
@@ -423,6 +412,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
                         activeId: item.document.rosterId,
                         selectedId:
                           item.document.selections[0]?.selectionId ?? null,
+                        selectedMemberPath: null,
                       }));
                       setAddTarget(null);
                       setSearch('');
@@ -470,7 +460,10 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
           </section>
           <section className="card">
             <h2>{t('editor.coverageTitle')}</h2>
-            <p>{t('editor.coverageBody')}</p>
+            <p>
+              {t('editor.coverageBody')}{' '}
+              {release ? release.catalog.entries.length : ''}
+            </p>
             {release?.coverage.omitted.map((text) => (
               <p className="muted" key={text}>
                 {text === 'A05 and A06 ambiguous combinations'
@@ -599,6 +592,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
                 document={roster}
                 release={release}
                 selectedId={state.selectedId}
+                selectedMemberPath={state.selectedMemberPath}
                 addTarget={addTarget}
                 onSelect={selectPurchase}
                 onAdd={beginAdding}
@@ -643,124 +637,73 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
                     <>
                       <h4>
                         {selectedEntry.name} · {selectedOrdinal}
+                        {state.selectedMemberPath
+                          ? ' / ' +
+                            state.selectedMemberPath
+                              .join(' / ')
+                              .replaceAll('-', ' ')
+                          : ''}
                       </h4>
-                      <div className="toolbar">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const ids = new Set([selected.selectionId]);
-                            let added = true;
-                            while (added) {
-                              added = false;
-                              for (const item of roster.selections)
-                                if (
-                                  item.parentSelectionId &&
-                                  ids.has(item.parentSelectionId) &&
-                                  !ids.has(item.selectionId)
-                                ) {
-                                  ids.add(item.selectionId);
-                                  added = true;
-                                }
-                            }
-                            edit([
-                              {
-                                kind: 'copy',
-                                selectionId: selected.selectionId,
-                                ids: Object.fromEntries(
-                                  [...ids].map((old) => [old, id()]),
-                                ),
-                              },
-                            ]);
-                          }}
-                        >
-                          {t('editor.copy')}
-                        </button>
-                      </div>
-                      {selectedEntry.optionGroupIds.map((groupId) => {
-                        const group = release.catalog.optionGroups.find(
-                          (item) => item.localId === groupId,
-                        )!;
-                        return (
-                          <fieldset key={groupId}>
-                            <legend>{group.name}</legend>
-                            {group.options.map((option) => {
-                              const choice = selected.optionChoices.find(
-                                (item) =>
-                                  item.optionGroupLocalId === groupId &&
-                                  item.optionLocalId === option.localId,
-                              );
-                              return (
-                                <div
-                                  className="option-row"
-                                  key={option.localId}
-                                >
-                                  <label className="checkbox-label">
-                                    <input
-                                      type="checkbox"
-                                      checked={!!choice}
-                                      onChange={(event) =>
-                                        toggleOption(
-                                          groupId,
-                                          option,
-                                          event.target.checked,
-                                        )
-                                      }
-                                    />
-                                    <span>
-                                      {option.name}
-                                      <small>
-                                        {delta(option.costDelta.points)}{' '}
-                                        {t('editor.points')} /{' '}
-                                        {delta(option.costDelta.br)} BR
-                                      </small>
-                                    </span>
-                                  </label>
-                                  {option.target.kind === 'member-slots' && (
-                                    <select
-                                      aria-label={
-                                        option.name + ' ' + t('editor.target')
-                                      }
-                                      disabled={!choice}
-                                      value={
-                                        choice?.targets[0]?.kind ===
-                                        'member-path'
-                                          ? choice.targets[0].nodePath.join('/')
-                                          : option.target.nodePaths[0]!.join(
-                                              '/',
-                                            )
-                                      }
-                                      onChange={(event) =>
-                                        toggleOption(
-                                          groupId,
-                                          option,
-                                          true,
-                                          event.target.value.split('/'),
-                                        )
-                                      }
-                                    >
-                                      {option.target.nodePaths.map(
-                                        (path, index) => (
-                                          <option
-                                            key={path.join('/')}
-                                            value={path.join('/')}
-                                          >
-                                            {resolveCompositionPath(
-                                              selectedEntry,
-                                              path,
-                                            )?.role.replaceAll('-', ' ')}{' '}
-                                            · {index + 1}
-                                          </option>
-                                        ),
-                                      )}
-                                    </select>
-                                  )}
-                                </div>
-                              );
-                            })}
-                          </fieldset>
-                        );
-                      })}
-                      <h4>{t('editor.charges')}</h4>
+                      {!state.selectedMemberPath && (
+                        <div className="toolbar">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const ids = new Set([selected.selectionId]);
+                              let added = true;
+                              while (added) {
+                                added = false;
+                                for (const item of roster.selections)
+                                  if (
+                                    item.parentSelectionId &&
+                                    ids.has(item.parentSelectionId) &&
+                                    !ids.has(item.selectionId)
+                                  ) {
+                                    ids.add(item.selectionId);
+                                    added = true;
+                                  }
+                              }
+                              edit([
+                                {
+                                  kind: 'copy',
+                                  selectionId: selected.selectionId,
+                                  ids: Object.fromEntries(
+                                    [...ids].map((old) => [old, id()]),
+                                  ),
+                                },
+                              ]);
+                            }}
+                          >
+                            {t('editor.copy')}
+                          </button>
+                        </div>
+                      )}
+                      {state.selectedMemberPath && (
+                        <p className="muted">{t('editor.included')}</p>
+                      )}
+                      <OptionEditor
+                        document={roster}
+                        selection={selected}
+                        entry={selectedEntry}
+                        catalog={release.catalog}
+                        memberPath={state.selectedMemberPath}
+                        onChoices={(choices) =>
+                          edit([
+                            {
+                              kind: 'options',
+                              selectionId: selected.selectionId,
+                              choices,
+                            },
+                          ])
+                        }
+                      />
+                      <h4>
+                        {t(
+                          state.selectedMemberPath
+                            ? 'editor.companyCharges'
+                            : 'editor.charges',
+                        )}
+                      </h4>
                       <ul className="charge-list">
                         {currentEvaluation?.chargeLines
                           .filter(
@@ -788,16 +731,9 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
                           ))}
                       </ul>
                       <h4>{t('editor.composition')}</h4>
-                      {currentEvaluation?.composition.find(
-                        (item) => item.selectionId === selected.selectionId,
-                      ) ? (
+                      {selectedComposition ? (
                         <CompositionTree
-                          node={
-                            currentEvaluation.composition.find(
-                              (item) =>
-                                item.selectionId === selected.selectionId,
-                            )!.node
-                          }
+                          node={selectedComposition}
                           release={release}
                         />
                       ) : (
@@ -846,6 +782,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
                           setState((current) => ({
                             ...current,
                             selectedId: issue.selectionId!,
+                            selectedMemberPath: null,
                           }));
                           setAddTarget(null);
                           setTab('roster');
@@ -976,6 +913,8 @@ function SettingsForm({
         onApply(String(data.get('roster-name')), {
           budgetPoints: Number(data.get('budget')),
           gameSizeId: String(data.get('size')),
+          scenarioId: String(data.get('scenario') ?? '') || undefined,
+          playerRoleId: String(data.get('player-role') ?? '') || undefined,
         });
       }}
     >
@@ -997,6 +936,27 @@ function SettingsForm({
       <label>
         {t('editor.gameSize')}
         <SizeSelect name="size" defaultValue={document.settings.gameSizeId} />
+      </label>
+      <label>
+        {t('editor.scenario')}
+        <select
+          name="scenario"
+          defaultValue={document.settings.scenarioId ?? ''}
+        >
+          <option value="">{t('editor.unspecified')}</option>
+          <option value="attack-defence">{t('editor.attackDefence')}</option>
+        </select>
+      </label>
+      <label>
+        {t('editor.playerRole')}
+        <select
+          name="player-role"
+          defaultValue={document.settings.playerRoleId ?? ''}
+        >
+          <option value="">{t('editor.unspecified')}</option>
+          <option value="attacker">{t('editor.attacker')}</option>
+          <option value="defender">{t('editor.defender')}</option>
+        </select>
       </label>
       <button type="submit">{t('editor.applySettings')}</button>
     </form>

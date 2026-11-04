@@ -177,7 +177,11 @@ export interface RulesetModule {
   evaluate(roster: RosterDocument, context: unknown): Evaluation;
   getEntryAvailability(
     entryLocalId: string,
-    target: { readonly selectionId?: string; readonly sectionId?: string },
+    target: {
+      readonly selectionId?: string;
+      readonly sectionId?: string;
+      readonly targetMemberPath?: readonly string[];
+    },
     roster: RosterDocument,
     context: unknown,
     evaluation: Evaluation,

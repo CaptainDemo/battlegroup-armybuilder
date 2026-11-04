@@ -145,6 +145,7 @@ function validateOptionInEntryContext(
     }
   }
   if (option.target.kind === 'scope-selector') {
+    if(option.target.rootMemberPath && !resolveCompositionPath(entry,option.target.rootMemberPath))issues.push(integrityIssue('catalog/option/member-path-unresolvable',prefix,'Selector subtree does not exist.'));
     for (const profileLocalId of option.target.matchProfileLocalIds) {
       if (!profileIds.has(profileLocalId)) {
         issues.push(
@@ -158,6 +159,16 @@ function validateOptionInEntryContext(
     }
   }
   for (const effect of option.effects) {
+    if(effect.kind==='composition-change') {
+      const roots=[...(effect.replacement?[effect.replacement]:[]),...(effect.additions??[])];
+      const visit=(node:CompositionNode):void=>{
+        if(node.profileLocalId && !profileIds.has(node.profileLocalId))issues.push(integrityIssue('catalog/option/effect-profile-unknown',prefix,'Unknown composition-change profile.'));
+        for(const child of node.children??[])visit(child);
+      };
+      for(const root of roots){issues.push(...validateSiblingNodeIds(root,entry.localId));visit(root);}
+      for(const id of effect.removeProfileLocalIds??[])if(!profileIds.has(id))issues.push(integrityIssue('catalog/option/effect-profile-unknown',prefix,'Unknown removed profile.'));
+      if(effect.includeAttachments && option.target.kind!=='whole-selection')issues.push(integrityIssue('catalog/option/composition-scope',prefix,'Owned transport conversion requires a whole-selection target.'));
+    }
     if (effect.kind === 'model-replacement') {
       for (const profileLocalId of [effect.fromProfileLocalId, effect.toProfileLocalId]) {
         if (!profileIds.has(profileLocalId)) {

@@ -94,6 +94,12 @@ export function evaluateRoster(document:RosterDocument,catalog:CatalogShell):Eva
   for(const value of usage.values()) if(value.amount>value.max) issues.push({ruleId:value.ruleId,selectionId:value.selectionId,severity:'error',message:'Option selection limit exceeded.',actual:value.amount,limit:value.max});
   // All target sets come from the unmodified input, so applying a replacement
   // cannot make later enumeration forget the members it is meant to upgrade.
+  const depth=(application:typeof applications[number],seen=new Set<string>()):number=>{
+    if(seen.has(application.option.localId))return 0;
+    const next=new Set(seen).add(application.option.localId);
+    return Math.max(0,...(application.option.requires??[]).flatMap(required=>applications.filter(other=>other.selection.selectionId===application.selection.selectionId&&other.option.localId===required).map(other=>1+depth(other,next))));
+  };
+  applications.sort((a,b)=>depth(a)-depth(b));
   for(const {selection,option,targets} of applications) for(const target of targets) {
     const ownerId=target.kind==='attachment-member'?target.ownerSelectionId:selection.selectionId;
     const root=nodes.get(ownerId);if(!root){compositionComplete=false;continue;}
@@ -101,6 +107,28 @@ export function evaluateRoster(document:RosterDocument,catalog:CatalogShell):Eva
     if(target.kind!=='whole-selection') for(const id of target.nodePath) node=node.children?.find(child=>child.nodeId===id)!;
     if(!node){compositionComplete=false;continue;}
     for(const effect of option.effects) {
+      if(effect.kind==='composition-change') {
+        if(effect.replacement) {
+          const replacement=structuredClone(effect.replacement);
+          const stableId=node.nodeId;
+          delete node.children;delete node.profileLocalId;
+          Object.assign(node,replacement,{nodeId:stableId});
+        }
+        const remove=(root:EvaluatedCompositionNode):void=>{
+          if(root.children)root.children=root.children.filter(child=>!child.profileLocalId||!effect.removeProfileLocalIds?.includes(child.profileLocalId));
+          for(const child of root.children??[])remove(child);
+        };
+        remove(node);
+        if(effect.includeAttachments) {
+          const owned=new Set([selection.selectionId]);let changed=true;
+          while(changed){changed=false;for(const child of document.selections)if(child.parentSelectionId&&owned.has(child.parentSelectionId)&&!owned.has(child.selectionId)){owned.add(child.selectionId);changed=true;}}
+          for(const owner of owned)if(owner!==selection.selectionId&&nodes.has(owner))remove(nodes.get(owner)!);
+        }
+        for(const addition of effect.additions??[]) {
+          if(node.children?.some(child=>child.nodeId===addition.nodeId)){addIssue('composition/collision','Added members collide with an existing stable node.',selection.selectionId);compositionComplete=false;}
+          else node.children=[...(node.children??[]),structuredClone(addition)];
+        }
+      }
       if(effect.kind==='training-change') node.training={state:'known',value:effect.toTrainingLevel};
       if(effect.kind==='tag-grant') node.tags=[...new Set([...(node.tags??[]),effect.tag])];
       if(effect.kind==='composition-addition') {

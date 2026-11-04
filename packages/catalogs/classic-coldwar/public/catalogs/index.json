@@ -5,6 +5,18 @@
       "identity": {
         "rulesetId": "classic-coldwar",
         "catalogId": "soviet-armoured-division-v4_1",
+        "catalogRevision": "1.1.0"
+      },
+      "label": "Soviet Armoured Division V4.1 · formation catalog",
+      "assetPath": "catalogs/classic-coldwar/soviet-armoured-division/1-1-0/catalog.json",
+      "sha256": "656544cae8893bead7140bef5e9e8750f49e7c57cb55a8d8adb222d56244e97c",
+      "rulesRevision": "cw-draft6+sov-v4.1+formations1",
+      "moduleContract": "classic/2"
+    },
+    {
+      "identity": {
+        "rulesetId": "classic-coldwar",
+        "catalogId": "soviet-armoured-division-v4_1",
         "catalogRevision": "1.0.0"
       },
       "label": "Soviet Armoured Division V4.1 · initial coverage",

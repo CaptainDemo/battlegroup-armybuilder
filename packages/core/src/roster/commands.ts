@@ -4,7 +4,7 @@ import { rosterDocumentSchema, type OptionChoice, type RosterDocument, type Rost
 import { ROSTER_FORMAT_VERSION } from '../contracts/versioning';
 import { resolveRosterMemberPath, validateRosterRelations } from '../validation/rosterRelations';
 
-export type PurchaseAccess = {kind:'top-level';entryId:string} | {kind:'attachment';entryId:string;parentEntryIds:readonly string[]};
+export type PurchaseAccess = {kind:'top-level';entryId:string} | {kind:'attachment';entryId:string;parentEntryIds:readonly string[];parentMemberPaths?:Record<string,string[][]>|undefined};
 export interface RosterCommandContext {catalog:CatalogShell;purchases:readonly PurchaseAccess[]}
 export type RosterCommand =
   | {kind:'add';selection:RosterSelection}
@@ -131,6 +131,11 @@ function checkDocument(document:RosterDocument,context:RosterCommandContext):Com
     } else {
       const parent = document.selections.find(s=>s.selectionId===selection.parentSelectionId)!;
       if (access?.kind!=='attachment' || !access.parentEntryIds.includes(parent.entryReference.localId)) problems.push({code:'purchase-context',message:`${selection.entryReference.localId} is not offered by its parent.`});
+      if (access?.kind==='attachment') {
+        const paths=access.parentMemberPaths?.[parent.entryReference.localId];
+        if (paths && !paths.some(path=>JSON.stringify(path)===JSON.stringify(selection.targetMemberPath))) problems.push({code:'purchase-member-context',message:'This purchase requires one of its declared fixed platoon destinations.'});
+        if (access.parentMemberPaths && !paths && selection.targetMemberPath) problems.push({code:'purchase-member-context',message:'This purchase is attached to the parent itself, not a fixed member.'});
+      }
     }
   }
   return problems;

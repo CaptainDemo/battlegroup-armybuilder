@@ -264,6 +264,8 @@ export const optionTargetSchema = z.discriminatedUnion('kind', [
     description: z.string().min(1),
     includeSubFormations: z.boolean(),
     matchProfileLocalIds: z.array(localIdSchema).min(1),
+    /** Optional subtree boundary, e.g. one fixed platoon within a company. */
+    rootMemberPath: z.array(localIdSchema).min(1).optional(),
   }),
 ]);
 export type OptionTarget = z.infer<typeof optionTargetSchema>;
@@ -278,6 +280,14 @@ export type OptionTarget = z.infer<typeof optionTargetSchema>;
  * is the option's target; expanding/charging it is evaluation (M06/M07).
  */
 export const optionEffectSchema = z.discriminatedUnion('kind', [
+  z.strictObject({
+    kind: z.literal('composition-change'),
+    replacement: compositionNodeSchema.optional(),
+    removeProfileLocalIds: z.array(localIdSchema).optional(),
+    additions: z.array(compositionNodeSchema).optional(),
+    /** Remove matching transports from owned purchases too; additions apply only to the target. */
+    includeAttachments: z.boolean().optional(),
+  }),
   z.strictObject({
     kind: z.literal('model-replacement'),
     fromProfileLocalId: localIdSchema,

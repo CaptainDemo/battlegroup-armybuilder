@@ -27,6 +27,7 @@ export function CatalogPanel({
     entryId: string,
     parent?: RosterSelection,
     sectionId?: string,
+    memberPath?: string[],
   ) => void;
 }) {
   const parent =
@@ -68,7 +69,13 @@ export function CatalogPanel({
           entry.sectionIds.includes(target.sectionId)
         : !!parent &&
           access?.kind === 'attachment' &&
-          access.parentEntryIds.includes(parent.entryReference.localId)) &&
+          access.parentEntryIds.includes(parent.entryReference.localId) &&
+          (target.memberPath
+            ? access.parentMemberPaths?.[parent.entryReference.localId]?.some(
+                (path) =>
+                  JSON.stringify(path) === JSON.stringify(target.memberPath),
+              )
+            : !access.parentMemberPaths?.[parent.entryReference.localId])) &&
       entry.name.toLowerCase().includes(search.toLowerCase())
     );
   });
@@ -84,6 +91,9 @@ export function CatalogPanel({
     <section aria-label={t('editor.catalog')}>
       <h3>
         {t('editor.addTo')} {destination}
+        {target.kind === 'attachment' && target.memberPath
+          ? ' / ' + target.memberPath.join(' / ').replaceAll('-', ' ')
+          : ''}
       </h3>
       <p className="muted">{t('editor.addingHint')}</p>
       <label>
@@ -102,7 +112,12 @@ export function CatalogPanel({
           entry.localId,
           target.kind === 'section'
             ? { sectionId: target.sectionId }
-            : { parentSelectionId: target.parentSelectionId },
+            : {
+                parentSelectionId: target.parentSelectionId,
+                ...(target.memberPath
+                  ? { targetMemberPath: target.memberPath }
+                  : {}),
+              },
         );
         return (
           <article className="catalog-item" key={entry.localId}>
@@ -120,6 +135,7 @@ export function CatalogPanel({
                   entry.localId,
                   parent,
                   target.kind === 'section' ? target.sectionId : undefined,
+                  target.kind === 'attachment' ? target.memberPath : undefined,
                 )
               }
             >

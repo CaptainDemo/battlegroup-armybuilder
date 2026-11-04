@@ -41,10 +41,10 @@ list and details:
 | `npm run test:e2e` | Build, then run Playwright checks against the built app |
 
 Open the app and choose **Create roster** or **Create the 398 Points / 23 BR
-example**. Only the initial Classic Soviet list is available (10 purchase entries,
-including four attachments); combat attributes and overall rule coverage remain
-partial. See [M08 acceptance](docs/implementation/m08-acceptance.md) for the tested
-desktop and small-screen editing flows.
+example**. The default Classic Soviet V4.1 catalog is 1.1.0 with 120 top-level
+purchases, 31 attachment purchase contexts and 203 options. Company platoons and
+their attachments appear in the roster pane. Combat attributes and overall rule
+coverage remain partial. See the [Soviet V4.1 formation acceptance](docs/implementation/soviet-v41-formations-acceptance.md).
 
 ## Repository layout
 
