@@ -129,7 +129,7 @@ relative node path; reordering identical purchases cannot retarget an option.
 Only scope-selector options can address attachments, not options restricted
 to declared static member slots. The document's edit `revision` is copied to
 `Evaluation.identity.inputRevision`; it is distinct from catalog revisions
-and the future storage concurrency revision.
+and the storage concurrency revision.
 
 `UnitEntry.baseTraining` carries an opaque tracked token per purchase context;
 Classic validates known levels as i/r/v/e. The Classic catalog and roster
@@ -160,16 +160,16 @@ the schema-vs-relationship check division, and the 23-account mapping.
 - **Asset base path:** set `VITE_BASE` (for example `VITE_BASE=/armybuilder/`
   in `apps/web/.env.production`) to build for a sub-path deployment. See
   `apps/web/vite.config.ts`.
-- **Honesty in the UI:** show partial data/rule coverage and the session-only
-  state. No local save is promised before M09 is implemented and verified.
+- **Save status:** local autosave reports saving, saved, failure and conflict
+  states. Game-rule coverage is reported separately.
 
 ## Browser editing (M08)
 
-The `#/` route manages multiple rosters within the open page. Create an empty
+The `#/` route manages multiple locally saved rosters. Create an empty
 Classic Soviet roster or use the 398 Points / 23 BR example. `#/editor` shows
 the active roster; a direct link with no session offers a route back to creation.
 The workspace stays mounted during hash navigation, so visiting Roadmap does
-not discard drafts. Refreshing or closing the page does discard them.
+not discard drafts. After reopening the browser, open a saved roster from the list.
 
 `features/roster-editor/RosterWorkspace.tsx` composes the exact catalog release,
 M05 commands and M07 evaluation/availability. The UI reads totals, composition,
@@ -177,7 +177,7 @@ charges and issues from one evaluation whose `inputRevision` must match the
 active document. `session.ts` keeps at most 50 undo/redo snapshots; restoring
 one creates a fresh edit revision. Applying name/budget/size is one command
 batch and one undo step. UI selection and small-screen panel state are separate
-from roster choices. No browser database or storage adapter is involved yet.
+from roster choices.
 
 Desktop uses two columns with Roster on the left and Actions on the right. Each
 catalog section has an add button. Fixed platoons appear inside their company
@@ -207,6 +207,21 @@ a budget problem. See [two-column acceptance](implementation/m08-two-column-layo
 The runtime example uses published purchase IDs and normal commands. It never
 imports manual fixture expectations or supplies precalculated totals. Coverage
 and verified browser flows are recorded in [M08 acceptance](implementation/m08-acceptance.md).
+
+## Local saving (M09)
+
+Local saving is implemented in `adapters/storage/`. The storage port separates
+database revisions from edit revisions. Dexie schema version 2 adds rebuildable
+summaries and deletion markers to version 1 rows, preserving each original
+document and its exact catalog identity. The save queue serializes writes per
+roster and coalesces pending edits. A successful older save acknowledges only its
+own edit revision. A transaction compares the expected database revision before
+writing or deleting. Conflicts require reloading the saved version or saving a
+copy. Storage failures retain the memory draft and offer retry and recovery JSON.
+This recovery download contains the raw draft document. The M10 import workflow
+and backup bundle format are planned separately.
+
+See [M09 acceptance](implementation/m09-acceptance.md) for the validation record.
 
 ## Tests
 

@@ -21,6 +21,12 @@ import { t } from '../../i18n';
 import { RosterTree, type AddTarget } from './RosterTree';
 import { CatalogPanel } from './CatalogPanel';
 import { OptionEditor } from './OptionEditor';
+import { DexieRosterStore } from '../../adapters/storage/dexieRosterStore';
+import { SaveQueue, type SaveState } from '../../adapters/storage/saveQueue';
+import type { StoredRoster } from '../../adapters/storage/rosterStore';
+import { restoreRoster } from './restoreRoster';
+import { downloadDraft } from './downloadDraft';
+import { SaveControls } from './SaveControls';
 import {
   makeSession,
   moveHistory,
@@ -51,6 +57,14 @@ const value = (tracked: TrackedValue): string =>
 export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
   const [load, setLoad] = useState<CatalogLoadResult | null>(null);
   const [retry, setRetry] = useState(0);
+  const [store] = useState(() => new DexieRosterStore());
+  const [queue] = useState(() => new SaveQueue(store));
+  const [saves, setSaves] = useState<Record<string, SaveState>>({});
+  const [storageReady, setStorageReady] = useState(false);
+  const [storageError, setStorageError] = useState(false);
+  const [storageRetry, setStorageRetry] = useState(0);
+  const [unavailable, setUnavailable] = useState<StoredRoster[]>([]);
+  const [catalogs, setCatalogs] = useState<ClassicCatalogRelease[]>([]);
   const [state, setState] = useState<WorkspaceState>({
     sessions: [],
     activeId: null,
@@ -61,6 +75,81 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
   const [search, setSearch] = useState('');
   const [tab, setTab] = useState('roster');
   const [addTarget, setAddTarget] = useState<AddTarget | null>(null);
+  useEffect(() => queue.subscribe(() => setSaves(queue.snapshot())), [queue]);
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const rows = await store.list();
+        const restored = await Promise.all(
+          rows.map(async (row) => ({
+            row,
+            restored: await restoreRoster(row),
+          })),
+        );
+        if (cancelled) return;
+        // A retry merges recovered records without replacing edited memory drafts.
+        for (const item of restored) {
+          if (item.restored && !queue.snapshot()[item.row.rosterId]) {
+            queue.restore(item.restored.document, item.row.saveRevision);
+          }
+        }
+        setCatalogs((current) => [
+          ...current,
+          ...restored.flatMap((item) =>
+            item.restored ? [item.restored.catalog.release] : [],
+          ),
+        ]);
+        setUnavailable(
+          restored.filter((item) => !item.restored).map((item) => item.row),
+        );
+        setState((current) => ({
+          ...current,
+          sessions: [
+            ...current.sessions,
+            ...restored.flatMap((item) =>
+              item.restored &&
+              !current.sessions.some(
+                (session) => session.document.rosterId === item.row.rosterId,
+              )
+                ? [makeSession(item.restored.document)]
+                : [],
+            ),
+          ],
+        }));
+        setStorageError(false);
+      } catch {
+        if (!cancelled) setStorageError(true);
+      } finally {
+        if (!cancelled) setStorageReady(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [store, queue, storageRetry]);
+  useEffect(() => {
+    if (storageReady)
+      for (const session of state.sessions) queue.enqueue(session.document);
+  }, [queue, storageReady, state.sessions]);
+  useEffect(() => {
+    const protectDrafts = (event: BeforeUnloadEvent) => {
+      if (
+        state.sessions.some((session) => {
+          const save = saves[session.document.rosterId];
+          return (
+            save?.phase !== 'saved' ||
+            save.persistedEditRevision !== session.document.revision
+          );
+        })
+      ) {
+        event.preventDefault();
+        event.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', protectDrafts);
+    return () => window.removeEventListener('beforeunload', protectDrafts);
+  }, [state.sessions, saves]);
   useEffect(() => {
     let cancelled = false;
     const identity = catalogIndex.releases[0]?.identity;
@@ -77,11 +166,23 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
       cancelled = true;
     };
   }, [retry]);
-  const release = load?.status === 'ready' ? load.release : null;
+  const defaultRelease = load?.status === 'ready' ? load.release : null;
   const session = state.sessions.find(
     (item) => item.document.rosterId === state.activeId,
   );
   const roster = session?.document;
+  const release = roster
+    ? ([defaultRelease, ...catalogs].find(
+        (item) =>
+          item &&
+          item.catalog.manifest.identity.rulesetId ===
+            roster.catalogRef.rulesetId &&
+          item.catalog.manifest.identity.catalogId ===
+            roster.catalogRef.catalogId &&
+          item.catalog.manifest.identity.catalogRevision ===
+            roster.catalogRef.catalogRevision,
+      ) ?? null)
+    : defaultRelease;
   const evaluation = useMemo(
     () => (roster && release ? evaluateClassicRoster(roster, release) : null),
     [roster, release],
@@ -221,17 +322,18 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
     size: string,
     example = false,
   ): void {
-    if (!release) return;
+    if (!defaultRelease || !storageReady) return;
+    const creationRelease = defaultRelease;
     const created = createRosterDocument(
       {
         rosterId: id(),
         revision: id(),
         name,
-        catalogRef: release.catalog.manifest.identity,
-        armyListId: release.catalog.armyLists[0]!.armyListId,
+        catalogRef: creationRelease.catalog.manifest.identity,
+        armyListId: creationRelease.catalog.armyLists[0]!.armyListId,
         settings: { budgetPoints: budget, gameSizeId: size, optionalRules: [] },
       },
-      release,
+      creationRelease,
     );
     if (!created.ok) {
       setState((current) => ({
@@ -255,12 +357,12 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
       ];
       const ids = plan.map(() => id());
       const commands: RosterCommand[] = plan.map((entryId, i) => {
-        const entry = release!.catalog.entries.find(
+        const entry = creationRelease.catalog.entries.find(
           (item) => item.localId === entryId,
         )!;
         const attachment =
-          release!.purchases.find((item) => item.entryId === entryId)!.kind ===
-          'attachment';
+          creationRelease.purchases.find((item) => item.entryId === entryId)!
+            .kind === 'attachment';
         return {
           kind: 'add',
           selection: {
@@ -275,7 +377,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
       const populated = executeRosterCommands(
         document,
         commands,
-        release,
+        creationRelease,
         id(),
       );
       if (!populated.ok) {
@@ -363,6 +465,95 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
     });
   }
 
+  async function reloadSaved(rosterId: string): Promise<void> {
+    try {
+      await queue.settle(rosterId);
+      const row = await store.read(rosterId);
+      if (!row || row.deleted) {
+        setState((current) => ({
+          ...current,
+          sessions: current.sessions.filter(
+            (item) => item.document.rosterId !== rosterId,
+          ),
+          activeId: current.activeId === rosterId ? null : current.activeId,
+        }));
+        return;
+      }
+      const restored = await restoreRoster(row);
+      if (!restored) {
+        setState((current) => ({
+          ...current,
+          notice: t('storage.unavailable'),
+        }));
+        return;
+      }
+      queue.restore(restored.document, row.saveRevision);
+      setCatalogs((current) => [...current, restored.catalog.release]);
+      setState((current) => ({
+        ...current,
+        sessions: current.sessions.map((item) =>
+          item.document.rosterId === rosterId
+            ? makeSession(restored.document)
+            : item,
+        ),
+        selectedId: null,
+        selectedMemberPath: null,
+      }));
+      setAddTarget(null);
+    } catch {
+      setState((current) => ({ ...current, notice: t('storage.loadError') }));
+    }
+  }
+
+  function saveCopy(document: RosterDocument): void {
+    const copy = {
+      ...structuredClone(document),
+      rosterId: id(),
+      revision: id(),
+      name: document.name + t('storage.copySuffix'),
+    };
+    setState((current) => ({
+      ...current,
+      sessions: [...current.sessions, makeSession(copy)],
+      activeId: copy.rosterId,
+      selectedId: null,
+      selectedMemberPath: null,
+    }));
+    setAddTarget(null);
+    window.location.hash = '/editor';
+  }
+
+  async function deleteRoster(document: RosterDocument): Promise<void> {
+    if (!window.confirm(t('storage.confirmDelete') + ' ' + document.name + '?'))
+      return;
+    queue.enqueue(document);
+    if (await queue.remove(document.rosterId)) {
+      setState((current) => ({
+        ...current,
+        sessions: current.sessions.filter(
+          (item) => item.document.rosterId !== document.rosterId,
+        ),
+        activeId:
+          current.activeId === document.rosterId ? null : current.activeId,
+      }));
+    }
+  }
+
+  function saveControls(document: RosterDocument) {
+    return (
+      <SaveControls
+        state={saves[document.rosterId]}
+        revision={document.revision}
+        onRetry={() => queue.retry(document.rosterId)}
+        onReload={() => {
+          void reloadSaved(document.rosterId);
+        }}
+        onCopy={() => saveCopy(document)}
+        onDownload={() => downloadDraft(document, document.rosterId)}
+      />
+    );
+  }
+
   const totals = currentEvaluation?.totals;
   return (
     <div hidden={hidden} className="page workspace">
@@ -370,6 +561,18 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
         <strong>{t('editor.preview')}</strong>
         <span>{t('editor.sessionOnly')}</span>
       </section>
+      {!storageReady && <p role="status">{t('storage.loading')}</p>}
+      {storageError && (
+        <div role="alert">
+          <p>{t('storage.loadError')}</p>
+          <button
+            type="button"
+            onClick={() => setStorageRetry((value) => value + 1)}
+          >
+            {t('storage.retryLoad')}
+          </button>
+        </div>
+      )}
       <p role="status" className="workspace-notice">
         {state.notice ||
           (!load
@@ -404,6 +607,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
                     {item.document.settings.budgetPoints} {t('editor.points')} ·{' '}
                     {item.document.settings.gameSizeId}
                   </p>
+                  {saveControls(item.document)}
                   <button
                     type="button"
                     onClick={() => {
@@ -424,33 +628,40 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
                   </button>{' '}
                   <button
                     type="button"
-                    onClick={() =>
-                      setState((current) => ({
-                        ...current,
-                        sessions: current.sessions.filter(
-                          (session) =>
-                            session.document.rosterId !==
-                            item.document.rosterId,
-                        ),
-                        activeId:
-                          current.activeId === item.document.rosterId
-                            ? null
-                            : current.activeId,
-                      }))
+                    disabled={
+                      saves[item.document.rosterId]?.phase === 'deleting'
                     }
+                    onClick={() => {
+                      void deleteRoster(item.document);
+                    }}
                   >
                     {t('editor.deleteRoster')}
                   </button>
                 </article>
               ))}
             </div>
+            {unavailable.map((row) => (
+              <article className="library-item" key={row.rosterId}>
+                <h3>{row.summary?.name ?? row.rosterId}</h3>
+                <p>{t('storage.unavailable')}</p>
+                <button
+                  type="button"
+                  onClick={() => downloadDraft(row.document, row.rosterId)}
+                >
+                  {t('storage.download')}
+                </button>
+              </article>
+            ))}
           </section>
           <section className="card">
             <h2>{t('home.createTitle')}</h2>
-            <CreateForm disabled={!release} onCreate={create} />
+            <CreateForm
+              disabled={!defaultRelease || !storageReady}
+              onCreate={create}
+            />
             <button
               type="button"
-              disabled={!release}
+              disabled={!defaultRelease || !storageReady}
               onClick={() =>
                 create(t('editor.exampleName'), 500, 'platoon', true)
               }
@@ -485,9 +696,10 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
               <p className="eyebrow">Classic Cold War · Soviet · V4.1</p>
               <h2>{roster.name}</h2>
               <p className="muted">
-                {t('editor.catalogVersion')} {roster.catalogRef.catalogRevision}{' '}
-                · {t('editor.sessionBadge')}
+                {t('editor.catalogVersion')}{' '}
+                {roster.catalogRef.catalogRevision}{' '}
               </p>
+              {saveControls(roster)}
             </div>
             <div className="toolbar">
               <a href="#/">{t('editor.back')}</a>
