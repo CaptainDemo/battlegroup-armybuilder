@@ -138,7 +138,7 @@ export interface Evaluation {
   readonly legality: LegalityConclusion;
 }
 
-export type AvailabilityStatus = 'allowed' | 'blocked' | 'unknown';
+export type AvailabilityStatus = 'allowed' | 'allowed-with-issues' | 'blocked' | 'unknown';
 
 export interface AvailabilityReason {
   readonly code: string;
@@ -146,7 +146,7 @@ export interface AvailabilityReason {
   readonly sourceRefs?: readonly SourceReference[];
 }
 
-/** Result of asking whether one entry may be purchased at one target. */
+/** Purchase preview. Only blocked prevents an edit; rule violations remain editable. */
 export interface Availability {
   readonly status: AvailabilityStatus;
   readonly reasons: readonly AvailabilityReason[];

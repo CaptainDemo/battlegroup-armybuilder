@@ -145,11 +145,6 @@ export function CatalogPanel({
             >
               {t('editor.add')}
             </button>
-            {available.status !== 'allowed' && (
-              <small>
-                {available.reasons.map((reason) => reason.message).join(' ')}
-              </small>
-            )}
           </article>
         );
       })}

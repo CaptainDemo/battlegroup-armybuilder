@@ -16,7 +16,7 @@
 | `contracts/versioning.ts` | `CATALOG_SCHEMA_VERSION='catalog-shell/1'`、`ROSTER_FORMAT_VERSION='roster/1'`、`catalogManifestSchema`、`manifestVersionIdentity()`（schemaVersion+rulesRevision+catalogRevision 三层版本投影） |
 | `contracts/catalog.ts` | 分区、目录外壳、组成三态、购买条目、资源、选项；`UnitEntry.baseTraining`保存上下文独立的训练三态；选项效果支持替换、训练变化、标签和显式composition-addition。`profileIdentitySchema`接受扩展属性，但core解析仅保留身份字段；保留战斗属性须使用对应规则体系schema |
 | `contracts/roster.ts` | `rosterSettingsSchema`、`optionChoiceSchema`（whole-selection / member-path / attachment-member）、`rosterSelectionSchema`（稳定实例与挂载点）、`rosterDocumentSchema`（formatVersion、编辑revision、精确catalogRef、armyListId） |
-| `contracts/evaluation.ts` | **仅协议类型**：`Evaluation`（身份及inputRevision、组成、费用归属、总额完整性、资源／统计、问题与覆盖）、`Availability`（allowed/blocked/unknown）、`CompatibilityResult`、`RulesetModule`；没有执行器 |
+| `contracts/evaluation.ts` | **仅协议类型**：`Evaluation`（身份及inputRevision、组成、费用归属、总额完整性、资源／统计、问题与覆盖）、`Availability`（allowed/allowed-with-issues/blocked/unknown）、`CompatibilityResult`、`RulesetModule`；没有执行器 |
 | `validation/` | `validateCatalogRelations(catalog)`、`validateRosterRelations(roster, catalog)`；静态组成路径`resolveCompositionPath`／`resolveRosterMemberPath`；显式附属拥有者路径`resolveAttachmentMemberPath`；返回`IntegrityIssue[]` |
 
 ### packages/rulesets/classic-coldwar（`@battlegroup/classic-coldwar`）

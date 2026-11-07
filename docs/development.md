@@ -192,6 +192,12 @@ switches to its details. The destination and details headings include an instanc
 ordinal to distinguish identical platoons. Deleting a target parent clears its
 attachment chooser. Selection/add-destination UI state is not saved as roster data.
 
+Purchases that exceed the budget or violate game rules can be added to a draft.
+The purchase preview returns `allowed-with-issues` with the resulting rule
+reasons. Invalid references or purchase destinations return `blocked`.
+After each edit, the editor reevaluates the current roster and updates the
+problem list, including clearing issues that the edit resolves.
+
 The desktop action pane remains visible while scrolling a long roster, with
 its own scrolling for lengthy details. Small screens have only Roster / Actions
 panel buttons and a route back to the roster; no third panel is created for

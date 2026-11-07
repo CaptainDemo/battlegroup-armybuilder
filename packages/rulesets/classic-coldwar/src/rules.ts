@@ -149,9 +149,28 @@ export function getClassicEntryAvailability(document:RosterDocument,context:Rost
   const before=evaluateClassicRoster(document,context);
   const after=evaluateClassicRoster(edited.document,context);
   const existing=new Set(before.issues.filter(issue=>issue.severity==='error').map(issue=>JSON.stringify(issue)));
-  const blockers=after.issues.filter(issue=>issue.severity==='error'&&!existing.has(JSON.stringify(issue)));
-  if(blockers.length)return {status:'blocked',reasons:blockers.map(issue=>({code:issue.ruleId,message:issue.message,...(issue.sourceRefs?{sourceRefs:issue.sourceRefs}:{})}))};
-  if(entry.baseCost.points.state!=='known'||entry.baseCost.br.state!=='known'||after.coverage.some(item=>['missing-input','blocked-unknown-data'].includes(item.status)))return {status:'unknown',reasons:[{code:'incomplete-data',message:'Relevant price or eligibility inputs are unknown.'}]};
+  const newIssues = after.issues.filter(
+    issue => issue.severity === 'error' && !existing.has(JSON.stringify(issue)),
+  );
+  const reasons = newIssues.map(issue => ({
+    code: issue.ruleId,
+    message: issue.message,
+    ...(issue.sourceRefs ? { sourceRefs: issue.sourceRefs } : {}),
+  }));
+  if (
+    entry.baseCost.points.state !== 'known' ||
+    entry.baseCost.br.state !== 'known' ||
+    after.coverage.some(item => ['missing-input', 'blocked-unknown-data'].includes(item.status))
+  ) {
+    return {
+      status: 'unknown',
+      reasons: [...reasons, {
+        code: 'incomplete-data',
+        message: 'Relevant price or eligibility inputs are unknown.',
+      }],
+    };
+  }
+  if (reasons.length) return { status: 'allowed-with-issues', reasons };
   return {status:'allowed',reasons:[{code:'partial-coverage',message:'No implemented purchase check blocks this entry; overall rules coverage remains partial.'}]};
 }
 

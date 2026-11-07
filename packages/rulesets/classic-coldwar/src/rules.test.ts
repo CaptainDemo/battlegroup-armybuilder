@@ -94,10 +94,10 @@ describe('PT-76 actual-profile restrictions',()=>{
 });
 
 describe('Classic purchase availability and module binding',()=>{
-  it('distinguishes a known allowed purchase, a blocked duplicate, unknown cost and missing entry',()=>{
+  it('distinguishes an allowed purchase, editable rule violations, unknown cost and invalid purchase targets',()=>{
     const document=runtimeDocument();
     expect(getClassicEntryAvailability(document,context,'brdm2-recon').status).toBe('allowed');
-    expect(getClassicEntryAvailability(document,context,'fhq').status).toBe('blocked');
+    expect(getClassicEntryAvailability(document,context,'fhq').status).toBe('allowed-with-issues');
     expect(getClassicEntryAvailability(document,context,'bmp1-platoon-medic',{parentSelectionId:'tank'}).status).toBe('blocked');
     expect(getClassicEntryAvailability(document,context,'missing').status).toBe('blocked');
     const ctx=structuredClone(context);ctx.catalog.entries.find(entry=>entry.localId==='brdm2-recon')!.baseCost.points={state:'unknown',reason:'synthetic missing cost'};

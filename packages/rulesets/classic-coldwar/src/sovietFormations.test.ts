@@ -390,6 +390,22 @@ describe('Soviet V4.1 independently transcribed formation accounts', () => {
       ]),
     ).toThrow();
   });
+  it('allows an over-budget draft and clears its budget issue after removing a purchase', () => {
+    let document = edit(empty(), {
+      kind: 'settings',
+      patch: { budgetPoints: 500 },
+    });
+    document = add(document, 'bmp1-company');
+    const preview = getClassicEntryAvailability(document, release, 't72-company');
+    expect(preview.status).toBe('allowed-with-issues');
+    expect(preview.reasons.map(reason => reason.code)).toContain('C01');
+    document = add(document, 't72-company');
+    expect(evaluate(document).totals.points.knownSubtotal).toBe(875);
+    expect(evaluate(document).issues.some(issue => issue.ruleId === 'C01')).toBe(true);
+    document = edit(document, { kind: 'remove', selectionId: 't72-company' });
+    expect(evaluate(document).totals.points.knownSubtotal).toBe(275);
+    expect(evaluate(document).issues.some(issue => issue.ruleId === 'C01')).toBe(false);
+  });
   it('limits a SAM Section to one platoon per company, including after SA-14 replacement', () => {
     let document = add(empty(), 'bmp1-company', 'company-a');
     document = add(document, 'bmp1-company', 'company-b');
@@ -408,7 +424,7 @@ describe('Soviet V4.1 independently transcribed formation accounts', () => {
         parentSelectionId: 'company-a',
         targetMemberPath: ['platoon-2'],
       }).status,
-    ).toBe('blocked');
+    ).toBe('allowed-with-issues');
     document = add(document, 'bmp1-company-sam', 'sam-a2', 'company-a', [
       'platoon-2',
     ]);
