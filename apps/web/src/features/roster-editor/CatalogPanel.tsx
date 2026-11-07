@@ -9,6 +9,7 @@ import {
 } from '@battlegroup/classic-coldwar';
 import { t } from '../../i18n';
 import type { AddTarget } from './RosterTree';
+import { sectionLabel } from './sectionLabel';
 
 export function CatalogPanel({
   document,
@@ -49,16 +50,19 @@ export function CatalogPanel({
         )
         .findIndex((item) => item.selectionId === parent.selectionId) + 1
     : 0;
-  const destination =
+  const section =
     target.kind === 'section'
       ? release.catalog.armyLists
           .find((list) => list.armyListId === document.armyListId)!
           .structure.sections.find(
             (section) => section.sectionId === target.sectionId,
-          )?.name
-      : parentEntry
-        ? parentEntry.name + ' · ' + ordinal
-        : t('editor.chooseSelection');
+          )
+      : undefined;
+  const destination = section
+    ? sectionLabel(document.catalogRef, section)
+    : parentEntry
+      ? parentEntry.name + ' · ' + ordinal
+      : t('editor.chooseSelection');
   const entries = release.catalog.entries.filter((entry) => {
     const access = release.purchases.find(
       (item) => item.entryId === entry.localId,

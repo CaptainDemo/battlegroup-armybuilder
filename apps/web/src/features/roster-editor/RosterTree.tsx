@@ -6,6 +6,7 @@ import type {
 } from '@battlegroup/core';
 import type { ClassicCatalogRelease } from '@battlegroup/classic-coldwar';
 import { t } from '../../i18n';
+import { sectionLabel } from './sectionLabel';
 
 /** A UI destination, separate from the player's stored purchase tree. */
 export type AddTarget =
@@ -54,45 +55,48 @@ export function RosterTree(props: TreeProps) {
               ),
           ),
         )
-        .map((section) => (
-          <section
-            className="roster-section"
-            key={section.sectionId}
-            aria-label={section.name}
-            data-adding={
-              addTarget?.kind === 'section' &&
-              addTarget.sectionId === section.sectionId
-            }
-          >
-            <div className="roster-section-heading">
-              <h4>{section.name}</h4>
-            </div>
-            {document.selections
-              .filter(
-                (selection) =>
-                  selection.parentSelectionId === null &&
-                  selection.sectionId === section.sectionId,
-              )
-              .map((selection, index) => (
-                <PurchaseBranch
-                  key={selection.selectionId}
-                  {...props}
-                  selection={selection}
-                  ordinal={index + 1}
-                />
-              ))}
-            <button
-              type="button"
-              className="add-slot"
-              aria-label={t('editor.addTo') + ' ' + section.name}
-              onClick={() =>
-                onAdd({ kind: 'section', sectionId: section.sectionId })
+        .map((section) => {
+          const label = sectionLabel(document.catalogRef, section);
+          return (
+            <section
+              className="roster-section"
+              key={section.sectionId}
+              aria-label={label}
+              data-adding={
+                addTarget?.kind === 'section' &&
+                addTarget.sectionId === section.sectionId
               }
             >
-              ＋ {t('editor.addFormation')}
-            </button>
-          </section>
-        ))}
+              <div className="roster-section-heading">
+                <h4>{label}</h4>
+              </div>
+              {document.selections
+                .filter(
+                  (selection) =>
+                    selection.parentSelectionId === null &&
+                    selection.sectionId === section.sectionId,
+                )
+                .map((selection, index) => (
+                  <PurchaseBranch
+                    key={selection.selectionId}
+                    {...props}
+                    selection={selection}
+                    ordinal={index + 1}
+                  />
+                ))}
+              <button
+                type="button"
+                className="add-slot"
+                aria-label={t('editor.addTo') + ' ' + label}
+                onClick={() =>
+                  onAdd({ kind: 'section', sectionId: section.sectionId })
+                }
+              >
+                ＋ {t('editor.addFormation')}
+              </button>
+            </section>
+          );
+        })}
     </>
   );
 }

@@ -32,6 +32,19 @@ test.describe('web shell', () => {
     await expect(page.getByRole('heading', { level: 2, name: 'Roadmap' })).toBeVisible();
   });
 
+  test('shows Infantry as the second Soviet roster section and catalog destination', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Create roster', exact: true }).click();
+
+    const roster = page.getByRole('region', { name: 'Roster', exact: true });
+    await expect(roster.getByRole('heading', { level: 4 }).nth(1)).toHaveText('Infantry');
+    await roster.getByRole('button', { name: 'Add to: Infantry', exact: true }).click();
+
+    const catalog = page.getByRole('region', { name: 'Catalog', exact: true });
+    await expect(catalog.getByRole('heading', { name: 'Add to: Infantry', exact: true })).toBeVisible();
+    await expect(catalog.getByRole('button', { name: 'Add BMP-1 Motor Rifle Platoon', exact: true })).toBeVisible();
+  });
+
   test('shows a not-found page for unknown hash routes with a way back', async ({ page }) => {
     await page.goto('/#/missing-page');
     await expect(page.getByRole('heading', { level: 2, name: 'Page not found' })).toBeVisible();
