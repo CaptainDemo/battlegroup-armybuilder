@@ -31,7 +31,7 @@ export const en = {
     m08Label: 'M08 — Web roster editing',
     m08Status: 'Delivered: purchases, options, totals, issue navigation and undo/redo.',
     m09Label: 'M09–M12 — Storage, import/export, print, deployment',
-    m09Status: 'Local autosave and conflict recovery are available. Import, print and deployment are planned.',
+    m09Status: 'Local autosave, conflict recovery and JSON import/export with backups are available. Print and deployment are planned.',
   },
   editor: {
     preview: 'Classic preview — local autosave',
@@ -87,6 +87,54 @@ export const en = {
     loadError: 'Saved rosters could not be read. New drafts can still be edited in this page.',
     retryLoad: 'Retry loading saved rosters',
     unavailable: 'This saved roster needs a catalog or format this app cannot currently open. Its original data is available for recovery.',
+  },
+  transfer: {
+    title: 'Import & backup',
+    intro:
+      'Export one roster or a full backup as JSON, then import files here. A preview is shown first — nothing is written until you confirm.',
+    chooseFile: 'Choose JSON file…',
+    parsing: 'Reading file…',
+    backup: 'Download all rosters (backup)',
+    backupBusy: 'Preparing backup…',
+    backupFailed: 'The backup file could not be created. Nothing was changed.',
+    previewTitle: 'Import preview',
+    singleFile: 'single roster file',
+    backupFile: 'library backup',
+    catalogRevision: 'catalog',
+    purchases: 'purchases',
+    unnamedOriginal: 'Original record',
+    recordOriginalCatalog:
+      'Original kept: its exact catalog version is not available in this app. It will be stored for recovery and can be exported again, but not edited or evaluated.',
+    recordOriginalFormat:
+      'Original kept: its file format version is not supported here. It will be stored for recovery and can be exported again, but not interpreted.',
+    recordError: 'Not importable',
+    modeTitle: 'Write mode',
+    modeCopy: 'Import as a new copy (recommended)',
+    modeOverwrite: 'Overwrite an existing roster…',
+    overwriteTarget: 'Roster to overwrite',
+    chooseTarget: 'Select a roster…',
+    confirmImport: 'Import',
+    importing: 'Importing…',
+    cancelImport: 'Cancel',
+    confirmOverwrite: 'Replace the contents of this roster with the imported file:',
+    imported: 'Import complete.',
+    overwritten: 'Roster replaced with the imported file.',
+    overwriteConflict:
+      'The overwrite conflicted with a newer saved version. The saved roster and your current draft are unchanged.',
+    overwriteMissing: 'The selected roster is no longer available.',
+    importFailed:
+      'Import failed before anything was written. Your rosters are unchanged.',
+    fatalTooLarge: 'This file exceeds the import size limit.',
+    fatalNotJson: 'This file is not valid JSON.',
+    fatalTooDeep: 'This file nests deeper than the supported limit.',
+    fatalTooMany: 'This backup contains more records than the limit allows.',
+    fatalUnrecognized: 'This file is not a recognizable roster export.',
+    batchRejectedPrefix: 'This backup contains',
+    batchRejectedSuffix:
+      'record(s) this app cannot import. The whole batch is rejected and nothing is written — remove or fix the failing records in the file and try again.',
+    limitsNote:
+      'Limits: single roster 2 MiB and 5000 purchases; backup 20 MiB and 200 rosters; nesting depth 64. Catalogs load only from this app’s own index at the exact saved version.',
+    exportRoster: 'Export JSON',
   },
   notFound: {
     title: 'Page not found',

@@ -21,6 +21,7 @@ export * from './contracts/versioning';
 export * from './contracts/catalog';
 export * from './contracts/catalogIndex';
 export * from './contracts/roster';
+export * from './contracts/transfer';
 export * from './contracts/evaluation';
 export * from './validation/integrityIssue';
 export * from './validation/catalogRelations';

@@ -278,6 +278,24 @@ details ul { padding-left: 1rem; }
 .roster-library { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: 1rem; }
 .library-item { padding: .8rem; border: 1px solid var(--border); border-radius: var(--radius); }
 .library-item h3 { margin-top: 0; }
+.transfer-actions { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; margin: .6rem 0; }
+.file-button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: .45rem .9rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); cursor: pointer; }
+.file-button:has(input:disabled) { opacity: .55; cursor: not-allowed; }
+.file-button input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.transfer-limits { font-size: .8rem; margin-top: 0; }
+.import-fatal { border: 1px solid var(--status-border); background: var(--status-bg); color: var(--status-text); border-radius: var(--radius); padding: .6rem .8rem; }
+.import-preview { border: 1px solid var(--border); border-radius: var(--radius); padding: .8rem; margin-top: .6rem; }
+.import-preview h3 { margin: 0 0 .4rem; }
+.import-records { list-style: none; margin: 0; padding: 0; display: grid; gap: .4rem; }
+.import-record { display: flex; flex-direction: column; gap: .15rem; padding: .5rem .6rem; border: 1px solid var(--border); border-left-width: 4px; border-radius: 6px; font-size: .9rem; overflow-wrap: anywhere; }
+.import-record strong { font-size: .95rem; }
+.import-record span { color: var(--text-muted); }
+.import-record[data-status='ready'] { border-left-color: var(--accent); }
+.import-record[data-status='original'] { border-left-color: var(--status-border); }
+.import-record[data-status='error'] { border-left-color: #a33; }
+.import-mode { display: grid; gap: .4rem; }
+.import-target { display: flex; flex-direction: column; gap: .3rem; margin-top: .3rem; min-width: 0; }
+.import-target select { max-width: 100%; }
 @media (max-width: 760px) {
   .editor-grid { grid-template-columns: minmax(0, 1fr); }
   .editor-tabs { display: flex; gap: .4rem; }

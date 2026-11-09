@@ -33,6 +33,22 @@ import {
   recordEdit,
   type EditorSession,
 } from './session';
+import { ImportPanel } from '../roster-transfer/ImportPanel';
+import type { ImportApplyResult } from '../roster-transfer/applyImport';
+import { downloadSingleRoster } from '../roster-transfer/rosterExport';
+
+function sameCatalogIdentity(
+  a: ClassicCatalogRelease,
+  b: ClassicCatalogRelease,
+): boolean {
+  const left = a.catalog.manifest.identity;
+  const right = b.catalog.manifest.identity;
+  return (
+    left.rulesetId === right.rulesetId &&
+    left.catalogId === right.catalogId &&
+    left.catalogRevision === right.catalogRevision
+  );
+}
 
 interface WorkspaceState {
   sessions: EditorSession[];
@@ -539,6 +555,55 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
     }
   }
 
+  function transferImported(result: ImportApplyResult): void {
+    // Copies are already persisted at their batch revisions; registering the
+    // sessions here lets the autosave effect re-enqueue as a no-op.
+    setCatalogs((current) => [
+      ...current,
+      ...result.releases.filter(
+        (release) => !current.some((item) => sameCatalogIdentity(item, release)),
+      ),
+    ]);
+    setUnavailable((current) => [...current, ...result.originals]);
+    setState((current) => ({
+      ...current,
+      sessions: [...current.sessions, ...result.sessions],
+      notice: t('transfer.imported'),
+    }));
+  }
+
+  function transferOverwritten(
+    document: RosterDocument,
+    release: ClassicCatalogRelease,
+  ): void {
+    setCatalogs((current) =>
+      current.some((item) => sameCatalogIdentity(item, release))
+        ? current
+        : [...current, release],
+    );
+    setState((current) => {
+      const exists = current.sessions.some(
+        (item) => item.document.rosterId === document.rosterId,
+      );
+      const active = current.activeId === document.rosterId;
+      return {
+        ...current,
+        sessions: exists
+          ? current.sessions.map((item) =>
+              item.document.rosterId === document.rosterId
+                ? makeSession(document)
+                : item,
+            )
+          : [...current.sessions, makeSession(document)],
+        // The replaced content invalidates the old selection and history.
+        selectedId: active ? null : current.selectedId,
+        selectedMemberPath: active ? null : current.selectedMemberPath,
+        notice: t('transfer.overwritten'),
+      };
+    });
+    setAddTarget(null);
+  }
+
   function saveControls(document: RosterDocument) {
     return (
       <SaveControls
@@ -628,6 +693,12 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
                   </button>{' '}
                   <button
                     type="button"
+                    onClick={() => downloadSingleRoster(item.document)}
+                  >
+                    {t('transfer.exportRoster')}
+                  </button>{' '}
+                  <button
+                    type="button"
                     disabled={
                       saves[item.document.rosterId]?.phase === 'deleting'
                     }
@@ -653,6 +724,17 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
               </article>
             ))}
           </section>
+          <ImportPanel
+            storageReady={storageReady}
+            store={store}
+            queue={queue}
+            sessions={state.sessions}
+            onNotice={(message) =>
+              setState((current) => ({ ...current, notice: message }))
+            }
+            onImported={transferImported}
+            onOverwritten={transferOverwritten}
+          />
           <section className="card">
             <h2>{t('home.createTitle')}</h2>
             <CreateForm
@@ -703,6 +785,12 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
             </div>
             <div className="toolbar">
               <a href="#/">{t('editor.back')}</a>
+              <button
+                type="button"
+                onClick={() => downloadSingleRoster(roster)}
+              >
+                {t('transfer.exportRoster')}
+              </button>
               <button
                 type="button"
                 disabled={!session?.past.length}

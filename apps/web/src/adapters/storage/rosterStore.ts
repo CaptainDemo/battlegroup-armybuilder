@@ -21,6 +21,11 @@ export type WriteResult =
   | { status: 'saved'; row: StoredRoster }
   | { status: 'conflict'; current: StoredRoster | undefined };
 
+/** One row created by a bulk import. Documents were pre-validated; originals stay opaque. */
+export type ImportWrite =
+  | { kind: 'document'; rosterId: string; document: RosterDocument }
+  | { kind: 'original'; rosterId: string; document: unknown };
+
 /** Storage failures reject. Conflicts never write over the stored row. */
 export interface RosterStore {
   list(): Promise<StoredRoster[]>;
@@ -33,6 +38,12 @@ export interface RosterStore {
     rosterId: string,
     expectedRevision: number | null,
   ): Promise<WriteResult>;
+  /**
+   * Creates every row inside one read/write transaction: either the whole
+   * batch lands or nothing does. Fresh roster ids only — overwriting an
+   * existing row goes through save() with its compare-and-write semantics.
+   */
+  importBatch(writes: readonly ImportWrite[]): Promise<StoredRoster[]>;
 }
 
 export function summarize(document: RosterDocument): RosterSummary {

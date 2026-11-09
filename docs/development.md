@@ -1,9 +1,9 @@
 # Development Guide
 
 Engineering setup for the Battlegroup Army Builder. This documents what is
-actually implemented through milestone M08: contracts, versioned catalog,
-atomic editing commands, evaluation, Classic rules and the browser editor.
-Storage, import/export and printing remain future work; see
+actually implemented through milestone M10: contracts, versioned catalog,
+atomic editing commands, evaluation, Classic rules, the browser editor, local
+saving and JSON import/export. Printing remains future work; see
 [implementation modules](implementation_modules.md) for the delivery plan.
 
 ## Prerequisites
@@ -223,18 +223,51 @@ and backup bundle format are planned separately.
 
 See [M09 acceptance](implementation/m09-acceptance.md) for the validation record.
 
+## Import & export (M10)
+
+Roster JSON transfer is implemented in `features/roster-transfer/` with
+envelope contracts in `packages/core/src/contracts/transfer.ts`. Exports read
+the current in-memory draft (unsaved and failed-save rosters included):
+**Export JSON** produces a `roster-file/1` single-roster file, **Download all
+rosters (backup)** a `library-backup/1` backup that merges memory drafts over
+stored rows and skips tombstones.
+
+Imports run a fixed gate order — `File.size` before the bytes are even read
+(20 MiB), byte size again before `JSON.parse`, the 2 MiB single-roster cap on
+every single-file shape (envelope, bare M09 document, recognizable unknown
+format), then JSON depth (64, measured iteratively), then per-record
+classification: `ready` (exact indexed catalog loads and the document passes
+the same command-document check used for restore), `original` (unknown catalog
+revision or unknown format version — preserved verbatim as a recovery row,
+never evaluated or converted), or `error` (corrupt structure,
+cross-ruleset/orphan/cycle references, limits exceeded, or an indexed catalog
+that cannot be verified right now — rejected from the library). The preview
+writes nothing; confirm applies the default copy (fresh roster and edit ids,
+all player choices verbatim), an explicit single-target overwrite
+(compare-and-write against the page-known queue-anchored revision after all
+pending writes settle — never a fresh store read, so another tab's committed
+update conflicts instead of being silently replaced; a deleted/deleting target
+is refused), or an all-or-nothing `importBatch` transaction for full backups.
+A backup preview containing error records is rejected as a whole — the import
+button stays disabled with the reason shown. The M09 bare recovery document
+remains importable. Catalogs load only from the application index by exact
+identity — nothing in a file can direct a request. Limits and semantics:
+[M10 contracts](implementation/m10-contracts.md).
+
 ## Tests
 
 - **Unit (Vitest):** `packages/core` and
   `packages/rulesets/classic-coldwar` — contract schema shape checks,
   catalog/roster relationship integrity positives and negatives, three-ruleset
   isolation, the Classic schema boundary, and the dependency boundaries
-  above. Config: `vitest.config.ts` (root).
-- **Browser (Playwright):** `tests/e2e/web-shell.spec.ts` — home page load,
-  hash-route navigation, direct deep links, not-found fallback, and
-  small-viewport layout without horizontal overflow. Config:
-  `playwright.config.ts` (root). The suite starts `vite preview` of the built
-  app, so a pass exercises the static artifacts.
+  above — plus the Web storage adapters and transfer pipeline (fake-indexeddb,
+  no DOM). Config: `vitest.config.ts` (root).
+- **Browser (Playwright):** `tests/e2e/web-shell.spec.ts` (shell, routing,
+  small viewport) and `tests/e2e/roster-transfer.spec.ts` — real downloads,
+  file selection, preview/cancel, copy and overwrite import, exact-catalog
+  and unknown-version handling. Config: `playwright.config.ts` (root). The
+  suite starts `vite preview` of the built app, so a pass exercises the
+  static artifacts.
 
 There are intentionally no unit tests for the page copy; the e2e checks cover
 the shell's main access paths without mirroring every string.

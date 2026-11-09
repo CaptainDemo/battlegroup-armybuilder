@@ -4,6 +4,7 @@ import type { RosterDocument } from '@battlegroup/core';
 import { SaveQueue } from './saveQueue';
 import {
   summarize,
+  type ImportWrite,
   type RosterStore,
   type StoredRoster,
   type WriteResult,
@@ -51,6 +52,8 @@ function fixture() {
         document: null,
       },
     }),
+    importBatch: async (writes: readonly ImportWrite[]) =>
+      writes.map((write) => ({ ...row(write.document as RosterDocument, 1), rosterId: write.rosterId })),
   };
   return { calls, queue: new SaveQueue(store) };
 }

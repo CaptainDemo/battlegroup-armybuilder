@@ -2,6 +2,7 @@ import Dexie, { type Table } from 'dexie';
 import { rosterDocumentSchema, type RosterDocument } from '@battlegroup/core';
 import {
   summarize,
+  type ImportWrite,
   type RosterStore,
   type StoredRoster,
   type WriteResult,
@@ -97,6 +98,45 @@ export class DexieRosterStore implements RosterStore {
       // A tombstone prevents an old tab from recreating a deleted roster.
       await this.db.rosters.put(row);
       return { status: 'saved', row };
+    });
+  }
+
+  async importBatch(writes: readonly ImportWrite[]): Promise<StoredRoster[]> {
+    await this.db.open();
+    // One transaction: a failure anywhere rolls back every earlier put, so an
+    // interrupted library import never leaves a half-imported database.
+    return this.db.transaction('rw', this.db.rosters, async () => {
+      const rows: StoredRoster[] = [];
+      const seen = new Set<string>();
+      for (const write of writes) {
+        if (seen.has(write.rosterId))
+          throw new Error(`import batch repeats roster id ${write.rosterId}`);
+        seen.add(write.rosterId);
+        if (await this.db.rosters.get(write.rosterId))
+          throw new Error(`import batch target exists: ${write.rosterId}`);
+        if (
+          write.kind === 'document' &&
+          !rosterDocumentSchema.safeParse(write.document).success
+        )
+          throw new Error(
+            `import batch document failed schema: ${write.rosterId}`,
+          );
+        // 'document' writes were pre-validated by the importer; an original
+        // may still be a roster/1 payload whose catalog is unavailable here —
+        // summarize that case for list display, otherwise keep the row opaque.
+        const parsed = rosterDocumentSchema.safeParse(write.document);
+        const row: StoredRoster = {
+          rosterId: write.rosterId,
+          saveRevision: 1,
+          updatedAt: new Date().toISOString(),
+          document: structuredClone(write.document),
+          summary: parsed.success ? summarize(parsed.data) : null,
+          deleted: false,
+        };
+        await this.db.rosters.put(row);
+        rows.push(row);
+      }
+      return rows;
     });
   }
 }
