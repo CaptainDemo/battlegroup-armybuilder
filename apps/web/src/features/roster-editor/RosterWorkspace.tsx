@@ -36,6 +36,7 @@ import {
 import { ImportPanel } from '../roster-transfer/ImportPanel';
 import type { ImportApplyResult } from '../roster-transfer/applyImport';
 import { downloadSingleRoster } from '../roster-transfer/rosterExport';
+import { UnitDataPanel } from './UnitDataPanel';
 
 function sameCatalogIdentity(
   a: ClassicCatalogRelease,
@@ -981,6 +982,13 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
                       {state.selectedMemberPath && (
                         <p className="muted">{t('editor.included')}</p>
                       )}
+                      {selectedComposition && (
+                        <UnitDataPanel
+                          key={selected.selectionId + '/' + (state.selectedMemberPath ?? []).join('/')}
+                          node={selectedComposition}
+                          release={release}
+                        />
+                      )}
                       <OptionEditor
                         document={roster}
                         selection={selected}
@@ -1032,10 +1040,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
                       </ul>
                       <h4>{t('editor.composition')}</h4>
                       {selectedComposition ? (
-                        <CompositionTree
-                          node={selectedComposition}
-                          release={release}
-                        />
+                        <CompositionTree node={selectedComposition} release={release} />
                       ) : (
                         <p>
                           {selectedEntry.composition.state === 'no-entities'

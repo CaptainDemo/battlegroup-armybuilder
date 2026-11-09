@@ -1,0 +1,1254 @@
+{
+  "revision": "draft6-weapons/1",
+  "rulesetId": "classic-coldwar",
+  "source": {
+    "title": "Unofficial Battlegroup CW Rules — Draft 6",
+    "sha256": "56595a4c83a35e6acf5242800361285381a16b0f44846331c7c26f2c5bda0b1b",
+    "authority": "unofficial-community"
+  },
+  "rangeBands": [
+    "0–5″",
+    "5–10″",
+    "10–20″",
+    "20–30″",
+    "30–40″",
+    "40–50″",
+    "50–70″",
+    "70–100″"
+  ],
+  "weapons": [
+    {
+      "id": "ak74",
+      "name": "AK-74 / Assault rifle",
+      "kind": "small-arms",
+      "pages": [
+        8,
+        20
+      ],
+      "rateOfFire": "2 at 0–10″; 1 at 10–30″",
+      "range": "30″",
+      "crew": null,
+      "heRating": null,
+      "heEffect": null,
+      "penetration": null,
+      "generation": null,
+      "backBlast": null,
+      "tandem": null,
+      "unreliable": null,
+      "notes": [
+        "RoF 2 at close range also applies with the Infantry Close Assault order."
+      ]
+    },
+    {
+      "id": "suppressed-ak74",
+      "name": "Suppressed AK-74 / Assault rifle",
+      "kind": "small-arms",
+      "pages": [
+        8,
+        20
+      ],
+      "rateOfFire": "2 at 0–10″; 1 at 10–30″",
+      "range": "30″",
+      "crew": null,
+      "heRating": null,
+      "heEffect": null,
+      "penetration": null,
+      "generation": null,
+      "backBlast": null,
+      "tandem": null,
+      "unreliable": null,
+      "notes": []
+    },
+    {
+      "id": "rpk74",
+      "name": "RPK-74 / Light machine gun",
+      "kind": "small-arms",
+      "pages": [
+        8,
+        20
+      ],
+      "rateOfFire": "3",
+      "range": "30″",
+      "crew": "1",
+      "heRating": null,
+      "heEffect": null,
+      "penetration": null,
+      "generation": null,
+      "backBlast": null,
+      "tandem": null,
+      "unreliable": null,
+      "notes": []
+    },
+    {
+      "id": "pkm",
+      "name": "PKM / General purpose machine gun",
+      "kind": "small-arms",
+      "pages": [
+        8,
+        20
+      ],
+      "rateOfFire": "6 (bipod); 8 (sustained-fire tripod)",
+      "range": "30″ (bipod); 40″ (sustained-fire tripod)",
+      "crew": "2",
+      "heRating": null,
+      "heEffect": null,
+      "penetration": null,
+      "generation": null,
+      "backBlast": null,
+      "tandem": null,
+      "unreliable": null,
+      "notes": [
+        "Use tripod values only with a sustained-fire tripod. With one crewman, RoF is 3 from a bipod or 4 from a tripod."
+      ]
+    },
+    {
+      "id": "dshk",
+      "name": "12.7mm DShK / Heavy machine gun",
+      "kind": "small-arms",
+      "pages": [
+        8,
+        21
+      ],
+      "rateOfFire": "6",
+      "range": "40″",
+      "crew": "3",
+      "heRating": null,
+      "heEffect": null,
+      "penetration": null,
+      "generation": null,
+      "backBlast": null,
+      "tandem": null,
+      "unreliable": null,
+      "notes": [
+        "With fewer crew, RoF is halved to 3. Mounted MG values depend on their mounting."
+      ]
+    },
+    {
+      "id": "bg15",
+      "name": "BG-15 / Under-barrel grenade launcher",
+      "kind": "small-arms",
+      "pages": [
+        8,
+        21
+      ],
+      "rateOfFire": "2",
+      "range": "30″",
+      "crew": null,
+      "heRating": null,
+      "heEffect": null,
+      "penetration": null,
+      "generation": null,
+      "backBlast": null,
+      "tandem": null,
+      "unreliable": null,
+      "notes": [
+        "An under-barrel launcher and its assault rifle cannot fire at the same time. RoF 2 represents its contribution to small-arms firepower."
+      ]
+    },
+    {
+      "id": "svd-marksman",
+      "name": "SVD / Marksman",
+      "kind": "small-arms",
+      "pages": [
+        20,
+        31
+      ],
+      "rateOfFire": "1",
+      "range": "30″",
+      "crew": null,
+      "heRating": null,
+      "heEffect": null,
+      "penetration": null,
+      "generation": null,
+      "backBlast": null,
+      "tandem": null,
+      "unreliable": null,
+      "notes": [
+        "This is a Marksman, not the full Sniper special rule. A Marksman cannot take a spotter and does not receive the sniper extension to 40″. See the Marksman rule for its other limitations."
+      ]
+    },
+    {
+      "id": "rpg18",
+      "name": "RPG-18 / LAW",
+      "kind": "anti-tank",
+      "pages": [
+        9,
+        21
+      ],
+      "rateOfFire": "1",
+      "range": "10″",
+      "crew": "—",
+      "heRating": "Very Light",
+      "heEffect": "2/5+",
+      "penetration": null,
+      "generation": null,
+      "backBlast": true,
+      "tandem": null,
+      "unreliable": null,
+      "rangeValues": [
+        10,
+        10,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "notes": [
+        "Single-use LAW."
+      ]
+    },
+    {
+      "id": "rpg22",
+      "name": "RPG-22 / LAW",
+      "kind": "anti-tank",
+      "pages": [
+        9,
+        21
+      ],
+      "rateOfFire": "1",
+      "range": "10″",
+      "crew": "—",
+      "heRating": "Very Light",
+      "heEffect": "2/5+",
+      "penetration": null,
+      "generation": null,
+      "backBlast": true,
+      "tandem": null,
+      "unreliable": null,
+      "rangeValues": [
+        13,
+        13,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "notes": [
+        "Single-use LAW."
+      ]
+    },
+    {
+      "id": "rpg7v",
+      "name": "RPG-7V",
+      "kind": "anti-tank",
+      "pages": [
+        9,
+        21
+      ],
+      "rateOfFire": "1",
+      "range": "20″",
+      "crew": "—",
+      "heRating": "Very Light",
+      "heEffect": "2/5+",
+      "penetration": null,
+      "generation": null,
+      "backBlast": true,
+      "tandem": null,
+      "unreliable": null,
+      "rangeValues": [
+        10,
+        10,
+        10,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "notes": [
+        "Reloadable RPG."
+      ]
+    },
+    {
+      "id": "rpg7vs",
+      "name": "RPG-7VS",
+      "kind": "anti-tank",
+      "pages": [
+        9,
+        21
+      ],
+      "rateOfFire": "1",
+      "range": "20″",
+      "crew": "—",
+      "heRating": "Very Light",
+      "heEffect": "3/5+",
+      "penetration": null,
+      "generation": null,
+      "backBlast": true,
+      "tandem": null,
+      "unreliable": null,
+      "rangeValues": [
+        12,
+        12,
+        12,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "notes": [
+        "Reloadable RPG."
+      ]
+    },
+    {
+      "id": "ags17",
+      "name": "AGS-17 / Automatic grenade launcher",
+      "kind": "anti-tank",
+      "pages": [
+        9,
+        21
+      ],
+      "rateOfFire": "3",
+      "range": "40″",
+      "crew": "2",
+      "heRating": "Very Light × 2",
+      "heEffect": "4/4+",
+      "penetration": null,
+      "generation": null,
+      "backBlast": false,
+      "tandem": null,
+      "unreliable": null,
+      "rangeValues": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        null,
+        null,
+        null
+      ],
+      "notes": [
+        "With only one crewman, RoF is reduced to 1. The HE rating and HE effect are separate source columns."
+      ]
+    },
+    {
+      "id": "skorpion",
+      "name": "9M17MP Skorpion / AT-2 Swatter-C",
+      "kind": "atgm",
+      "pages": [
+        15
+      ],
+      "rateOfFire": null,
+      "range": null,
+      "crew": null,
+      "heRating": null,
+      "heEffect": "2/5+",
+      "penetration": null,
+      "generation": "GEN 1",
+      "backBlast": false,
+      "tandem": false,
+      "unreliable": false,
+      "rangeValues": [
+        null,
+        null,
+        null,
+        14,
+        14,
+        14,
+        14,
+        14
+      ],
+      "notes": []
+    },
+    {
+      "id": "sagger",
+      "name": "9K11 Malyutka / AT-3 Sagger",
+      "kind": "atgm",
+      "pages": [
+        15
+      ],
+      "rateOfFire": null,
+      "range": null,
+      "crew": null,
+      "heRating": null,
+      "heEffect": "2/5+",
+      "penetration": null,
+      "generation": "GEN 1",
+      "backBlast": false,
+      "tandem": false,
+      "unreliable": false,
+      "rangeValues": [
+        null,
+        null,
+        null,
+        14,
+        14,
+        14,
+        14,
+        14
+      ],
+      "notes": []
+    },
+    {
+      "id": "fagot",
+      "name": "9K111 Fagot / AT-4 Spigot",
+      "kind": "atgm",
+      "pages": [
+        15
+      ],
+      "rateOfFire": null,
+      "range": null,
+      "crew": null,
+      "heRating": null,
+      "heEffect": "3/5+",
+      "penetration": null,
+      "generation": "GEN 2",
+      "backBlast": true,
+      "tandem": false,
+      "unreliable": false,
+      "rangeValues": [
+        null,
+        null,
+        null,
+        19,
+        19,
+        19,
+        null,
+        null
+      ],
+      "notes": []
+    },
+    {
+      "id": "konkurs",
+      "name": "9K113 Konkurs / AT-5 Spandrel",
+      "kind": "atgm",
+      "pages": [
+        15
+      ],
+      "rateOfFire": null,
+      "range": null,
+      "crew": null,
+      "heRating": null,
+      "heEffect": "3/5+",
+      "penetration": null,
+      "generation": "GEN 2",
+      "backBlast": true,
+      "tandem": false,
+      "unreliable": false,
+      "rangeValues": [
+        null,
+        null,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "notes": []
+    },
+    {
+      "id": "shturm",
+      "name": "9K114 Shturm / AT-6 Spiral",
+      "kind": "atgm",
+      "pages": [
+        15
+      ],
+      "rateOfFire": null,
+      "range": null,
+      "crew": null,
+      "heRating": null,
+      "heEffect": "3/5+",
+      "penetration": null,
+      "generation": "GEN 2",
+      "backBlast": true,
+      "tandem": false,
+      "unreliable": false,
+      "rangeValues": [
+        null,
+        null,
+        null,
+        null,
+        21,
+        21,
+        21,
+        21
+      ],
+      "notes": []
+    },
+    {
+      "id": "metis",
+      "name": "9K115 Metis / AT-7 Saxhorn",
+      "kind": "atgm",
+      "pages": [
+        15
+      ],
+      "rateOfFire": null,
+      "range": null,
+      "crew": null,
+      "heRating": null,
+      "heEffect": "2/5+",
+      "penetration": null,
+      "generation": "GEN 2",
+      "backBlast": true,
+      "tandem": false,
+      "unreliable": false,
+      "rangeValues": [
+        16,
+        16,
+        16,
+        16,
+        16,
+        null,
+        null,
+        null
+      ],
+      "notes": []
+    },
+    {
+      "id": "kobra",
+      "name": "9M112 Kobra / AT-8 Songster",
+      "kind": "atgm",
+      "pages": [
+        15
+      ],
+      "rateOfFire": null,
+      "range": null,
+      "crew": null,
+      "heRating": null,
+      "heEffect": "3/5+",
+      "penetration": null,
+      "generation": "GEN 2",
+      "backBlast": false,
+      "tandem": true,
+      "unreliable": true,
+      "rangeValues": [
+        null,
+        null,
+        null,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "notes": []
+    },
+    {
+      "id": "bastion",
+      "name": "9M117 Bastion / AT-10 Stabber",
+      "kind": "atgm",
+      "pages": [
+        15
+      ],
+      "rateOfFire": null,
+      "range": null,
+      "crew": null,
+      "heRating": null,
+      "heEffect": "3/5+",
+      "penetration": null,
+      "generation": "GEN 2",
+      "backBlast": false,
+      "tandem": false,
+      "unreliable": false,
+      "rangeValues": [
+        null,
+        null,
+        21,
+        21,
+        21,
+        21,
+        21,
+        21
+      ],
+      "notes": []
+    },
+    {
+      "id": "svir",
+      "name": "9M119 Refleks & 9M120 Svir / AT-11 Sniper (Draft 6 heading)",
+      "kind": "atgm",
+      "pages": [
+        15
+      ],
+      "rateOfFire": null,
+      "range": null,
+      "crew": null,
+      "heRating": null,
+      "heEffect": "4/5+",
+      "penetration": null,
+      "generation": "GEN 2",
+      "backBlast": false,
+      "tandem": false,
+      "unreliable": false,
+      "rangeValues": [
+        null,
+        null,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24
+      ],
+      "notes": [
+        "The Refleks/Svir names and missile numbers follow the Draft 6 heading. The table lists Tandem as No; some AFV cards list Tandem ammunition instead. Their source-specific values are not silently merged."
+      ]
+    },
+    {
+      "id": "sa6",
+      "name": "2K12 Kub / SA-6 Gainful",
+      "kind": "sam",
+      "pages": [
+        50
+      ],
+      "rateOfFire": null,
+      "range": null,
+      "crew": null,
+      "heRating": null,
+      "heEffect": null,
+      "penetration": null,
+      "generation": null,
+      "backBlast": null,
+      "tandem": null,
+      "unreliable": null,
+      "sam": {
+        "type": "Intermediate",
+        "attackModifier": 2,
+        "damage": "Heavy (D6+2)"
+      },
+      "notes": []
+    },
+    {
+      "id": "sa7",
+      "name": "9K32 Strela-2 / SA-7 Grail",
+      "kind": "sam",
+      "pages": [
+        50
+      ],
+      "rateOfFire": null,
+      "range": null,
+      "crew": null,
+      "heRating": null,
+      "heEffect": null,
+      "penetration": null,
+      "generation": null,
+      "backBlast": null,
+      "tandem": null,
+      "unreliable": null,
+      "sam": {
+        "type": "Basic",
+        "attackModifier": 0,
+        "damage": "Light (D3)"
+      },
+      "notes": []
+    },
+    {
+      "id": "sa8",
+      "name": "9M33 Osa / SA-8 Gecko",
+      "kind": "sam",
+      "pages": [
+        50
+      ],
+      "rateOfFire": null,
+      "range": null,
+      "crew": null,
+      "heRating": null,
+      "heEffect": null,
+      "penetration": null,
+      "generation": null,
+      "backBlast": null,
+      "tandem": null,
+      "unreliable": null,
+      "sam": {
+        "type": "Intermediate",
+        "attackModifier": 2,
+        "damage": "Standard (D6)"
+      },
+      "notes": []
+    },
+    {
+      "id": "sa9",
+      "name": "9M31 Strela-1 / SA-9 Gaskin",
+      "kind": "sam",
+      "pages": [
+        50
+      ],
+      "rateOfFire": null,
+      "range": null,
+      "crew": null,
+      "heRating": null,
+      "heEffect": null,
+      "penetration": null,
+      "generation": null,
+      "backBlast": null,
+      "tandem": null,
+      "unreliable": null,
+      "sam": {
+        "type": "Basic",
+        "attackModifier": 1,
+        "damage": "Standard (D6)"
+      },
+      "notes": []
+    },
+    {
+      "id": "sa11",
+      "name": "9M317 / SA-11 Gadfly",
+      "kind": "sam",
+      "pages": [
+        50
+      ],
+      "rateOfFire": null,
+      "range": null,
+      "crew": null,
+      "heRating": null,
+      "heEffect": null,
+      "penetration": null,
+      "generation": null,
+      "backBlast": null,
+      "tandem": null,
+      "unreliable": null,
+      "sam": {
+        "type": "Advanced",
+        "attackModifier": 3,
+        "damage": "Very Heavy (2D6)"
+      },
+      "notes": []
+    },
+    {
+      "id": "sa13",
+      "name": "9M333 Strela-10 / SA-13 Gopher",
+      "kind": "sam",
+      "pages": [
+        50
+      ],
+      "rateOfFire": null,
+      "range": null,
+      "crew": null,
+      "heRating": null,
+      "heEffect": null,
+      "penetration": null,
+      "generation": null,
+      "backBlast": null,
+      "tandem": null,
+      "unreliable": null,
+      "sam": {
+        "type": "Basic",
+        "attackModifier": 1,
+        "damage": "Standard (D6)"
+      },
+      "notes": []
+    },
+    {
+      "id": "sa14",
+      "name": "9K34 Strela-3 / SA-14 Gremlin",
+      "kind": "sam",
+      "pages": [
+        50
+      ],
+      "rateOfFire": null,
+      "range": null,
+      "crew": null,
+      "heRating": null,
+      "heEffect": null,
+      "penetration": null,
+      "generation": null,
+      "backBlast": null,
+      "tandem": null,
+      "unreliable": null,
+      "sam": {
+        "type": "Intermediate",
+        "attackModifier": 2,
+        "damage": "Standard (D6)"
+      },
+      "notes": []
+    },
+    {
+      "id": "sa19",
+      "name": "9M311 / SA-19 Grison",
+      "kind": "sam",
+      "pages": [
+        50
+      ],
+      "rateOfFire": null,
+      "range": null,
+      "crew": null,
+      "heRating": null,
+      "heEffect": null,
+      "penetration": null,
+      "generation": null,
+      "backBlast": null,
+      "tandem": null,
+      "unreliable": null,
+      "sam": {
+        "type": "Advanced",
+        "attackModifier": 2,
+        "damage": "Standard (D6)"
+      },
+      "notes": []
+    },
+    {
+      "id": "heavy-mortar",
+      "name": "M1943 / M120 120mm heavy mortar",
+      "kind": "support",
+      "pages": [
+        23
+      ],
+      "rateOfFire": null,
+      "range": "15–240″",
+      "crew": null,
+      "heRating": "Light",
+      "heEffect": "6/4+",
+      "penetration": "3",
+      "generation": null,
+      "backBlast": null,
+      "tandem": null,
+      "unreliable": null,
+      "notes": [
+        "Uses indirect artillery fire and requires a Mortar Fire Controller or Forward Artillery Observer; cannot self-observe."
+      ]
+    },
+    {
+      "id": "vasilek",
+      "name": "2B9 Vasilek / Automatic 82mm mortar",
+      "kind": "support",
+      "pages": [
+        22,
+        23
+      ],
+      "rateOfFire": null,
+      "range": "10–90″",
+      "crew": null,
+      "heRating": "Light",
+      "heEffect": "4/4+",
+      "penetration": "2",
+      "generation": null,
+      "backBlast": null,
+      "tandem": null,
+      "unreliable": null,
+      "notes": [
+        "Uses medium-mortar characteristics and fires twice for each normal shot (four shots with Open Fire!). No RoF value is inferred from the four-round clip."
+      ]
+    },
+    {
+      "id": "lpo50",
+      "name": "LPO-50 / Man-pack flamethrower",
+      "kind": "support",
+      "pages": [
+        8,
+        23
+      ],
+      "rateOfFire": "10",
+      "range": "5″",
+      "crew": null,
+      "heRating": null,
+      "heEffect": null,
+      "penetration": "D6 against stationary vehicles, side armour",
+      "generation": null,
+      "backBlast": null,
+      "tandem": null,
+      "unreliable": null,
+      "notes": [
+        "Fuel for one burst. Cannot target a unit that moved last turn, except a building containing infantry. Targets count as in the open for cover saves."
+      ]
+    },
+    {
+      "id": "rpoa",
+      "name": "RPO-A / Thermobaric rocket launcher",
+      "kind": "support",
+      "pages": [
+        23
+      ],
+      "rateOfFire": "5",
+      "range": "30″",
+      "crew": null,
+      "heRating": null,
+      "heEffect": null,
+      "penetration": "D6 against stationary vehicles, side armour",
+      "generation": null,
+      "backBlast": null,
+      "tandem": null,
+      "unreliable": null,
+      "notes": [
+        "Single use. Can engage moving targets; targets count as in the open for cover saves. The first attack forces the enemy commander to take a battle counter."
+      ]
+    }
+  ],
+  "bindings": [
+    {
+      "catalogId": "soviet-armoured-division-v4_1",
+      "catalogRevision": "1.1.0",
+      "vehicleProfileIds": [
+        "bmp-1k",
+        "bmp-1pk",
+        "bmp-2k",
+        "bmp-2dk",
+        "bmp-1ksh",
+        "btr-50pu",
+        "t-62ak",
+        "t-62mk",
+        "t-64ak",
+        "t-64bk",
+        "t-64bvk",
+        "t-72ak",
+        "t-72bk",
+        "t-80bk",
+        "t-80bvk",
+        "zil-131-zil-157-ural-375-command-vehicle",
+        "gaz-66",
+        "uaz-469",
+        "gaz-66-command-vehicle",
+        "brdm-2um",
+        "btr-60-1v18",
+        "acrv",
+        "prp-3",
+        "zil-131-zil-157-ural-375-gaz-66-ew-vehicle",
+        "snar-10",
+        "brdm-2",
+        "btr-60r-975",
+        "btr-70",
+        "btr-80",
+        "m-72-motorcycle",
+        "bmp-1",
+        "bmp-1p",
+        "mi-8-hip-c",
+        "mtlb",
+        "bmp-2",
+        "bmp-2d",
+        "t-80b",
+        "t-80bv",
+        "t-80u",
+        "t-72a",
+        "t-72b1",
+        "t-72b",
+        "t-72av",
+        "t-64a",
+        "t-64b",
+        "t-64bv",
+        "t-62a",
+        "t-62m",
+        "t-62mb",
+        "t-62mb-with-bastion",
+        "t-72b-with-svir",
+        "2s1-gvozdika",
+        "motorcycle-and-sidecar",
+        "brdm-2-rkhb",
+        "pt-76b",
+        "brm-1",
+        "luaz-967",
+        "mi-4-hound",
+        "heavy-truck",
+        "gsp-amphibious-ferry",
+        "pmm-2-tracked-ferry",
+        "btr-60pb",
+        "t-62-t",
+        "brem-1",
+        "brem-2",
+        "t-55-with-kmt-mine-plough",
+        "t-62-with-kmt-mine-plough",
+        "mtu-55-avlb",
+        "mtu-72-avlb",
+        "pts-m-amphibious-transporter",
+        "to-55",
+        "to-62a",
+        "tos-1-thermobaric-mrl",
+        "ural-452-ambulance",
+        "zsu-23-4",
+        "9k22-tunguska",
+        "bmp-1aa",
+        "sa-6-gainful",
+        "sa-8-gecko",
+        "sa-9-gaskin",
+        "sa-11-gadfly",
+        "sa-13-gopher",
+        "medium-truck",
+        "9p133-malyutka-brdm-2-at-3",
+        "9p148-konkurs-brdm-2-at-5",
+        "9p149-shturm-s-at-6"
+      ],
+      "nonCombatProfileIds": [
+        "infantry-personnel",
+        "spotter",
+        "spetsnaz-five-man-team",
+        "pmp-bridge-section",
+        "mine-sweeper",
+        "medical-tent",
+        "3-man-loader-team"
+      ],
+      "unverifiedWeaponProfileIds": [
+        "demolition-charge",
+        "100mm-t-12-mt-12-anti-tank-gun",
+        "125mm-2a45-sprut-b-anti-tank-gun"
+      ],
+      "profileWeapons": {
+        "rpk-74": {
+          "weaponIds": [
+            "rpk74"
+          ],
+          "quantityMode": "weapons"
+        },
+        "rpg-7v": {
+          "weaponIds": [
+            "rpg7v"
+          ],
+          "quantityMode": "weapons"
+        },
+        "rpg-7vs": {
+          "weaponIds": [
+            "rpg7vs"
+          ],
+          "quantityMode": "weapons"
+        },
+        "rpg-18": {
+          "weaponIds": [
+            "rpg18"
+          ],
+          "quantityMode": "weapons"
+        },
+        "rpg-22": {
+          "weaponIds": [
+            "rpg22"
+          ],
+          "quantityMode": "weapons"
+        },
+        "pkm": {
+          "weaponIds": [
+            "pkm"
+          ],
+          "quantityMode": "weapons"
+        },
+        "pkm-gpmg": {
+          "weaponIds": [
+            "pkm"
+          ],
+          "quantityMode": "weapons"
+        },
+        "bg-15-ugl": {
+          "weaponIds": [
+            "bg15"
+          ],
+          "quantityMode": "weapons"
+        },
+        "svd-marksman": {
+          "weaponIds": [
+            "svd-marksman"
+          ],
+          "quantityMode": "weapons"
+        },
+        "ags-17": {
+          "weaponIds": [
+            "ags17"
+          ],
+          "quantityMode": "weapons"
+        },
+        "12-7mm-dshk-hmg": {
+          "weaponIds": [
+            "dshk"
+          ],
+          "quantityMode": "weapons"
+        },
+        "fagot-atgm": {
+          "weaponIds": [
+            "fagot"
+          ],
+          "quantityMode": "weapons"
+        },
+        "sa-7": {
+          "weaponIds": [
+            "sa7"
+          ],
+          "quantityMode": "weapons"
+        },
+        "sa-14": {
+          "weaponIds": [
+            "sa14"
+          ],
+          "quantityMode": "weapons"
+        },
+        "suppressed-ak-74": {
+          "weaponIds": [
+            "suppressed-ak74"
+          ],
+          "quantityMode": "weapons"
+        },
+        "suppressed-ak-74-bg-15": {
+          "weaponIds": [
+            "suppressed-ak74",
+            "bg15"
+          ],
+          "quantityMode": "weapons"
+        },
+        "m1943-m120-120mm-mortar": {
+          "weaponIds": [
+            "heavy-mortar"
+          ],
+          "quantityMode": "weapons"
+        },
+        "m1943-120mm-mortar": {
+          "weaponIds": [
+            "heavy-mortar"
+          ],
+          "quantityMode": "weapons"
+        },
+        "2b9-vasilek": {
+          "weaponIds": [
+            "vasilek"
+          ],
+          "quantityMode": "weapons"
+        },
+        "rpo-a": {
+          "weaponIds": [
+            "rpoa"
+          ],
+          "quantityMode": "weapons"
+        },
+        "lpo-50-flamethrower": {
+          "weaponIds": [
+            "lpo50"
+          ],
+          "quantityMode": "weapons"
+        },
+        "bmp-1-command-squad": {
+          "weaponIds": [
+            "ak74"
+          ],
+          "quantityMode": "unit-equipment"
+        },
+        "bmp-1-assistant-squad": {
+          "weaponIds": [
+            "ak74"
+          ],
+          "quantityMode": "unit-equipment"
+        },
+        "bmp-1-rifle-squad": {
+          "weaponIds": [
+            "ak74"
+          ],
+          "quantityMode": "unit-equipment"
+        },
+        "bmp-1p-rifle-squad": {
+          "weaponIds": [
+            "ak74"
+          ],
+          "quantityMode": "unit-equipment"
+        },
+        "bmp-2-command-squad": {
+          "weaponIds": [
+            "ak74"
+          ],
+          "quantityMode": "unit-equipment"
+        },
+        "bmp-2-assistant-squad": {
+          "weaponIds": [
+            "ak74"
+          ],
+          "quantityMode": "unit-equipment"
+        },
+        "bmp-2-rifle-squad": {
+          "weaponIds": [
+            "ak74"
+          ],
+          "quantityMode": "unit-equipment"
+        },
+        "3-9m119-svir-missile-rounds": {
+          "weaponIds": [
+            "svir"
+          ],
+          "quantityMode": "unit-equipment"
+        }
+      },
+      "vehicleWeapons": {
+        "sa-6-gainful": [
+          "sa6"
+        ],
+        "sa-8-gecko": [
+          "sa8"
+        ],
+        "sa-9-gaskin": [
+          "sa9"
+        ],
+        "sa-11-gadfly": [
+          "sa11"
+        ],
+        "sa-13-gopher": [
+          "sa13"
+        ],
+        "9k22-tunguska": [
+          "sa19"
+        ],
+        "9p133-malyutka-brdm-2-at-3": [
+          "sagger"
+        ],
+        "9p148-konkurs-brdm-2-at-5": [
+          "konkurs"
+        ],
+        "9p149-shturm-s-at-6": [
+          "shturm"
+        ],
+        "t-62mb": [
+          "bastion"
+        ],
+        "t-62mb-with-bastion": [
+          "bastion"
+        ],
+        "t-72b-with-svir": [
+          "svir"
+        ]
+      },
+      "tagWeapons": [
+        {
+          "tag": "konkurs",
+          "profileIds": [
+            "bmp-1p",
+            "bmp-1pk",
+            "bmp-2",
+            "bmp-2d",
+            "bmp-2k",
+            "brm-1"
+          ],
+          "weaponIds": [
+            "konkurs"
+          ],
+          "replacesCardAtgm": true
+        },
+        {
+          "tag": "svir",
+          "profileIds": [
+            "t-72b",
+            "t-72b-with-svir"
+          ],
+          "weaponIds": [
+            "svir"
+          ],
+          "replacesCardAtgm": true
+        }
+      ]
+    },
+    {
+      "catalogId": "soviet-armoured-division-v4_1",
+      "catalogRevision": "1.0.0",
+      "vehicleProfileIds": [
+        "t72a",
+        "t72b",
+        "bmp1",
+        "bmp1p",
+        "bmp1k",
+        "brdm2",
+        "zsu234",
+        "gaz66",
+        "mtlb"
+      ],
+      "nonCombatProfileIds": [],
+      "unverifiedWeaponProfileIds": [],
+      "profileWeapons": {},
+      "vehicleWeapons": {},
+      "tagWeapons": [
+        {
+          "tag": "konkurs",
+          "profileIds": [
+            "bmp1p"
+          ],
+          "weaponIds": [
+            "konkurs"
+          ],
+          "replacesCardAtgm": true
+        }
+      ]
+    }
+  ]
+}

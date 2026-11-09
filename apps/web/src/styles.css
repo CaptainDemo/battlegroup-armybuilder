@@ -270,6 +270,19 @@ legend { font-size: .9rem; }
 .checkbox-label { display: flex; align-items: start; gap: .6rem; }
 .checkbox-label input { width: 1.1rem; height: 1.1rem; flex: 0 0 1.1rem; margin-top: .2rem; }
 .composition-tree { padding-left: 1.1rem; font-size: .85rem; }
+.unit-data { min-width: 0; margin-block: 1rem; }
+.unit-data-card { border: 1px solid var(--border); border-radius: .5rem; margin-block: .6rem; overflow: hidden; }
+.unit-data-card > summary { cursor: pointer; padding: .75rem; font-weight: 600; overflow-wrap: anywhere; }
+.unit-data-body { padding: 0 .75rem .75rem; min-width: 0; }
+.unit-data-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); gap: .65rem; margin-block: .5rem; }
+.unit-data-stats dt { font-size: .75rem; color: var(--text-muted); }
+.unit-data-stats dd { margin: .2rem 0 0; font-size: .85rem; overflow-wrap: anywhere; }
+.unit-data-table-scroll { max-width: 100%; overflow-x: auto; }
+.unit-data-weapons { border-collapse: collapse; font-size: .75rem; width: 100%; }
+.unit-data-weapons caption { text-align: left; font-weight: 600; margin-bottom: .4rem; }
+.unit-data-weapons th, .unit-data-weapons td { padding: .35rem .45rem; border-bottom: 1px solid var(--border); text-align: center; white-space: nowrap; }
+.unit-data-weapons th:first-child { text-align: left; white-space: normal; min-width: 6rem; }
+.unit-data-source, .unit-data-missing { font-size: .75rem; overflow-wrap: anywhere; }
 .issue-list { padding-left: 1rem; }
 .issue-link { border: 0; padding: .3rem 0; text-align: left; font-size: .85rem; color: var(--link); text-decoration: underline; }
 details { font-size: .85rem; }

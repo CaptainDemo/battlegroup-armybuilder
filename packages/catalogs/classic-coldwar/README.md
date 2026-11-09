@@ -26,3 +26,26 @@ for the data and rule coverage boundaries.
 source identities, the independent M01 cost table and the publication file list.
 The normal build runs this gate and publishes this directory's `public/` only;
 source PDFs, fixtures, tools, reports and scratch files are never public assets.
+
+`reference/soviet-afv-v1.json` is a separately versioned, read-only combat
+reference for the detail panel. It contains 51 visually checked Soviet AFV
+cards with explicit bindings to 52 profile IDs in catalog 1.1.0 and 7 in 1.0.0.
+Bindings use full catalog identity and profile IDs; names never select a card.
+The web build bundles this JSON after ruleset-specific schema validation.
+It adds movement, armour, source-card weapons and traits without rewriting
+immutable catalog bytes, saved selections, costs or legality coverage.
+It is not a complete resolved equipment loadout. Unverified vehicle profiles
+remain explicitly missing; optional missiles are not auto-equipped.
+The catalog check also validates this supplement and all its profile bindings.
+See [combat data acceptance](../../../docs/implementation/classic-unit-data.md).
+
+`reference/draft6-weapons-v1.json` adds 33 Classic-only weapon references from
+Draft 6. All 125 current catalog profiles have an explicit presentation kind:
+86 vehicles, 29 carried-weapon/unit-equipment bindings, 7 personnel/container
+or non-weapon equipment records, and 3 weapons with unverified data. Infantry
+shows carried weapons instead of vehicle stats. Counts are used only for
+explicitly recorded weapons, not inferred from personnel or squad size.
+Current evaluated replacement profiles and targeted tags drive PKM/RPG/SAM
+and Konkurs/Svir presentation. Generic missile-table data retains its own
+source; it does not silently overwrite differing AFV-card values. A selected
+ATGM replacement hides the replaced base-card missile row for its target.

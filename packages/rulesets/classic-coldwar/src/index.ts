@@ -53,3 +53,7 @@ export { classicUnitProfileSchema, unverifiedStats };
 export type { ClassicUnitProfile, ClassicProfileStats };
 export { classicCatalogShellSchema, classicRosterDocumentSchema, classicGameSizeSchema };
 export type { ClassicCatalogShell, ClassicRosterDocument };
+export { classicCombatReferenceSchema, findClassicCombatCard } from './combatReference';
+export type { ClassicCombatReference, ClassicCombatCard } from './combatReference';
+export { classicWeaponReferenceSchema, findClassicWeaponBinding } from './weaponReference';
+export type { ClassicWeaponReference, ClassicWeapon, ClassicWeaponBinding } from './weaponReference';

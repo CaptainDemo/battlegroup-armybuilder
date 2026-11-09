@@ -1,0 +1,2921 @@
+{
+  "revision": "soviet-afv/1",
+  "rulesetId": "classic-coldwar",
+  "source": {
+    "title": "BGCW Soviet AFV data cards",
+    "sha256": "80e560ea58f716ca1b49075f1635d2ed557209c18bc607fe7c6902875fb8cbd1",
+    "authority": "unofficial-community"
+  },
+  "rangeBands": [
+    "0–5″",
+    "0–10″",
+    "10–20″",
+    "20–30″",
+    "30–40″",
+    "40–50″",
+    "50–70″",
+    "70–100″"
+  ],
+  "cards": [
+    {
+      "id": "t64a",
+      "name": "T-64A",
+      "page": 1,
+      "position": "top left",
+      "movement": {
+        "offRoad": 8,
+        "road": 15
+      },
+      "armour": {
+        "front": 16,
+        "side": 5,
+        "rear": 3,
+        "top": 2
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": false,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Coax",
+        "HMG – Pintle"
+      ],
+      "specialRules": [
+        "Advanced Stabilisers"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "125mm 2A46M-1 Early",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            23,
+            23,
+            23,
+            22,
+            21,
+            20,
+            19,
+            null
+          ]
+        },
+        {
+          "name": "125mm 2A46M-1 Early",
+          "ammunition": "HE",
+          "he": "5/3+",
+          "generation": null,
+          "rangeValues": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t64b",
+      "name": "T-64B",
+      "page": 1,
+      "position": "top centre",
+      "movement": {
+        "offRoad": 12,
+        "road": 18
+      },
+      "armour": {
+        "front": 17,
+        "side": 7,
+        "rear": 3,
+        "top": 2
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": false,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Coax",
+        "HMG – Turret"
+      ],
+      "specialRules": [
+        "Advanced Stabilisers",
+        "Unreliable Missile"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "125mm 2A46M-1 Early",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            23,
+            23,
+            23,
+            22,
+            21,
+            20,
+            19,
+            null
+          ]
+        },
+        {
+          "name": "125mm 2A46M-1 Early",
+          "ammunition": "HE",
+          "he": "5/3+",
+          "generation": null,
+          "rangeValues": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            null
+          ]
+        },
+        {
+          "name": "Kobra ATGM",
+          "ammunition": "0/2 Tandem",
+          "he": "3/5+",
+          "generation": "2",
+          "rangeValues": [
+            null,
+            null,
+            null,
+            20,
+            20,
+            20,
+            20,
+            20
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t64bv",
+      "name": "T-64BV w/ERA",
+      "page": 1,
+      "position": "top right",
+      "movement": {
+        "offRoad": 12,
+        "road": 18
+      },
+      "armour": {
+        "front": 20,
+        "side": 8,
+        "rear": 4,
+        "top": 2
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": false,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Coax",
+        "HMG – Turret"
+      ],
+      "specialRules": [
+        "Advanced Stabilisers",
+        "Unreliable Missile",
+        "Reactive Armour"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "125mm 2A46M-1 Early",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            23,
+            23,
+            23,
+            22,
+            21,
+            20,
+            19,
+            null
+          ]
+        },
+        {
+          "name": "125mm 2A46M-1 Early",
+          "ammunition": "HE",
+          "he": "5/3+",
+          "generation": null,
+          "rangeValues": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            null
+          ]
+        },
+        {
+          "name": "Kobra ATGM",
+          "ammunition": "0/2 Tandem",
+          "he": "3/5+",
+          "generation": "2",
+          "rangeValues": [
+            null,
+            null,
+            null,
+            20,
+            20,
+            20,
+            20,
+            20
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t80b",
+      "name": "T-80B",
+      "page": 1,
+      "position": "middle left",
+      "movement": {
+        "offRoad": 14,
+        "road": 20
+      },
+      "armour": {
+        "front": 18,
+        "side": 9,
+        "rear": 4,
+        "top": 3
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": false,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Coax",
+        "HMG – Pintle"
+      ],
+      "specialRules": [
+        "Advanced Stabilisers",
+        "Unreliable Missile"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "125mm 2A46M-1 Late",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            24,
+            24,
+            24,
+            23,
+            22,
+            21,
+            20,
+            null
+          ]
+        },
+        {
+          "name": "125mm 2A46M-1 Late",
+          "ammunition": "HE",
+          "he": "5/3+",
+          "generation": null,
+          "rangeValues": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            null
+          ]
+        },
+        {
+          "name": "Kobra ATGM",
+          "ammunition": "0/2 Tandem",
+          "he": "3/5+",
+          "generation": "2",
+          "rangeValues": [
+            null,
+            null,
+            null,
+            20,
+            20,
+            20,
+            20,
+            20
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t80bv",
+      "name": "T-80BV w/ERA",
+      "page": 1,
+      "position": "middle centre",
+      "movement": {
+        "offRoad": 14,
+        "road": 20
+      },
+      "armour": {
+        "front": 20,
+        "side": 9,
+        "rear": 5,
+        "top": 3
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": false,
+      "night": [
+        "II"
+      ],
+      "mounts": [
+        "MG – Coax",
+        "HMG – Pintle"
+      ],
+      "specialRules": [
+        "Advanced Stabilisers",
+        "Unreliable Missile"
+      ],
+      "notes": [
+        "The card lists no Reactive Armour rule for this ERA-labelled variant. No extra rule has been inferred."
+      ],
+      "weapons": [
+        {
+          "name": "125mm 2A46M-1 Late",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            24,
+            24,
+            24,
+            23,
+            22,
+            21,
+            20,
+            null
+          ]
+        },
+        {
+          "name": "125mm 2A46M-1 Late",
+          "ammunition": "HE",
+          "he": "5/3+",
+          "generation": null,
+          "rangeValues": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            null
+          ]
+        },
+        {
+          "name": "Kobra ATGM",
+          "ammunition": "0/2 Tandem",
+          "he": "3/5+",
+          "generation": "2",
+          "rangeValues": [
+            null,
+            null,
+            null,
+            20,
+            20,
+            20,
+            20,
+            20
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t80u",
+      "name": "T-80U",
+      "page": 1,
+      "position": "middle right",
+      "movement": {
+        "offRoad": 14,
+        "road": 20
+      },
+      "armour": {
+        "front": 23,
+        "side": 11,
+        "rear": 8,
+        "top": 4
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": false,
+      "night": [
+        "II"
+      ],
+      "mounts": [
+        "MG – Coax",
+        "HMG – Pintle"
+      ],
+      "specialRules": [
+        "Advanced Stabilisers",
+        "Advanced Armour"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "125mm 2A46M-1 Late",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            24,
+            24,
+            24,
+            23,
+            22,
+            21,
+            20,
+            null
+          ]
+        },
+        {
+          "name": "125mm 2A46M-1 Late",
+          "ammunition": "HE",
+          "he": "5/3+",
+          "generation": null,
+          "rangeValues": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            null
+          ]
+        },
+        {
+          "name": "Refleks ATGM",
+          "ammunition": "0/2 Tandem",
+          "he": "4/5+",
+          "generation": "2",
+          "rangeValues": [
+            null,
+            null,
+            24,
+            24,
+            24,
+            24,
+            24,
+            24
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t72a",
+      "name": "T-72A",
+      "page": 1,
+      "position": "bottom left",
+      "movement": {
+        "offRoad": 12,
+        "road": 18
+      },
+      "armour": {
+        "front": 17,
+        "side": 8,
+        "rear": 3,
+        "top": 2
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": false,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Coax",
+        "HMG – Pintle"
+      ],
+      "specialRules": [
+        "Advanced Stabilisers"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "125mm 2A46M-1 Early",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            23,
+            23,
+            23,
+            22,
+            21,
+            20,
+            19,
+            null
+          ]
+        },
+        {
+          "name": "125mm 2A46M-1 Early",
+          "ammunition": "HE",
+          "he": "5/3+",
+          "generation": null,
+          "rangeValues": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t72b1",
+      "name": "T-72B1",
+      "page": 1,
+      "position": "bottom centre",
+      "movement": {
+        "offRoad": 12,
+        "road": 18
+      },
+      "armour": {
+        "front": 21,
+        "side": 9,
+        "rear": 5,
+        "top": 2
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": false,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Coax",
+        "HMG – Pintle"
+      ],
+      "specialRules": [
+        "Advanced Stabilisers",
+        "Advanced Armour (Front Only)"
+      ],
+      "notes": [
+        "The card also prints optional Svir ATGM data. It is not included here because this catalog profile does not select that optional missile."
+      ],
+      "weapons": [
+        {
+          "name": "125mm 2A46M-1 Early",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            23,
+            23,
+            23,
+            22,
+            21,
+            20,
+            19,
+            null
+          ]
+        },
+        {
+          "name": "125mm 2A46M-1 Early",
+          "ammunition": "HE",
+          "he": "5/3+",
+          "generation": null,
+          "rangeValues": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t72av",
+      "name": "T-72AV",
+      "page": 1,
+      "position": "bottom right",
+      "movement": {
+        "offRoad": 12,
+        "road": 18
+      },
+      "armour": {
+        "front": 20,
+        "side": 7,
+        "rear": 4,
+        "top": 2
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": false,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Coax",
+        "HMG – Pintle"
+      ],
+      "specialRules": [
+        "Advanced Stabilisers",
+        "Reactive Armour"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "125mm 2A46M-1 Early",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            23,
+            23,
+            23,
+            22,
+            21,
+            20,
+            19,
+            null
+          ]
+        },
+        {
+          "name": "125mm 2A46M-1 Early",
+          "ammunition": "HE",
+          "he": "5/3+",
+          "generation": null,
+          "rangeValues": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t62a",
+      "name": "T-62A",
+      "page": 2,
+      "position": "middle right",
+      "movement": {
+        "offRoad": 8,
+        "road": 12
+      },
+      "armour": {
+        "front": 9,
+        "side": 4,
+        "rear": 2,
+        "top": 2
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": false,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Coax",
+        "HMG – Pintle"
+      ],
+      "specialRules": [],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "115mm U-5TS",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            19,
+            19,
+            19,
+            18,
+            17,
+            16,
+            15,
+            null
+          ]
+        },
+        {
+          "name": "115mm U-5TS",
+          "ammunition": "HE",
+          "he": "5/3+",
+          "generation": null,
+          "rangeValues": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t62m",
+      "name": "T-62M",
+      "page": 2,
+      "position": "bottom left",
+      "movement": {
+        "offRoad": 8,
+        "road": 12
+      },
+      "armour": {
+        "front": 11,
+        "side": 5,
+        "rear": 2,
+        "top": 2
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": false,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Coax",
+        "HMG – Pintle"
+      ],
+      "specialRules": [
+        "Advanced Stabilisers"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "115mm U-5TS",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            19,
+            19,
+            19,
+            18,
+            17,
+            16,
+            15,
+            null
+          ]
+        },
+        {
+          "name": "115mm U-5TS",
+          "ammunition": "HE",
+          "he": "5/3+",
+          "generation": null,
+          "rangeValues": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t62mb-bastion",
+      "name": "T-62MB with Bastion",
+      "page": 2,
+      "position": "bottom centre",
+      "movement": {
+        "offRoad": 8,
+        "road": 12
+      },
+      "armour": {
+        "front": 11,
+        "side": 5,
+        "rear": 2,
+        "top": 2
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": false,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Coax",
+        "HMG – Pintle"
+      ],
+      "specialRules": [
+        "Advanced Stabilisers",
+        "Unique"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "115mm U-5TS",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            19,
+            19,
+            19,
+            18,
+            17,
+            16,
+            15,
+            null
+          ]
+        },
+        {
+          "name": "115mm U-5TS",
+          "ammunition": "HE",
+          "he": "5/3+",
+          "generation": null,
+          "rangeValues": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            null
+          ]
+        },
+        {
+          "name": "Bastion ATGM",
+          "ammunition": "0/2",
+          "he": "3/5+",
+          "generation": "2",
+          "rangeValues": [
+            null,
+            null,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bmp1",
+      "name": "BMP-1 / BMP-1 AA",
+      "page": 3,
+      "position": "top left",
+      "movement": {
+        "offRoad": 12,
+        "road": 20
+      },
+      "armour": {
+        "front": 3,
+        "side": 2,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Medium",
+      "nbc": true,
+      "amphibious": true,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Coax"
+      ],
+      "specialRules": [
+        "Poor Design",
+        "Troop Capacity: 8"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "73mm 2A28",
+          "ammunition": "HE",
+          "he": "3/4+",
+          "generation": null,
+          "rangeValues": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "name": "Sagger ATGM",
+          "ammunition": "1/1",
+          "he": "2/5+",
+          "generation": "1",
+          "rangeValues": [
+            null,
+            null,
+            14,
+            14,
+            14,
+            14,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bmp1k",
+      "name": "BMP-1K",
+      "page": 3,
+      "position": "top centre",
+      "movement": {
+        "offRoad": 12,
+        "road": 20
+      },
+      "armour": {
+        "front": 3,
+        "side": 2,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Medium",
+      "nbc": true,
+      "amphibious": true,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Coax"
+      ],
+      "specialRules": [
+        "Poor Design",
+        "Troop Capacity: 3"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "73mm 2A28",
+          "ammunition": "HE",
+          "he": "3/4+",
+          "generation": null,
+          "rangeValues": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "name": "Sagger ATGM",
+          "ammunition": "1/1",
+          "he": "2/5+",
+          "generation": "1",
+          "rangeValues": [
+            null,
+            null,
+            14,
+            14,
+            14,
+            14,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bmp1p",
+      "name": "BMP-1P",
+      "page": 3,
+      "position": "top right",
+      "movement": {
+        "offRoad": 12,
+        "road": 20
+      },
+      "armour": {
+        "front": 3,
+        "side": 2,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Medium",
+      "nbc": true,
+      "amphibious": true,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Coax"
+      ],
+      "specialRules": [
+        "Poor Design",
+        "Dismount ATGM",
+        "Troop Capacity: 8"
+      ],
+      "notes": [
+        "The source repeats this card at middle left. Optional replacement missiles are not inferred from the base card."
+      ],
+      "weapons": [
+        {
+          "name": "73mm 2A28",
+          "ammunition": "HE",
+          "he": "3/4+",
+          "generation": null,
+          "rangeValues": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "name": "Spigot ATGM",
+          "ammunition": "1/1",
+          "he": "3/5+",
+          "generation": "2",
+          "rangeValues": [
+            null,
+            null,
+            19,
+            19,
+            19,
+            19,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bmp1pk",
+      "name": "BMP-1PK",
+      "page": 3,
+      "position": "middle centre",
+      "movement": {
+        "offRoad": 12,
+        "road": 20
+      },
+      "armour": {
+        "front": 3,
+        "side": 2,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Medium",
+      "nbc": true,
+      "amphibious": true,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Coax"
+      ],
+      "specialRules": [
+        "Poor Design",
+        "Dismount ATGM",
+        "Troop Capacity: 3"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "73mm 2A28",
+          "ammunition": "HE",
+          "he": "3/4+",
+          "generation": null,
+          "rangeValues": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            null,
+            null,
+            null
+          ]
+        },
+        {
+          "name": "Spigot ATGM",
+          "ammunition": "1/1",
+          "he": "3/5+",
+          "generation": "2",
+          "rangeValues": [
+            null,
+            null,
+            19,
+            19,
+            19,
+            19,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bmp1ksh",
+      "name": "BMP-1Ksh",
+      "page": 3,
+      "position": "middle right",
+      "movement": {
+        "offRoad": 12,
+        "road": 20
+      },
+      "armour": {
+        "front": 3,
+        "side": 2,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Medium",
+      "nbc": true,
+      "amphibious": true,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Pintle"
+      ],
+      "specialRules": [
+        "Poor Design",
+        "Troop Capacity: 3"
+      ],
+      "notes": [],
+      "weapons": []
+    },
+    {
+      "id": "bmp2",
+      "name": "BMP-2",
+      "page": 3,
+      "position": "bottom left",
+      "movement": {
+        "offRoad": 12,
+        "road": 20
+      },
+      "armour": {
+        "front": 3,
+        "side": 2,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Medium",
+      "nbc": true,
+      "amphibious": true,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Coax"
+      ],
+      "specialRules": [
+        "Poor Design",
+        "Advanced Stabilisers",
+        "Troop Capacity: 7"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "30mm 2A42",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            4,
+            4,
+            4,
+            3,
+            3,
+            2,
+            null,
+            null
+          ]
+        },
+        {
+          "name": "30mm 2A42",
+          "ammunition": "HE",
+          "he": "2/5+",
+          "generation": null,
+          "rangeValues": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            null,
+            null
+          ]
+        },
+        {
+          "name": "Spigot ATGM",
+          "ammunition": "1/1",
+          "he": "3/5+",
+          "generation": "2",
+          "rangeValues": [
+            null,
+            null,
+            19,
+            19,
+            19,
+            19,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bmp2k",
+      "name": "BMP-2K",
+      "page": 3,
+      "position": "bottom centre",
+      "movement": {
+        "offRoad": 12,
+        "road": 20
+      },
+      "armour": {
+        "front": 3,
+        "side": 2,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Medium",
+      "nbc": true,
+      "amphibious": true,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Coax"
+      ],
+      "specialRules": [
+        "Poor Design",
+        "Advanced Stabilisers",
+        "Troop Capacity: 3"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "30mm 2A42",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            4,
+            4,
+            4,
+            3,
+            3,
+            2,
+            null,
+            null
+          ]
+        },
+        {
+          "name": "30mm 2A42",
+          "ammunition": "HE",
+          "he": "2/5+",
+          "generation": null,
+          "rangeValues": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            null,
+            null
+          ]
+        },
+        {
+          "name": "Spigot ATGM",
+          "ammunition": "1/1",
+          "he": "3/5+",
+          "generation": "2",
+          "rangeValues": [
+            null,
+            null,
+            19,
+            19,
+            19,
+            19,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bmp2d",
+      "name": "BMP-2D",
+      "page": 3,
+      "position": "bottom right",
+      "movement": {
+        "offRoad": 12,
+        "road": 20
+      },
+      "armour": {
+        "front": 4,
+        "side": 2,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Medium",
+      "nbc": true,
+      "amphibious": false,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Coax"
+      ],
+      "specialRules": [
+        "Poor Design",
+        "Advanced Stabilisers",
+        "Troop Capacity: 7"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "30mm 2A42",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            4,
+            4,
+            4,
+            3,
+            3,
+            2,
+            null,
+            null
+          ]
+        },
+        {
+          "name": "30mm 2A42",
+          "ammunition": "HE",
+          "he": "2/5+",
+          "generation": null,
+          "rangeValues": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            null,
+            null
+          ]
+        },
+        {
+          "name": "Spigot ATGM",
+          "ammunition": "1/1",
+          "he": "3/5+",
+          "generation": "2",
+          "rangeValues": [
+            null,
+            null,
+            19,
+            19,
+            19,
+            19,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "prp3",
+      "name": "PRP-3",
+      "page": 4,
+      "position": "top centre",
+      "movement": {
+        "offRoad": 12,
+        "road": 20
+      },
+      "armour": {
+        "front": 3,
+        "side": 2,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Medium",
+      "nbc": true,
+      "amphibious": true,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Turret"
+      ],
+      "specialRules": [
+        "Poor Design",
+        "Ground Surveillance Radar"
+      ],
+      "notes": [],
+      "weapons": []
+    },
+    {
+      "id": "mtlb",
+      "name": "MTLB",
+      "page": 4,
+      "position": "top right",
+      "movement": {
+        "offRoad": 12,
+        "road": 18
+      },
+      "armour": {
+        "front": 1,
+        "side": 1,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": true,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Turret"
+      ],
+      "specialRules": [
+        "Artillery Tow",
+        "Transport Capacity: 10 troops"
+      ],
+      "notes": [],
+      "weapons": []
+    },
+    {
+      "id": "sa13",
+      "name": "MTLB / SA-13 Gopher",
+      "page": 4,
+      "position": "middle left",
+      "movement": {
+        "offRoad": 12,
+        "road": 18
+      },
+      "armour": {
+        "front": 1,
+        "side": 1,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": false,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Turret"
+      ],
+      "specialRules": [
+        "SAM"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "4 × 9M333 (SA-13) SAM",
+          "ammunition": "4/1",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "snar10",
+      "name": "SNAR-10",
+      "page": 4,
+      "position": "middle centre",
+      "movement": {
+        "offRoad": 12,
+        "road": 18
+      },
+      "armour": {
+        "front": 1,
+        "side": 1,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": true,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Turret"
+      ],
+      "specialRules": [
+        "Artillery Radar"
+      ],
+      "notes": [],
+      "weapons": []
+    },
+    {
+      "id": "acrv",
+      "name": "ACRV 1V12",
+      "page": 4,
+      "position": "middle right",
+      "movement": {
+        "offRoad": 12,
+        "road": 18
+      },
+      "armour": {
+        "front": 1,
+        "side": 1,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": true,
+      "night": [
+        "II"
+      ],
+      "mounts": [
+        "HMG – Pintle"
+      ],
+      "specialRules": [],
+      "notes": [],
+      "weapons": []
+    },
+    {
+      "id": "brdm2",
+      "name": "BRDM-2",
+      "page": 4,
+      "position": "bottom left",
+      "movement": {
+        "offRoad": 8,
+        "road": 26
+      },
+      "armour": {
+        "front": 1,
+        "side": 1,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Small",
+      "nbc": true,
+      "amphibious": true,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "HMG – Turret",
+        "MG – Coax"
+      ],
+      "specialRules": [],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "14.5mm Heavy MG",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            2,
+            2,
+            1,
+            1,
+            1,
+            1,
+            1,
+            null
+          ]
+        },
+        {
+          "name": "14.5mm Heavy MG",
+          "ammunition": "HE",
+          "he": "1/5+",
+          "generation": null,
+          "rangeValues": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "brdm2-sagger",
+      "name": "BRDM-2 / Sagger",
+      "page": 4,
+      "position": "bottom centre",
+      "movement": {
+        "offRoad": 8,
+        "road": 26
+      },
+      "armour": {
+        "front": 1,
+        "side": 1,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Small",
+      "nbc": true,
+      "amphibious": true,
+      "night": [],
+      "mounts": [],
+      "specialRules": [
+        "Displaced Track & Fire"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "AT-3 Sagger ATGM",
+          "ammunition": "AP; 6/1",
+          "he": "2/5+",
+          "generation": "1",
+          "rangeValues": [
+            null,
+            null,
+            14,
+            14,
+            14,
+            14,
+            14,
+            14
+          ]
+        }
+      ]
+    },
+    {
+      "id": "brdm2-spandrel",
+      "name": "BRDM-2 / Spandrel",
+      "page": 4,
+      "position": "bottom right",
+      "movement": {
+        "offRoad": 8,
+        "road": 26
+      },
+      "armour": {
+        "front": 1,
+        "side": 1,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Small",
+      "nbc": true,
+      "amphibious": true,
+      "night": [],
+      "mounts": [],
+      "specialRules": [
+        "Displaced Track & Fire"
+      ],
+      "notes": [
+        "The card labels this weapon AT-3 Spandrel; the heading is retained as Spandrel without correcting its designation."
+      ],
+      "weapons": [
+        {
+          "name": "Spandrel ATGM",
+          "ammunition": "AP; 5/1",
+          "he": "3/5+",
+          "generation": "2",
+          "rangeValues": [
+            null,
+            null,
+            20,
+            20,
+            20,
+            20,
+            20,
+            20
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sa9",
+      "name": "BRDM-2 / SA-9 Gaskin",
+      "page": 5,
+      "position": "top left",
+      "movement": {
+        "offRoad": 8,
+        "road": 26
+      },
+      "armour": {
+        "front": 1,
+        "side": 1,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Small",
+      "nbc": true,
+      "amphibious": true,
+      "night": [],
+      "mounts": [
+        "HMG – Turret",
+        "MG – Coax"
+      ],
+      "specialRules": [
+        "SAM"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "4 × 9M31 (SA-9) SAM",
+          "ammunition": "4/0",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "brdm2rkh",
+      "name": "BRDM-2Rkh",
+      "page": 5,
+      "position": "top centre",
+      "movement": {
+        "offRoad": 8,
+        "road": 26
+      },
+      "armour": {
+        "front": 1,
+        "side": 1,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Small",
+      "nbc": true,
+      "amphibious": true,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "MG – Turret"
+      ],
+      "specialRules": [
+        "NBC"
+      ],
+      "notes": [],
+      "weapons": []
+    },
+    {
+      "id": "btr50pu",
+      "name": "BTR-50PU",
+      "page": 5,
+      "position": "top right",
+      "movement": {
+        "offRoad": 8,
+        "road": 12
+      },
+      "armour": {
+        "front": 0,
+        "side": 0,
+        "rear": 0,
+        "top": 0
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": true,
+      "night": [],
+      "mounts": [
+        "MG – Pintle"
+      ],
+      "specialRules": [
+        "Command"
+      ],
+      "notes": [],
+      "weapons": []
+    },
+    {
+      "id": "btr60pb",
+      "name": "BTR-60 PB",
+      "page": 5,
+      "position": "middle right",
+      "movement": {
+        "offRoad": 10,
+        "road": 25
+      },
+      "armour": {
+        "front": 2,
+        "side": 1,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Medium",
+      "nbc": true,
+      "amphibious": true,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "HMG – Turret",
+        "MG – Coax"
+      ],
+      "specialRules": [
+        "Transport Capacity: 8 troops"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "14.5mm Heavy MG",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            2,
+            2,
+            1,
+            1,
+            1,
+            1,
+            1,
+            null
+          ]
+        },
+        {
+          "name": "14.5mm Heavy MG",
+          "ammunition": "HE",
+          "he": "1/5+",
+          "generation": null,
+          "rangeValues": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "btr60r975",
+      "name": "BTR-60 R-975",
+      "page": 5,
+      "position": "bottom right",
+      "movement": {
+        "offRoad": 10,
+        "road": 25
+      },
+      "armour": {
+        "front": 2,
+        "side": 1,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Medium",
+      "nbc": true,
+      "amphibious": true,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "HMG – Turret"
+      ],
+      "specialRules": [
+        "FAC"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "14.5mm Heavy MG",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            2,
+            2,
+            1,
+            1,
+            1,
+            1,
+            1,
+            null
+          ]
+        },
+        {
+          "name": "14.5mm Heavy MG",
+          "ammunition": "HE",
+          "he": "1/5+",
+          "generation": null,
+          "rangeValues": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "btr70",
+      "name": "BTR-70",
+      "page": 6,
+      "position": "top left",
+      "movement": {
+        "offRoad": 10,
+        "road": 25
+      },
+      "armour": {
+        "front": 2,
+        "side": 1,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Medium",
+      "nbc": true,
+      "amphibious": true,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "HMG – Turret",
+        "MG – Coax"
+      ],
+      "specialRules": [
+        "Transport Capacity: 8 troops"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "14.5mm Heavy MG",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            2,
+            2,
+            1,
+            1,
+            1,
+            1,
+            1,
+            null
+          ]
+        },
+        {
+          "name": "14.5mm Heavy MG",
+          "ammunition": "HE",
+          "he": "1/5+",
+          "generation": null,
+          "rangeValues": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "btr80",
+      "name": "BTR-80",
+      "page": 6,
+      "position": "middle left",
+      "movement": {
+        "offRoad": 10,
+        "road": 25
+      },
+      "armour": {
+        "front": 2,
+        "side": 1,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Medium",
+      "nbc": true,
+      "amphibious": true,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [
+        "HMG – Turret",
+        "MG – Coax"
+      ],
+      "specialRules": [
+        "Transport Capacity: 8 troops"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "14.5mm Heavy MG",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            2,
+            2,
+            1,
+            1,
+            1,
+            1,
+            1,
+            null
+          ]
+        },
+        {
+          "name": "14.5mm Heavy MG",
+          "ammunition": "HE",
+          "he": "1/5+",
+          "generation": null,
+          "rangeValues": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zsu234",
+      "name": "ZSU-23-4 Shilka",
+      "page": 6,
+      "position": "middle right",
+      "movement": {
+        "offRoad": 8,
+        "road": 13
+      },
+      "armour": {
+        "front": 1,
+        "side": 1,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": false,
+      "night": [],
+      "mounts": [],
+      "specialRules": [
+        "Radar Directed ADA"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "4 × 2A7 23mm cannons",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            2,
+            2,
+            2,
+            1,
+            1,
+            1,
+            1,
+            null
+          ]
+        },
+        {
+          "name": "4 × 2A7 23mm cannons",
+          "ammunition": "HE",
+          "he": "2/5+",
+          "generation": null,
+          "rangeValues": [
+            1,
+            2,
+            2,
+            2,
+            2,
+            2,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tunguska",
+      "name": "2S6 Tunguska",
+      "page": 6,
+      "position": "bottom left",
+      "movement": {
+        "offRoad": 8,
+        "road": 13
+      },
+      "armour": {
+        "front": 1,
+        "side": 1,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": false,
+      "night": [],
+      "mounts": [],
+      "specialRules": [
+        "Radar Directed ADA",
+        "SAM"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "2 × 2A38 30mm cannons",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            4,
+            4,
+            4,
+            3,
+            3,
+            2,
+            null,
+            null
+          ]
+        },
+        {
+          "name": "2 × 2A38 30mm cannons",
+          "ammunition": "HE",
+          "he": "2/5+",
+          "generation": null,
+          "rangeValues": [
+            2,
+            2,
+            2,
+            2,
+            2,
+            2,
+            null,
+            null
+          ]
+        },
+        {
+          "name": "4 × SA-19 SAM",
+          "ammunition": "4/0",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sa6",
+      "name": "2K12 SA-6 Gainful",
+      "page": 6,
+      "position": "bottom centre",
+      "movement": {
+        "offRoad": 8,
+        "road": 13
+      },
+      "armour": {
+        "front": 1,
+        "side": 1,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": false,
+      "night": [],
+      "mounts": [],
+      "specialRules": [
+        "SAM"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "3 × 2K12 (SA-6) SAM",
+          "ammunition": "3/0",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sa8",
+      "name": "9K33 SA-8 Gecko",
+      "page": 6,
+      "position": "bottom right",
+      "movement": {
+        "offRoad": 8,
+        "road": 13
+      },
+      "armour": {
+        "front": 1,
+        "side": 1,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": true,
+      "night": [
+        "II"
+      ],
+      "mounts": [],
+      "specialRules": [
+        "SAM"
+      ],
+      "notes": [
+        "The source vehicle row says 2K12 beneath a 9K33 SA-8 heading. This reference follows the heading; movement and armour are transcribed without correction."
+      ],
+      "weapons": [
+        {
+          "name": "6 × 9M33 (SA-8) SAM",
+          "ammunition": "6/0",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sa11",
+      "name": "9K37 Buk SA-11 Gadfly",
+      "page": 7,
+      "position": "top left",
+      "movement": {
+        "offRoad": 8,
+        "road": 13
+      },
+      "armour": {
+        "front": 1,
+        "side": 1,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": false,
+      "night": [],
+      "mounts": [],
+      "specialRules": [
+        "SAM"
+      ],
+      "notes": [
+        "The source vehicle row says 2K12. The ammunition cell contains a dash; no ammunition quantity is inferred."
+      ],
+      "weapons": [
+        {
+          "name": "4 × 9M317 (SA-11) SAM",
+          "ammunition": "—",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2s1",
+      "name": "2S1 Gvozdika",
+      "page": 7,
+      "position": "top centre",
+      "movement": {
+        "offRoad": 12,
+        "road": 18
+      },
+      "armour": {
+        "front": 1,
+        "side": 1,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": true,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [],
+      "specialRules": [
+        "Ammo: 4"
+      ],
+      "notes": [
+        "The card heading spells Gvozdkia; this record uses the catalog spelling Gvozdika."
+      ],
+      "weapons": [
+        {
+          "name": "2A18 122mm howitzer",
+          "ammunition": "HE",
+          "he": "5/3+",
+          "generation": null,
+          "rangeValues": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tos1",
+      "name": "TOS-1",
+      "page": 7,
+      "position": "bottom left",
+      "movement": {
+        "offRoad": 10,
+        "road": 16
+      },
+      "armour": {
+        "front": 10,
+        "side": 4,
+        "rear": 3,
+        "top": 2
+      },
+      "size": "Large",
+      "nbc": false,
+      "amphibious": false,
+      "night": [],
+      "mounts": [],
+      "specialRules": [
+        "Thermobaric Weapon",
+        "MRL: Multiple Hits"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "220mm Rocket Multiple",
+          "ammunition": "HE",
+          "he": "6/2+",
+          "generation": null,
+          "rangeValues": [
+            5,
+            5,
+            5,
+            5,
+            5,
+            5,
+            5,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gsp",
+      "name": "GSP Amphib Ferry",
+      "page": 8,
+      "position": "top right",
+      "movement": {
+        "offRoad": 6,
+        "road": 12
+      },
+      "armour": {
+        "front": 0,
+        "side": 0,
+        "rear": 0,
+        "top": 0
+      },
+      "size": "Large",
+      "nbc": false,
+      "amphibious": true,
+      "night": [],
+      "mounts": [],
+      "specialRules": [
+        "Bridging"
+      ],
+      "notes": [],
+      "weapons": []
+    },
+    {
+      "id": "pmm2",
+      "name": "PMM-2 Tracked Ferry",
+      "page": 8,
+      "position": "middle left",
+      "movement": {
+        "offRoad": 6,
+        "road": 12
+      },
+      "armour": {
+        "front": 1,
+        "side": 1,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Large",
+      "nbc": false,
+      "amphibious": true,
+      "night": [],
+      "mounts": [],
+      "specialRules": [
+        "Bridging"
+      ],
+      "notes": [
+        "The vehicle row says GSP beneath the PMM-2 heading. Values are transcribed from this card without using the GSP card."
+      ],
+      "weapons": []
+    },
+    {
+      "id": "t62t",
+      "name": "T-62T",
+      "page": 8,
+      "position": "middle centre",
+      "movement": {
+        "offRoad": 8,
+        "road": 12
+      },
+      "armour": {
+        "front": 9,
+        "side": 4,
+        "rear": 2,
+        "top": 2
+      },
+      "size": "Large",
+      "nbc": false,
+      "amphibious": false,
+      "night": [],
+      "mounts": [],
+      "specialRules": [
+        "Repair",
+        "Recovery"
+      ],
+      "notes": [],
+      "weapons": []
+    },
+    {
+      "id": "brem1",
+      "name": "BREM-1",
+      "page": 8,
+      "position": "middle right",
+      "movement": {
+        "offRoad": 12,
+        "road": 18
+      },
+      "armour": {
+        "front": 20,
+        "side": 8,
+        "rear": 5,
+        "top": 2
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": false,
+      "night": [],
+      "mounts": [
+        "MG – Pintle"
+      ],
+      "specialRules": [
+        "Repair",
+        "Recovery"
+      ],
+      "notes": [],
+      "weapons": []
+    },
+    {
+      "id": "brem2",
+      "name": "BREM-2",
+      "page": 8,
+      "position": "bottom left",
+      "movement": {
+        "offRoad": 12,
+        "road": 20
+      },
+      "armour": {
+        "front": 3,
+        "side": 2,
+        "rear": 1,
+        "top": 1
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": true,
+      "night": [],
+      "mounts": [
+        "MG – Pintle"
+      ],
+      "specialRules": [
+        "Repair",
+        "Recovery"
+      ],
+      "notes": [],
+      "weapons": []
+    },
+    {
+      "id": "mtu55",
+      "name": "MTU-55 AVLB",
+      "page": 8,
+      "position": "bottom centre",
+      "movement": {
+        "offRoad": 6,
+        "road": 10
+      },
+      "armour": {
+        "front": 6,
+        "side": 3,
+        "rear": 2,
+        "top": 3
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": false,
+      "night": [],
+      "mounts": [
+        "MG – Pintle"
+      ],
+      "specialRules": [
+        "Bridging"
+      ],
+      "notes": [],
+      "weapons": []
+    },
+    {
+      "id": "ptsm",
+      "name": "PTS-M Amphib Transporter",
+      "page": 8,
+      "position": "bottom right",
+      "movement": {
+        "offRoad": 6,
+        "road": 10
+      },
+      "armour": {
+        "front": 0,
+        "side": 0,
+        "rear": 0,
+        "top": 0
+      },
+      "size": "Large",
+      "nbc": false,
+      "amphibious": true,
+      "night": [],
+      "mounts": [
+        "MG – Pintle"
+      ],
+      "specialRules": [
+        "Bridging",
+        "Carrier – 50 troops"
+      ],
+      "notes": [],
+      "weapons": []
+    },
+    {
+      "id": "to55",
+      "name": "TO-55",
+      "page": 9,
+      "position": "top left",
+      "movement": {
+        "offRoad": 8,
+        "road": 12
+      },
+      "armour": {
+        "front": 7,
+        "side": 4,
+        "rear": 2,
+        "top": 2
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": false,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [],
+      "specialRules": [
+        "Tank Flamethrower"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "100mm D-10T",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            17,
+            17,
+            17,
+            16,
+            15,
+            14,
+            13,
+            null
+          ]
+        },
+        {
+          "name": "100mm D-10T",
+          "ammunition": "HE",
+          "he": "5/3+",
+          "generation": null,
+          "rangeValues": [
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            3,
+            null
+          ]
+        },
+        {
+          "name": "ATO-200 Flame",
+          "ammunition": "—",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "id": "to62a",
+      "name": "TO-62A",
+      "page": 9,
+      "position": "top centre",
+      "movement": {
+        "offRoad": 8,
+        "road": 12
+      },
+      "armour": {
+        "front": 9,
+        "side": 4,
+        "rear": 2,
+        "top": 2
+      },
+      "size": "Large",
+      "nbc": true,
+      "amphibious": false,
+      "night": [
+        "IRS",
+        "WLS"
+      ],
+      "mounts": [],
+      "specialRules": [
+        "Tank Flamethrower"
+      ],
+      "notes": [],
+      "weapons": [
+        {
+          "name": "115mm U-5TS",
+          "ammunition": "AP",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            19,
+            19,
+            19,
+            18,
+            17,
+            16,
+            15,
+            null
+          ]
+        },
+        {
+          "name": "115mm U-5TS",
+          "ammunition": "HE",
+          "he": "5/3+",
+          "generation": null,
+          "rangeValues": [
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            4,
+            null
+          ]
+        },
+        {
+          "name": "ATO-200 Flame",
+          "ammunition": "—",
+          "he": null,
+          "generation": null,
+          "rangeValues": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ]
+        }
+      ]
+    }
+  ],
+  "bindings": [
+    {
+      "catalogId": "soviet-armoured-division-v4_1",
+      "catalogRevision": "1.1.0",
+      "profiles": {
+        "t-64a": "t64a",
+        "t-64b": "t64b",
+        "t-64bv": "t64bv",
+        "t-80b": "t80b",
+        "t-80bv": "t80bv",
+        "t-80u": "t80u",
+        "t-72a": "t72a",
+        "t-72b1": "t72b1",
+        "t-72av": "t72av",
+        "t-62a": "t62a",
+        "t-62m": "t62m",
+        "t-62mb-with-bastion": "t62mb-bastion",
+        "bmp-1": "bmp1",
+        "bmp-1aa": "bmp1",
+        "bmp-1k": "bmp1k",
+        "bmp-1p": "bmp1p",
+        "bmp-1pk": "bmp1pk",
+        "bmp-1ksh": "bmp1ksh",
+        "bmp-2": "bmp2",
+        "bmp-2k": "bmp2k",
+        "bmp-2d": "bmp2d",
+        "prp-3": "prp3",
+        "mtlb": "mtlb",
+        "sa-13-gopher": "sa13",
+        "snar-10": "snar10",
+        "acrv": "acrv",
+        "brdm-2": "brdm2",
+        "9p133-malyutka-brdm-2-at-3": "brdm2-sagger",
+        "9p148-konkurs-brdm-2-at-5": "brdm2-spandrel",
+        "sa-9-gaskin": "sa9",
+        "brdm-2-rkhb": "brdm2rkh",
+        "btr-50pu": "btr50pu",
+        "btr-60pb": "btr60pb",
+        "btr-60r-975": "btr60r975",
+        "btr-70": "btr70",
+        "btr-80": "btr80",
+        "zsu-23-4": "zsu234",
+        "9k22-tunguska": "tunguska",
+        "sa-6-gainful": "sa6",
+        "sa-8-gecko": "sa8",
+        "sa-11-gadfly": "sa11",
+        "2s1-gvozdika": "2s1",
+        "tos-1-thermobaric-mrl": "tos1",
+        "gsp-amphibious-ferry": "gsp",
+        "pmm-2-tracked-ferry": "pmm2",
+        "t-62-t": "t62t",
+        "brem-1": "brem1",
+        "brem-2": "brem2",
+        "mtu-55-avlb": "mtu55",
+        "pts-m-amphibious-transporter": "ptsm",
+        "to-55": "to55",
+        "to-62a": "to62a"
+      }
+    },
+    {
+      "catalogId": "soviet-armoured-division-v4_1",
+      "catalogRevision": "1.0.0",
+      "profiles": {
+        "t72a": "t72a",
+        "bmp1": "bmp1",
+        "bmp1p": "bmp1p",
+        "bmp1k": "bmp1k",
+        "brdm2": "brdm2",
+        "zsu234": "zsu234",
+        "mtlb": "mtlb"
+      }
+    }
+  ]
+}
