@@ -1,4 +1,4 @@
-export type RouteId = 'home' | 'editor' | 'roadmap';
+export type RouteId = 'home' | 'editor';
 
 export interface AppRoute {
   readonly id: RouteId;
@@ -10,7 +10,6 @@ export interface AppRoute {
 export const routes: readonly AppRoute[] = [
   { id: 'home', path: '/', navLabelKey: 'nav.home' },
   { id: 'editor', path: '/editor', navLabelKey: 'nav.editor' },
-  { id: 'roadmap', path: '/roadmap', navLabelKey: 'nav.roadmap' },
 ];
 
 export function findRoute(path: string): AppRoute | undefined {

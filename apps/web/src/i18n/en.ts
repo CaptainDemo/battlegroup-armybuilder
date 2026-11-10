@@ -11,42 +11,31 @@ export const en = {
   nav: {
     home: 'My Rosters',
     editor: 'Editor',
-    roadmap: 'Roadmap',
   },
   home: {
     myRostersTitle: 'My Rosters',
     createTitle: 'Create a roster',
   },
-  roadmap: {
-    title: 'Roadmap',
-    intro: 'Engineering milestones and their honest current status.',
-    m01Label: 'M01 — Source verification and coverage baseline',
-    m01Status:
-      'Delivered: manually verified fixture accounts, including a 398 points / 23 battle rating sample baseline.',
-    m02Label: 'M02 — Engineering and build foundation',
-    m02Status:
-      'Delivered: this web shell, npm workspaces, type checks, unit tests, browser checks and a static build.',
-    m03Label: 'M03–M07 — Domain contracts, catalogue, commands, evaluation, Classic rules',
-    m03Status: 'Delivered: versioned Classic data, atomic editing commands, pricing and scoped Classic checks. Coverage remains partial.',
-    m08Label: 'M08 — Web roster editing',
-    m08Status: 'Delivered: purchases, options, totals, issue navigation and undo/redo.',
-    m09Label: 'M09–M12 — Storage, import/export, print, deployment',
-    m09Status:
-      'Local autosave, conflict recovery, JSON import/export with backups and the browser print/PDF view are available. Combined acceptance and further deployment remain planned.',
+  debug: {
+    title: 'Debug tools',
+    catalogEntries: 'Catalog purchase records:',
+    omitted: 'Catalog coverage exclusions',
+    checks: 'Check diagnostics',
+  },
+  coverage: {
+    partial: 'Automatic checks cover part of the army-list rules. No reported problems does not guarantee a fully legal roster.',
+    complete: 'All available rule checks have run. See Problems for any violations.',
+    unknownData: 'Some checks could not be completed because required data is unavailable.',
+    missingInput: 'Some checks need additional roster settings, such as the scenario or player role.',
   },
   editor: {
-    preview: 'Classic preview — local autosave',
-    sessionOnly: 'Rosters are saved in this browser on this device. Check the save status before closing the page.',
-    loading: 'Loading the Classic catalog…', ready: 'Classic catalog ready.',
+    loading: 'Loading army lists…',
     loadFailed: 'Catalog verification failed in this browser. Retry loading the catalog.',
-    omittedOptions: 'Certain Restricted/Unique upgrades and MANPADS combinations await clarification.',
     retry: 'Retry catalog loading', updated: 'Roster updated.', created: 'Roster created.',
-    emptyLibrary: 'No rosters yet. Create one below or open the example.',
+    emptyLibrary: 'No rosters yet. Create one below or import a roster file.',
     emptyRoster: 'Your roster is empty. Use a section’s add button to choose a formation.',
     open: 'Open', deleteRoster: 'Delete roster',
     exampleName: 'Soviet sample roster', createExample: 'Create the 398 Points / 23 BR example',
-    coverageTitle: 'Available data',
-    coverageBody: 'Classic Cold War · Soviet Armoured Division V4.1 formation catalog. Purchase contexts include companies, fixed platoons and their attachments. Combat attributes and overall rule coverage remain partial. Available purchase records:',
     included: 'Included in the company price; not a separate purchase.', companyCharges: 'Company price breakdown', perTarget: 'per selected target',
     scenario: 'Scenario', playerRole: 'Player role', unspecified: 'Not specified', attackDefence: 'Attack-Defence', attacker: 'Attacker', defender: 'Defender',
     noRoster: 'Create or open a roster first', back: 'Back to My Rosters',
@@ -68,7 +57,7 @@ export const en = {
     composition: 'Current composition', noEntities: 'This purchase has no on-table entities.',
     attributesUnknown: 'Missing combat data remains unknown. Unknown values are not zero.',
     sources: 'Sources', problems: 'Problems', noProblems: 'No violations found within implemented checks. Coverage is partial.',
-    coverage: 'Check coverage', target: 'target', name: 'Roster name', ruleset: 'Ruleset', army: 'Army list',
+    coverage: 'Rule coverage', target: 'target', name: 'Roster name', ruleset: 'Ruleset', army: 'Army list',
     budget: 'Points budget', gameSize: 'Game size', create: 'Create roster', applySettings: 'Apply settings',
   },
   storage: {
@@ -134,7 +123,7 @@ export const en = {
     batchRejectedSuffix:
       'record(s) this app cannot import. The whole batch is rejected and nothing is written — remove or fix the failing records in the file and try again.',
     limitsNote:
-      'Limits: single roster 2 MiB and 5000 purchases; backup 20 MiB and 200 rosters; nesting depth 64. Catalogs load only from this app’s own index at the exact saved version.',
+      'Maximum file size: 2 MiB for a roster, 20 MiB for a backup.',
     exportRoster: 'Export JSON',
   },
   unitData: {
@@ -215,13 +204,12 @@ export const en = {
   },
   notFound: {
     title: 'Page not found',
-    body: 'This hash route does not exist.',
+    body: 'This page is unavailable. Return to your rosters to continue.',
     backHome: 'Back to My Rosters',
   },
   footer: {
     license:
       'A free community tool under the MIT license. Not affiliated with the rules authors or publishers.',
-    docs: 'Design documents live in the repository docs/ folder.',
   },
 } as const;
 

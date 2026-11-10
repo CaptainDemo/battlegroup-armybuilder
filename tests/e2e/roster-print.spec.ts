@@ -172,7 +172,7 @@ async function openPrint(page: Page): Promise<void> {
 test.describe('roster print', () => {
   test('optionally appends the roster vehicle and weapon data without changing its snapshot', async ({page})=>{
     test.slow();
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await createExample(page);
     await openPrint(page);
     const option=page.getByRole('checkbox',{name:'Append vehicle and weapon data',exact:true});
@@ -215,7 +215,7 @@ test.describe('roster print', () => {
 
   test('appends selected missile upgrades, SAM properties and missing vehicle markers',async({page})=>{
     test.slow();
-    await page.goto('/');
+    await page.goto('/?debug=1');
     const document={...longDocument,rosterId:'appendix-upgrades',name:'Appendix with targeted upgrades',notes:'Appendix acceptance roster.',selections:[
       selection('p','bmp1-platoon',{sectionId:'motor-rifle',choices:[
         {optionGroupLocalId:'bmp1-platoon-infantry',optionLocalId:'all-bmp1-to-p',targets:['command','assistant','rifle'].map(id=>({kind:'member-path',nodePath:[id,'transport']}))},
@@ -246,7 +246,7 @@ test.describe('roster print', () => {
   });
 
   test('prints the current draft, refreshes after edits and keeps the editor intact', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await createExample(page);
     await openPrint(page);
     const sheet = page.locator('#print-sheet');
@@ -287,7 +287,7 @@ test.describe('roster print', () => {
 
   test('prints a long multi-page roster to a real A4 PDF with fixed platoons and anchored attachments', async ({ page }) => {
     test.slow();
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await importAndOpen(page, rosterFile('long-print-roster.json', longDocument));
     const editorPoints = await page.getByTestId('points-total').textContent();
     await openPrint(page);
@@ -375,7 +375,7 @@ test.describe('roster print', () => {
 
   test('prints violations, coverage gaps and unknown markers without blocking the draft', async ({ page }) => {
     test.slow();
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await importAndOpen(page, rosterFile('violation-print-roster.json', violationDocument));
     await openPrint(page);
     const sheet = page.locator('#print-sheet');
@@ -386,7 +386,9 @@ test.describe('roster print', () => {
     await expect(issues).toContainText('C16');
     await expect(issues.locator('li[data-severity="error"]').first()).toBeVisible();
     // Coverage stays independent from confirmed violations.
-    await expect(page.getByTestId('print-coverage')).toContainText('not implemented');
+    await expect(page.getByTestId('print-coverage')).toContainText('Automatic checks cover part of the army-list rules.');
+    await expect(page.getByTestId('print-coverage')).not.toContainText('classic/full-army-coverage');
+    await expect(page.getByTestId('print-coverage')).not.toContainText('user clarification');
     // Player-entered markup renders as text, never as HTML in the printout.
     await expect(sheet).toContainText('<img src=x onerror="window.__printXss=1">');
     await expect(sheet.locator('img')).toHaveCount(0);
@@ -412,7 +414,7 @@ test.describe('roster print', () => {
   });
 
   test('prints the exact legacy 1.0.0 catalog with its leaf composition root', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await importAndOpen(page, rosterFile('legacy-print-roster.json', legacyDocument));
     await openPrint(page);
     const sheet = page.locator('#print-sheet');

@@ -161,24 +161,6 @@ body {
   color: var(--text-muted);
 }
 
-.coverage-list,
-.milestone-list {
-  margin: 0.5rem 0;
-  padding-left: 1.25rem;
-}
-
-.milestone-list li {
-  margin-bottom: 0.75rem;
-}
-
-.milestone-list h3 {
-  margin: 0 0 0.2rem;
-}
-
-.milestone-list p {
-  margin: 0;
-}
-
 .button {
   display: inline-block;
   margin-top: 0.75rem;
@@ -227,7 +209,6 @@ small { display: block; color: var(--text-muted); font-size: .8rem; }
 .workspace { gap: 1rem; }
 .workspace > *, .editor-grid > *, .settings-form > * { min-width: 0; }
 .workspace { overflow-wrap: anywhere; }
-.preview-note { display: flex; flex-wrap: wrap; gap: .25rem 1rem; background: var(--status-bg); border: 1px solid var(--status-border); color: var(--status-text); border-radius: var(--radius); padding: .7rem 1rem; font-size: .9rem; }
 .workspace-notice { margin: 0; color: var(--text-muted); font-size: .85rem; }
 .editor-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; }
 .editor-heading h2 { margin: 0; font-size: 1.6rem; }

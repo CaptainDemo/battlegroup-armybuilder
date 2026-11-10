@@ -38,6 +38,7 @@ import type { ImportApplyResult } from '../roster-transfer/applyImport';
 import { downloadSingleRoster } from '../roster-transfer/rosterExport';
 import { UnitDataPanel } from './UnitDataPanel';
 import { PrintPreview, type PrintSnapshot } from '../roster-output/PrintPreview';
+import { RuleCoverage } from '../../components/RuleCoverage';
 
 function sameCatalogIdentity(
   a: ClassicCatalogRelease,
@@ -73,6 +74,10 @@ const value = (tracked: TrackedValue): string =>
           : 'editor.unknown',
       );
 export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
+  // Explicit, non-persistent opt-in; works with the same static production build.
+  const [debugToolsEnabled] = useState(
+    () => new URLSearchParams(window.location.search).get('debug') === '1',
+  );
   const [load, setLoad] = useState<CatalogLoadResult | null>(null);
   const [retry, setRetry] = useState(0);
   const [store] = useState(() => new DexieRosterStore());
@@ -634,12 +639,13 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
   }
 
   const totals = currentEvaluation?.totals;
+  const notice = state.notice || (
+    !load
+      ? t('editor.loading')
+      : load.status !== 'ready' ? t('editor.loadFailed') : ''
+  );
   return (
     <div hidden={hidden} className="page workspace">
-      <section className="preview-note">
-        <strong>{t('editor.preview')}</strong>
-        <span>{t('editor.sessionOnly')}</span>
-      </section>
       {!storageReady && <p role="status">{t('storage.loading')}</p>}
       {storageError && (
         <div role="alert">
@@ -652,14 +658,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
           </button>
         </div>
       )}
-      <p role="status" className="workspace-notice">
-        {state.notice ||
-          (!load
-            ? t('editor.loading')
-            : load.status !== 'ready'
-              ? load.reason
-              : t('editor.ready'))}
-      </p>
+      {notice && <p role="status" className="workspace-notice">{notice}</p>}
       {load && load.status !== 'ready' && (
         <button
           type="button"
@@ -755,30 +754,26 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
               disabled={!defaultRelease || !storageReady}
               onCreate={create}
             />
-            <button
-              type="button"
-              disabled={!defaultRelease || !storageReady}
-              onClick={() =>
-                create(t('editor.exampleName'), 500, 'platoon', true)
-              }
-            >
-              {t('editor.createExample')}
-            </button>
           </section>
-          <section className="card">
-            <h2>{t('editor.coverageTitle')}</h2>
-            <p>
-              {t('editor.coverageBody')}{' '}
-              {release ? release.catalog.entries.length : ''}
-            </p>
-            {release?.coverage.omitted.map((text) => (
-              <p className="muted" key={text}>
-                {text === 'A05 and A06 ambiguous combinations'
-                  ? t('editor.omittedOptions')
-                  : text}
-              </p>
-            ))}
-          </section>
+          {debugToolsEnabled && (
+            <section className="card" aria-labelledby="debug-tools-heading">
+              <h2 id="debug-tools-heading">{t('debug.title')}</h2>
+              <button
+                type="button"
+                disabled={!defaultRelease || !storageReady}
+                onClick={() => create(t('editor.exampleName'), 500, 'platoon', true)}
+              >
+                {t('editor.createExample')}
+              </button>
+              <p>{t('debug.catalogEntries')} {defaultRelease?.catalog.entries.length ?? ''}</p>
+              <details>
+                <summary>{t('debug.omitted')}</summary>
+                <ul>
+                  {defaultRelease?.coverage.omitted.map((text) => <li key={text}>{text}</li>)}
+                </ul>
+              </details>
+            </section>
+          )}
         </>
       ) : !roster || !release ? (
         <section className="card">
@@ -1136,14 +1131,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
               </details>
               <details>
                 <summary>{t('editor.coverage')}</summary>
-                <ul>
-                  {currentEvaluation?.coverage.map((check, index) => (
-                    <li key={index}>
-                      {check.checkId}: {check.status.replaceAll('-', ' ')}
-                      {check.note ? ' — ' + check.note : ''}
-                    </li>
-                  ))}
-                </ul>
+                <RuleCoverage checks={currentEvaluation?.coverage ?? []} debug={debugToolsEnabled} />
               </details>
             </section>
           </div>

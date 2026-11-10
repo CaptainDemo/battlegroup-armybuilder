@@ -36,7 +36,7 @@ async function openLibraryItem(page: Page, index: number): Promise<void> {
 
 test.describe('roster transfer', () => {
   test('exports the in-memory draft and re-imports it as a copy with identical totals', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await createExample(page);
     // Export reads the memory draft; the button lives in the editor toolbar.
     const envelopePath = await downloadVia(page, 'example-envelope.json', () =>
@@ -54,7 +54,7 @@ test.describe('roster transfer', () => {
     const barePath = test.info().outputPath('example-bare.json');
     writeFileSync(barePath, JSON.stringify(envelope.document, null, 2));
 
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await page.setInputFiles(FILE_INPUT, envelopePath);
     await expect(page.getByRole('heading', { name: /Import preview/ })).toBeVisible();
     await expect(page.locator('.import-record')).toHaveCount(1);
@@ -68,7 +68,7 @@ test.describe('roster transfer', () => {
     await expect(page.getByTestId('points-total')).toHaveText('398');
     await expect(page.getByTestId('br-total')).toHaveText('23');
 
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await page.setInputFiles(FILE_INPUT, barePath);
     await expect(page.locator('.import-record').first()).toHaveAttribute('data-status', 'ready');
     await page.getByRole('button', { name: 'Import', exact: true }).click();
@@ -78,12 +78,12 @@ test.describe('roster transfer', () => {
   });
 
   test('cancelling the preview writes nothing', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await createExample(page);
     const envelopePath = await downloadVia(page, 'cancel.json', () =>
       page.getByRole('button', { name: 'Export JSON', exact: true }).first().click(),
     );
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await page.setInputFiles(FILE_INPUT, envelopePath);
     await expect(page.getByRole('heading', { name: /Import preview/ })).toBeVisible();
     await page.getByRole('button', { name: 'Cancel', exact: true }).click();
@@ -96,7 +96,7 @@ test.describe('roster transfer', () => {
   });
 
   test('round-trips a full backup including an unsaved memory draft', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await createExample(page);
     await page.getByRole('link', { name: 'Back to My Rosters' }).click();
     await page.getByLabel('Roster name').fill('Second roster');
@@ -129,7 +129,7 @@ test.describe('roster transfer', () => {
   });
 
   test('rejects corrupt JSON without offering an import', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await page.setInputFiles(FILE_INPUT, {
       name: 'corrupt.json',
       mimeType: 'application/json',
@@ -141,7 +141,7 @@ test.describe('roster transfer', () => {
   });
 
   test('imports the exact old 1.0.0 catalog and keeps unknown versions as originals', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?debug=1');
     const document = (catalogRevision: string) => ({
       formatVersion: 'roster/1',
       rosterId: 'legacy-' + catalogRevision,
@@ -168,7 +168,7 @@ test.describe('roster transfer', () => {
     await expect(page.locator('.library-item')).toHaveCount(1);
     await openLibraryItem(page, 0);
     await expect(page.locator('.editor-heading')).toContainText('1.0.0');
-    await page.goto('/');
+    await page.goto('/?debug=1');
 
     // A truly unknown version is preserved as an original, not converted.
     await page.setInputFiles(FILE_INPUT, {
@@ -186,7 +186,7 @@ test.describe('roster transfer', () => {
   });
 
   test('overwrites an explicitly chosen roster and keeps autosave anchored', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await createExample(page);
     // Export first: the file holds the example's original name.
     const exportedPath = await downloadVia(page, 'overwrite-source.json', () =>
@@ -197,7 +197,7 @@ test.describe('roster transfer', () => {
     await page.getByRole('button', { name: 'Apply settings' }).click();
     await expect(page.locator('.editor-heading h2')).toHaveText('Overwrite me');
 
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await page.setInputFiles(FILE_INPUT, exportedPath);
     await page.getByLabel('Overwrite an existing roster…').check();
     await page.getByLabel('Roster to overwrite').selectOption({ index: 1 });
@@ -214,7 +214,7 @@ test.describe('roster transfer', () => {
     await expect(page.getByText('Saved locally', { exact: true })).toBeVisible();
     await page.reload();
     // After a cold reload the library list is the way back into the roster.
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await expect(page.locator('.library-item').getByRole('button', { name: 'Open', exact: true })).toHaveCount(1);
     await openLibraryItem(page, 0);
     await expect(page.locator('.editor-heading h2')).toHaveText('After overwrite');
@@ -223,7 +223,7 @@ test.describe('roster transfer', () => {
 
   test('keeps the import panel usable on a small screen without overflow', async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 640 });
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await expect(page.getByRole('heading', { name: 'Import & backup' })).toBeVisible();
     await page.setInputFiles(FILE_INPUT, {
       name: 'tiny.json',
@@ -239,7 +239,7 @@ test.describe('roster transfer', () => {
   });
 
   test('rejects a mixed backup with error records instead of silently skipping them', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await createExample(page);
     const exportedPath = await downloadVia(page, 'mixed-source.json', () =>
       page.getByRole('button', { name: 'Export JSON', exact: true }).first().click(),
@@ -256,7 +256,7 @@ test.describe('roster transfer', () => {
         { rosterId: 'bad', document: bad },
       ],
     };
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await page.setInputFiles(FILE_INPUT, {
       name: 'mixed-backup.json',
       mimeType: 'application/json',
@@ -271,7 +271,7 @@ test.describe('roster transfer', () => {
   });
 
   test('applies the single-roster size cap to every single-file shape without reading oversized files', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await createExample(page);
     const exportedPath = await downloadVia(page, 'gate-source.json', () =>
       page.getByRole('button', { name: 'Export JSON', exact: true }).first().click(),
@@ -279,7 +279,7 @@ test.describe('roster transfer', () => {
     const document = (JSON.parse(readFileSync(exportedPath, 'utf8')) as { document: Record<string, unknown> }).document;
     // A bare M09 document above 2 MiB (but under 20 MiB) is refused.
     const bigBare = { ...document, notes: 'x'.repeat(TRANSFER_LIMITS.singleFileBytes) };
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await page.setInputFiles(FILE_INPUT, {
       name: 'big-bare.json',
       mimeType: 'application/json',
@@ -320,7 +320,7 @@ test.describe('roster transfer', () => {
     const context = await browser.newContext();
     const page1 = await context.newPage();
     const page2 = await context.newPage();
-    await page1.goto('/');
+    await page1.goto('/?debug=1');
     await createExample(page1);
     await expect(page1.getByText('Saved locally', { exact: true })).toBeVisible();
     const exportedPath = await downloadVia(page1, 'two-tab-source.json', () =>
@@ -328,7 +328,7 @@ test.describe('roster transfer', () => {
     );
 
     // Tab 2 opens the saved roster and commits an update.
-    await page2.goto('/');
+    await page2.goto('/?debug=1');
     await page2.locator('.library-item').first().getByRole('button', { name: 'Open', exact: true }).click();
     await page2.getByLabel('Roster name').fill('Remote edit wins');
     await page2.getByRole('button', { name: 'Apply settings' }).click();
@@ -356,7 +356,7 @@ test.describe('roster transfer', () => {
   });
 
   test('exports the in-memory draft after a storage failure and re-imports it', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await createExample(page);
     // Break every IndexedDB write inside the page; reads still work. The
     // patch throws synchronously so Dexie aborts its transaction and the
@@ -392,7 +392,7 @@ test.describe('roster transfer', () => {
     await page.evaluate(
       () => (window as unknown as { __restorePut: () => void }).__restorePut(),
     );
-    await page.goto('/');
+    await page.goto('/?debug=1');
     await page.setInputFiles(FILE_INPUT, failedPath);
     await expect(page.locator('.import-record').first()).toHaveAttribute('data-status', 'ready');
     await expect(page.locator('.import-record').first()).toContainText('10 purchases');

@@ -12,6 +12,7 @@ import {
   type PrintPurchaseView,
 } from './printProjection';
 import { PrintUnitDataAppendix } from './PrintUnitDataAppendix';
+import { RuleCoverage } from '../../components/RuleCoverage';
 
 /**
  * Frozen print preview (M11). The snapshot is captured when the preview opens
@@ -252,15 +253,9 @@ function RosterSheet({ roster, options }: { roster: PrintableRoster; options: Pr
 
       <section className="print-block" aria-label={t('editor.coverage')}>
         <h2>{t('editor.coverage')}</h2>
-        <p className="muted">{roster.versions.coverageNote}</p>
-        <ul className="print-coverage" data-testid="print-coverage">
-          {roster.coverage.map((check, index) => (
-            <li key={index} data-status={check.status}>
-              {check.checkId}: {check.status.replaceAll('-', ' ')}
-              {check.note ? ' — ' + check.note : ''}
-            </li>
-          ))}
-        </ul>
+        <div className="print-coverage" data-testid="print-coverage">
+          <RuleCoverage checks={roster.coverage} />
+        </div>
       </section>
 
       <section className="print-block" aria-label={t('print.reference.title')}>

@@ -2,7 +2,6 @@ import type { ReactElement } from 'react';
 import { t } from '../i18n';
 import { RosterWorkspace } from '../features/roster-editor/RosterWorkspace';
 import { NotFoundPage } from '../pages/NotFoundPage';
-import { RoadmapPage } from '../pages/RoadmapPage';
 import { findRoute, routes } from './routes';
 import { useHashPath } from './hashRouter';
 
@@ -35,12 +34,11 @@ export function App(): ReactElement {
 
       <main className="app-main" id="main">
         <RosterWorkspace editor={activeRoute?.id === 'editor'} hidden={activeRoute?.id !== 'home' && activeRoute?.id !== 'editor'} />
-        {activeRoute?.id === 'roadmap' ? <RoadmapPage /> : !activeRoute ? <NotFoundPage /> : null}
+        {!activeRoute ? <NotFoundPage /> : null}
       </main>
 
       <footer className="app-footer">
         <p>{t('footer.license')}</p>
-        <p>{t('footer.docs')}</p>
       </footer>
     </div>
   );
