@@ -1,18 +1,16 @@
-# M01 Classic 资料验证样本
+# Classic Source-Verification Fixtures
 
-日期：2026-10-30。用途与手工账目见 [Classic 核算说明](../../../docs/data/classic-calibration.md)。
+Baseline: 2026-10-30. See the [calibration guide](../../../docs/data/classic-calibration.md) for the independent accounts and their boundaries.
 
-- `m01-sources.json`：四份本地 PDF 的内容指纹与实际目视核查页。AFV 卡片仅登记哈希，未核查数值。
-- `m01-calibration.json`：B01–B04 四份组合账目与 L01–L10 十份局部样本；期望合计是独立写入的字面值。
+- `m01-sources.json`: source PDF fingerprints and actual visually reviewed pages. AFV cards were fingerprinted only during M01; later attribute verification is separate.
+- `m01-calibration.json`: 23 accounts: B01–B04 combined cases, L01–L10 local cases, S01–S02 separate support-pool cases and F01–F07 clarified boundary cases. Expected totals are independent literal values.
 
-字段 `lines` 表示费用贡献，不等于最终购买树；固定成员不再产生费用行。`parentSelectionId` 指向付费父购买，`targetPath(s)` 表示其中的稳定成员目标。L04/L05 用目标路径区分已包含的子排，不再单独购买这些排。未来 schema 需要完整表达固定组成与玩家选择，不能直接把费用行当作军表序列化格式。
+`lines` means cost contributions, not a serialized purchase tree. Fixed members create no separate charge. `parentSelectionId` identifies a paid parent; `targetPath(s)` identifies stable members. L04/L05 distinguish included platoons by path without buying them again. The production schema represents composition and player choices separately from charge lines.
 
-`unitBr` 是用于合计的数字，训练等级说明保留在资料文档／案例说明，不能从总 BR 推断全军等级。已知零和降级负差额均有明确意义。
+`unitBr` is numeric. Training is recorded in source/case notes and cannot be inferred for the entire army from total BR. Known zero and negative downgrade deltas are intentional.
 
-运行 `python tools/data-import/check_m01_fixtures.py`（仓库根目录）。只需要标准库，不依赖网站工程或 pytest。通过表示来源未漂移、手工账目算术一致及内部引用成立，不表示已经实现规则引擎。
+Run `python tools/data-import/check_m01_fixtures.py` from the root. It uses only the standard library. Passing establishes source fingerprints, arithmetic and internal references, not game-rule execution. Engine implementations must compute independently and compare rather than read expectedTotals/expectedViolations as output.
 
-用户澄清后A02已解决，完整覆盖事项仅保留A08；B01为undetermined，B02–B04有已确认违规，L类不评估全军合法性。新增S01/S02分别核对“4个排内选项与4个全军支援同时成立”和“第五个全军支援超额”，总计16份账目。手工额度字段是后续实现比对输入，脚本仅核算账目，不执行额度规则。后续实现必须独立计算再对比期望，不读取expectedTotals或expectedViolations作为输出。
+A02 is resolved. A08 retains incomplete full-rule coverage: B01 is undetermined, B02–B04 have confirmed subset violations, and local cases do not establish complete-army legality. S01/S02 independently distinguish four local plus four army supports from a fifth army-support violation. Manual allowance fields are comparison inputs, not rules executed by the arithmetic checker.
 
-同日[基础书补查](../../../docs/data/classic-base-rulebook-review.md)扩展了来源页集合，保留全部原始PDF哈希与14份费用期望。B01新增人工辅助统计Officer=1、Scout权重=1，作为后续独立实现的比对输入；现有算术脚本不计算或验证这些统计规则。
-
-当前总数为23份：B01–B04、L01–L10、S01–S02、F01–F07。新增F类固化用户解释的递归all目标、第二Fire Support名额，以及PT-76对连／排／额外单车及嵌套运输的限制。L10已明确组成与升级后的型号；A01/A03/A04/A07/A09解释不再是待确认假设。`rulesClarifications`保留用户澄清出处；原始PDF不改写。
+The [base-book review](../../../docs/data/classic-base-rulebook-review.md) expanded reviewed source pages without changing hashes or the initial fourteen costs, and added B01 Officer=1 / Scout weight=1 auxiliary expectations. F cases preserve recursive all targets, second Fire Support slot use and PT-76 exclusions for platoons, companies, individual tanks and nested transports. L10 identifies the corrected base/upgraded models. A01/A03/A04/A07/A09 are confirmed project interpretations, not open hypotheses. `rulesClarifications` retains their provenance; original PDFs remain unchanged.

@@ -1,73 +1,77 @@
-# Classic 人工核算与边界样本
+# Classic Manual Calibration and Boundary Samples
 
-日期：2026-10-30。机器可读账目在 [m01-calibration.json](../../tests/fixtures/classic-coldwar/m01-calibration.json)。它是资料验证 fixture，不是最终 RosterDocument，也不是自动规则引擎输出。
+Baseline date: 2026-10-30. [m01-calibration.json](../../tests/fixtures/classic-coldwar/m01-calibration.json) contains independent source/calculation fixtures. It is neither the application RosterDocument format nor automatic rule-engine output.
 
-## 1. 主组合样本 B01
+## 1. Combined baseline B01
 
-设置：Classic 苏联装甲师 V4.1、显式 Platoon 规模、500 Points预算、没有启用房规；不选择需要场景资格的防御设施。按已核对的购买规则子集无已知违规；完整规则覆盖状态仍保留A08，A02已由用户澄清解决并从unresolved移除。
+Classic Soviet Armoured Division V4.1, explicit Platoon size, 500-point budget, no house rules and no scenario-dependent defences. There is no known violation in the reviewed purchase subset; A08 retains incomplete full-rule coverage. A02 has been resolved by the user.
 
-| 购买／附属 | Points | BR | 出处与说明 |
+| Purchase / attachment | Points | BR | Source / meaning |
 |---|---:|---:|---|
-| Forward Headquarters | 20 | 3 | SOV p.1，含BMP-1K，Unique |
-| T-72 MBT Platoon | 180 | 7 | p.6，三辆基础T-72A，不再计三辆单车价 |
-| BMP-1 Motor Rifle Platoon | 95 | 8 | p.2，三班及其三辆车已含 |
-| 该步兵排：Combat Medic | 8 | 0 | p.2，训练i，零BR为已知值 |
-| 该步兵排：Fire Support Section | 25 | 1 | p.2，两组共用一辆车 |
-| 该步兵排：AGL Section | 18 | 1 | p.2，3人及运输 |
-| BRDM-2 Armoured Car | 12 | 1 | p.10，分配步兵购买授予的侦察选择 |
-| ZSU-23-4 | 35 | 2 | p.12，分配坦克购买授予的Specialist选择 |
-| Off-Table Artillery Support Request，3rd Priority | 5 | 0 | p.13，分配HQ授予的Additional Fire Support选择 |
-| 合计 | **398** | **23** | 剩余102 Points |
+| Forward Headquarters | 20 | 3 | SOV p.1; includes BMP-1K, Unique |
+| T-72 MBT Platoon | 180 | 7 | p.6; three base T-72A, no extra individual-tank charge |
+| BMP-1 Motor Rifle Platoon | 95 | 8 | p.2; three squads/transports included |
+| Its Combat Medic | 8 | 0 | p.2; training i; zero BR is known |
+| Its Fire Support Section | 25 | 1 | p.2; two teams share one vehicle |
+| Its AGL Section | 18 | 1 | p.2; three men and transport |
+| BRDM-2 Armoured Car | 12 | 1 | p.10; reconnaissance choice from Infantry grant |
+| ZSU-23-4 | 35 | 2 | p.12; Specialist choice from tank grant |
+| Off-Table Artillery Support Request, 3rd Priority | 5 | 0 | p.13; Additional Fire Support choice from HQ |
+| Total | **398** | **23** | **102 Points remaining** |
 
-步兵排内使用3/4个Platoon Support Options，三种各一次。步兵排另提供4个全军Support units额度，本例消费1个侦察选择；T-72排提供4个，本例消费1个Specialist选择；HQ提供1个，本例消费1个Additional Fire Support选择。排内三项不消耗上述全军额度，互相独立。具体数量不额外加页首1个，连内已含子排也不重复生成额度。
+The BMP platoon uses 3/4 local options, one of each. It separately grants four army supports, one allocated to reconnaissance. The T-72 platoon grants four, one allocated to Specialist. HQ grants one, consumed by the request. Local options do not consume those army choices. Do not add another heading +1 or duplicate grants from included platoons.
 
-基础书补查后，手工辅助统计为Officer=1（HQ的Senior Officer）、Scout=1（BRDM-2）；排指挥角色不自动当Officer。23 BR不因同乘运输、预备队部署或请求未来随机选出的炮兵而变化。具体证据见[基础书核对](classic-base-rulebook-review.md)，不会把Classic火力请求当作NORTHAG的额外增援次数。
+Independent auxiliary expectations: Officer = 1 (HQ Senior Officer), Scout weight = 1 (BRDM-2). Platoon-command roles do not automatically count as Officer. Shared transports, reserve deployment and future randomly determined artillery do not change the purchased 23 BR. See [base-book evidence](classic-base-rulebook-review.md).
 
-## 2. 主样本变体
+## 2. Combined variants
 
-| ID | 变更 | 手算期望 | 规则期望及边界 |
+| ID | Change | Expected arithmetic | Expected rule / boundary |
 |---|---|---|---|
-| B02 | 同一BMP-1排再加一个Medic | 406 Points / 23 BR | 局部唯一性C02违规；总支援数4仍未超限，预算未超；整体invalid，覆盖仍不完整 |
-| B03 | 仅把预算改397 | 398 / 23，超1点 | C01违规；不能因为资料覆盖不完整而丢失已确认错误 |
-| B04 | 移除HQ，保留其请求及其他购买 | 378 / 20 | 无其他Artillery/HQ授予额度时，C09资源来源缺失；不把“没有HQ”本身断言成未经证实的强制单位违规 |
+| B02 | Add another Medic to the same BMP-1 platoon | 406 Points / 23 BR | C02 local duplication; four total local slots still fit and budget is fine; coverage remains incomplete |
+| B03 | Change only budget to 397 | 398 / 23, one over budget | C01 confirmed violation despite partial coverage |
+| B04 | Remove HQ, retain its request and other purchases | 378 / 20 | C09 lacks a supplying grant when no other HQ/Artillery grants exist; do not invent a mandatory-HQ rule |
 
-B02应只以局部重复Medic为新增违规；不是全军Medic只可一份。B04的违规只依赖已核对的HQ/炮兵授予关系，不假定HQ为强制购买。
+B02 adds a local duplicate violation, not an army-wide one-Medic restriction. B04 depends only on the verified resource relationship.
 
-## 3. 局部建模样本
+## 3. Local modeling samples
 
-这些样本只核算一个编制或某种操作，不判定完整军表是否合法。
+These establish a formation/operation's arithmetic, not full-army legality.
 
-| ID | 输入与手算 | Points / BR | 验证目标 |
+| ID | Independent account | Points / BR | Capability |
 |---|---|---|---|
-| L01 | T-72排180 + 整排B升级30 + 单辆KMT5 | 215 / 7 | 整组一次与单成员一次；没有Svir，不裁定Restricted计数 |
-| L02 | T-62排75 + 全排M30 + 一辆Bastion20 + Regular20 | 145 / 9 | 升级前置、费用各一次、BR6+3、训练i→r；Unique作用域另审 |
-| L03 | BMP-2独立排130 + Fire Support45 | 175 / 13 | p.4上下文价；不是连内40 |
-| L04 | BMP-2连380 + 一个所属排的Fire Support40 | 420 / 36 | p.5上下文价，三个子排已含；不再加390 |
-| L05 | BMP-1连275 + 子排1 Medic8 + 子排2 Medic8 | 291 / 25 | 不同父排的重复名称各合法，局部支援各用1个；不收3×95 |
-| L06 | 独立BMP-1排95 + 三辆基础BMP-1各升P5 | 110 / 8 | 当前无支援所以3目标；有支援BMP时all同时包含其运输，见C27 |
-| L07 | Engineer25 + 免费换BTR-80 | 25 / 3 | 替换不是新增运输；原BTR-60PB移除，新车继承同一角色 |
-| L08 | Ambulance20/2 + Heavy Truck降级 -5/-1 | 15 / 1 | 负Points及BR差额，训练仍i；Restricted购买是否解除没有证据，不自动移除 |
-| L09 | Timed122 25，零附加目标费用 | 25 / 0 | 非实体购买、已含目标点、ToT零支援消费；不展开六门场上炮 |
-| L10 | 10辆T-72A的连600 + 十辆B1升级各10 | 700 / 25 | A01已按用户确认修正，升级后10 T-72B1；仅列Points所以BR不变 |
+| L01 | T-72 platoon 180 + whole B upgrade 30 + one KMT 5 | 215 / 7 | Once versus per-member charging; no Svir |
+| L02 | T-62 platoon 75 + M 30 + one Bastion 20 + Regular 20 | 145 / 9 | Prerequisites, each cost once, BR 6+3, training i→r |
+| L03 | Independent BMP-2 platoon 130 + Fire Support 45 | 175 / 13 | p.4 context, not company price 40 |
+| L04 | BMP-2 company 380 + Fire Support for one fixed platoon 40 | 420 / 36 | p.5 context; no additional 390 for included platoons |
+| L05 | BMP-1 company 275 + Medic on platoon 1 (8) + Medic on platoon 2 (8) | 291 / 25 | Independent local limits; no extra 3×95 |
+| L06 | Independent BMP-1 platoon 95 + three BMP-1P upgrades at 5 | 110 / 8 | Three current targets without attachments; added BMPs enter all scope |
+| L07 | Engineer 25 + free BTR-80 replacement | 25 / 3 | Replace BTR-60PB rather than add another transport; preserve role |
+| L08 | Ambulance 20/2 + Heavy Truck delta −5/−1 | 15 / 1 | Negative Points/BR; training remains i; no inferred removal of Restricted |
+| L09 | Timed122 25, no extra target charge | 25 / 0 | No entities, target included, ToT no support consumption; no six on-table guns |
+| L10 | Ten-T-72A company 600 + ten B1 upgrades at 10 | 700 / 25 | A01 corrected composition; ten T-72B1; Points-only preserves BR |
 
-## 4. 检查方法与限制
+## 4. Separate support pools
 
-用户澄清A02后新增两份独立作用域账目：S01为BMP-1排95、四种排内选项8+25+18+40、四辆全军侦察BRDM-2各12，合计234 Points / 15 BR。排内使用4/4，全军使用4/4，两者同时成立。S02增加第五辆侦察，合计246 / 16，超出C07全军额度；排内仍为4/4，不触发排内数量超限。两者只判断指定规则范围，不判整套军表合法。至此共有16份手工账目。
+After A02, S01 combines BMP-1 platoon 95, four local options 8+25+18+40, and four BRDM-2 army supports at 12 each: **234 Points / 15 BR**. Both local and army pools use 4/4 independently.
 
-再次用户澄清A01/A03/A04/A07/A09后新增F01–F07，现共23份账目：
+S02 adds a fifth BRDM-2: **246 / 16**. It violates C07's army allowance while local options remain 4/4. These cases cover only their declared rule subset.
 
-| ID | 场景 | Points / BR | 人工断言 |
+## 5. Clarified boundary fixtures
+
+| ID | Scenario | Points / BR | Independent assertion |
 |---|---|---|---|
-| F01 | BMP-1连275＋所属排Fire Support25＋另一排AGL35＋全部12辆BMP各升级5 | 395 / 27 | 10辆基础BMP与2辆支援BMP均被all覆盖，每辆一次；不因两个武器组共乘一车多算目标 |
-| F02 | BMP-2连380＋同排Fire Support40＋第二Section35＋Medic8＋Mortar40 | 503 / 38 | 四个排内名额恰好用完；两个Section各占1 |
-| F03 | F02再加该排AGL35/1 | 538 / 39 | 第五个排内选项违反C03 |
-| F04 | B01加独立PT-76B17/1 | 415 / 24 | T-72排违反C16 |
-| F05 | T-72连600/25＋PT-76B17/1 | 617 / 26 | T-72连同样违反C16 |
-| F06 | 额外T-72A60/3＋PT-76B17/1 | 77 / 4 | 额外单车同样违反C16 |
-| F07 | Recon Command22/2，免费改PT-76B运输，再取额外T-72A60/3 | 82 / 5 | 嵌套运输选择也触发C16；免费运输选项没有列BR变化，故原BR不变 |
+| F01 | BMP-1 company 275 + fixed-platoon Fire Support 25 + another platoon's AGL 35 + twelve BMP upgrades at 5 | 395 / 27 | all covers ten base and two support vehicles once; shared transport is not doubled for two teams |
+| F02 | BMP-2 company 380 + same-platoon Fire Support 40 + second Section 35 + Medic 8 + Mortar 40 | 503 / 38 | Four local slots exactly; each Section counts one |
+| F03 | F02 plus same-platoon AGL 35/1 | 538 / 39 | Fifth local option violates C03 |
+| F04 | B01 plus independent PT-76B 17/1 | 415 / 24 | T-72 platoon violates C16 |
+| F05 | T-72 company 600/25 + PT-76B 17/1 | 617 / 26 | Company also violates C16 |
+| F06 | Additional T-72A 60/3 + PT-76B 17/1 | 77 / 4 | Individual additional tank also violates C16 |
+| F07 | Recon Command 22/2, free PT-76B transport, additional T-72A 60/3 | 82 / 5 | Nested transport triggers C16; free Points-only conversion preserves BR |
 
-F类仅核对指定规则与费用，不表示其他支援／预算等完整军表条件都已评估。F01为公司指挥及子排对应BMP升级的组合操作账目，不凭此创造军表未列出的新购买选项。
+F fixtures do not establish unrelated budget/support/full-list validity. F01 combines defined command/platoon upgrades; it does not invent a new purchase option. Current total: 23 fixtures, B01–B04, L01–L10, S01–S02, F01–F07.
 
-执行 `python tools/data-import/check_m01_fixtures.py`，仅使用标准库。脚本检查来源文件哈希、费用行来源／父实例引用、无循环、费用行数量及手工期望合计。它不从PDF自动推导费用，不实现C01–C28，不把 expectedViolations 当成已经执行的规则检查。
+## 6. Checking method and limits
 
-后续 M05–M07 应使用相同玩家选择独立生成评估结果，再与这里的字面期望比对；不能直接把账目行求和当成对规则引擎的测试。局部样本的未决解释和人为边界也需保留。
+Run `python tools/data-import/check_m01_fixtures.py` from the repository root. It uses the standard library and checks source hashes, line source/parent references, cycles, line counts and literal expected totals. It does not derive prices from PDFs or execute C01–C28, Officer/Scout or resource rules.
+
+Commands/evaluation/rules must independently compute the same player choices and compare results with literal expectations. Reading expectedTotals/expectedViolations as engine output, or merely summing fixture lines, cannot validate the implementation. Preserve local-case boundaries and the [clarification record](classic-ambiguities.md).

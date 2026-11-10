@@ -1,53 +1,53 @@
-# M01 基础规则书补充核对
+# Classic Base-Rulebook Review
 
-日期：2026-10-30。依据本地 `references/battlegroup rulebook.pdf`，并交叉核对 Cold War Draft 6。本文补充上一轮仅重点查看预算／规模页的不足，不修改原始规则，也不引入房规。
+Review date: 2026-10-30. Source: local `references/Coldwar/battlegroup rulebook.pdf`, cross-checked with Cold War Draft 6. This records the reviewed evidence, not a house rule or a claim to have audited the entire game. Later A05/A06 decisions are in the [clarification register](classic-ambiguities.md).
 
-## 1. 查阅范围与来源身份
+## 1. Source identity and scope
 
-全文提取与章节定位覆盖本地 PDF 的66页，检索军表、购买、支援、强制条件、最低数量、BR、等级与特殊限制；再对相关章节原页进行目视核查。不是逐页验证所有移动、射击、命中表或战斗流程。
+Text extraction/search covered all 66 PDF pages for roster purchasing, support, compulsory/minimum choices, BR, training and restrictions. Relevant original pages were then reviewed visually. Movement, shooting, hit tables and the full battle procedure were not all verified.
 
-本轮目视核查基础书 PDF 第5、6、8、13、14、36、39、40、41、44、45、47、48、49、58、59、60、61页；加上上一轮第11页。这里只对相应段落作结论，未查验所有字段。第5页版权信息标明2013年首次出版；文件名不含印次，不据此断言是某个最新修订。
+Visually reviewed base PDF pages: 5, 6, 8, 11, 13, 14, 36, 39, 40, 41, 44, 45, 47, 48, 49, 58, 59, 60, 61. Copyright page 5 says first published 2013; the filename does not establish a particular later printing.
 
-Cold War Draft 6 第29、30页本轮目视核查；第25–27页辅助读取提取文字，第28、31、32页已在上一轮核查。渲染证据仍保留在 `.tmp/`，来源指纹与目视页集合写入 [manifest](../../tests/fixtures/classic-coldwar/m01-sources.json)。
+Draft 6 pages 29/30 were reviewed in this extension; 25–27 were supporting extracted text; 28/31/32 were already reviewed. Images remain in .tmp/. The [source manifest](../../tests/fixtures/classic-coldwar/m01-sources.json) retains fingerprints and actual visual-page sets. Historical source-location strings do not change the original hashes.
 
-本文引用页码按“PDF页序 / 印刷页码”分别记录；对所引基础书页面，印刷页码为PDF页序减1。目录对部分场景的页码标注与实际页脚有差异，定位以实际页为准。
+References below distinguish PDF from printed numbering; cited base-book printed pages are one less than PDF pages. Some contents-page scenario references differ from actual footers, so use the actual page location.
 
-## 2. 核实结果
+## 2. Findings
 
-| 主题 | 原书位置 PDF / 印刷 | 已确认内容 | 项目处理 |
+| Topic | PDF / printed | Confirmed evidence | Project consequence |
 |---|---|---|---|
-| 基础书与补充资料分工 | 6 / 5；8 / 7 | 基础书提供通用规则，具体军表、战区内容由补充资料提供 | 不能要求基础书独自给出苏联所有购买限制，也不能把没找到限制等同于已经证实自由购买 |
-| 购买单位与游戏单位 | 8 / 7，v. Units | 游戏单位按单独命令行动；军表可一次购买排、班组、炮兵连等多个单位，它们仍分别行动 | 购买实例与场上单位数分开；Support units额度按具体军表条目，不由组成单位数反推。原候选解释已按用户澄清撤回 |
-| 预算与规模 | 11 / 10；13–14 / 12–13 | 预算由玩家约定；规模表称指南，命令骰数量按规模使用，军表需要记录Officer数量 | 显式保存规模及预算；推荐不一致可提示，不能无提示选另一规模或凭此新增强制最低单位数 |
-| 专属炮兵与外部火力请求 | 36 / 35；40–41 / 39–40 | Artillery栏炮兵的Priority Check自动通过；Additional Fire Support需要优先级及通信流程；多个不同优先级请求可存在 | p.8 Off-Table Mortar仍是Artillery，p.13 Request仍是外部火力请求；不能按是否有模型合并分类 |
-| 请求与一次性打击不同 | 40 / 39 | 外部请求一旦获准并成功开火，仍可在之后需要时使用；Timed Barrage和Timed Airstrike是预安排、一次性使用 | Classic请求不能套用NORTHAG“购买额外请求次数”的消耗语义；首版只显示购买与说明，不实现对局过程 |
-| 预设目标与Timed Barrage | 40 / 39 | 预设目标免去校射等环节；Timed Barrage事先记回合与目标，按时发生、一次性 | 原书描述不会自动给所有条目免单；本军表Timed122已含目标费用的依据仍是SOV p.15；ToT额度豁免依据仍是CW p.28 |
-| BR与训练字母 | 44 / 43；CW 29 / 29 | BR独立于Points；游戏前累计军表BR；字母i/r/v/e分别表达Inexperienced/Regular/Veteran/Elite；CW保留基础BR体系并列出变更 | Classic类型应允许e，尽管首批数据只用i/r；不按Points或人数反推BR，不用训练字母参与加法 |
-| BR范围的语境 | 44 / 43，对照SOV p.2–7 | 基础段落描述单个游戏单位BR为0–5，而苏联整排／连购买明列更高合计 | 不给购买条目BR设5的上限，也不篡改军表180/7、275/25等数值；不把编制当一辆车 |
-| Officer与Scout统计 | 14 / 13；48–49 / 47–48 | 记录Officer总数；Senior Officer同样按普通Officer处理并有额外能力；Scout2按两个Scout计，Sniper Scout也计Scout | 不把Platoon Commander字符串自动当Officer；侦察比较、先手、out-scouted等需要对手／场景，不能全转为本军表错误 |
-| Unique | 49 / 48；CW 32 / 32 | 稀有单位的Unique限制不随规模变化，CW继续明确Unique，Restricted另有CW规则 | 基础书没有解决整排升级或T-62连三辆Bastion的身份作用域；A05保持未决 |
-| 预备队与运输计数 | 45 / 44 | 基础场景预备队通常一个unit计一次；运输车辆及所载单位合计一次预备队，tank riders也包括在内 | 这是部署／到场计数规则，不是Points、BR、支援名额计数规则；不得用它扣除军表中乘员BR |
-| 场景条件 | 58–60 / 57–59 | Flanking Attack要求已有Scout在特定区部署；Defence Line的Probing Force包含攻击方全部侦察；High Ground防守方有额外默认防御设施 | “全部侦察须部署”不等于“购买至少一个侦察”；部署分组与组军资格分开；默认防御设施不是自动按苏联条目收费 |
-| 组织记录表 | 61 / 60 | 记录Points、BR、Officer、Scout及各购买栏 | 空表栏目没有给出HQ/步兵最低购买数或各类支援比例，不能从栏名创造校验条件 |
+| Base book versus supplements | 6 / 5; 8 / 7 | General rules are in the base book; lists/theater content are in supplements | The base book alone need not supply every Soviet restriction; an absent clause is not proof of free purchasing |
+| Purchase versus game unit | 8 / 7, v. Units | Independently commanded units can be bought together as a platoon, group or battery | Separate purchase identity from battlefield count; support allowance comes from the actual list entry, not model/unit-count inference |
+| Budget and game size | 11 / 10; 13–14 / 12–13 | Agreed budget; size table is a guideline; size determines command dice; record Officers | Persist budget and size separately; warn for a guideline mismatch rather than silently change size or invent minimum units |
+| Artillery versus external support | 36 / 35; 40–41 / 39–40 | Artillery automatically passes Priority Check; Additional Fire Support uses priority/communications; several request priorities may exist | SOV p.8 mortar remains Artillery, p.13 request remains external support; having no model does not merge categories |
+| Requests versus timed strikes | 40 / 39 | A granted request that fires can be used again later; Timed Barrage/Airstrike are prearranged one-shot events | Do not adopt NORTHAG extra-request consumption; implement static purchases only |
+| Target points and Timed Barrage | 40 / 39 | Registered targets bypass ranging; timed barrage has a preset turn/target | No universal free target: Timed122 includes it because of SOV p.15; ToT exemption still comes from CW p.28 |
+| BR / training | 44 / 43; CW 29 / 29 | BR is independent of Points; sum before battle; i/r/v/e = Inexperienced/Regular/Veteran/Elite; CW retains the system with changes | Include e even when samples use i/r; no cost/manpower-derived BR or arithmetic on training letters |
+| BR range context | 44 / 43 versus SOV pp.2–7 | Base text discusses 0–5 for a game unit; printed platoon/company purchases have higher totals | No BR≤5 cap on purchase entries; preserve values such as 180/7 and 275/25 |
+| Officer / Scout | 14 / 13; 48–49 / 47–48 | Senior Officer also counts as Officer; Scout2 counts two; Sniper Scout counts | Do not infer Officer from Platoon Commander text; opponent/scenario comparisons are not automatic roster errors |
+| Unique | 49 / 48; CW 32 / 32 | Unique does not scale by game size; Restricted has additional CW rules | These passages did not resolve whole-upgrade counting; later A05 user clarification does |
+| Reserves / transports | 45 / 44 | Usually one reserve roll per unit; transport/passengers share an arrival choice, including tank riders | Deployment counting is not pricing, BR or support counting; never subtract passenger BR |
+| Scenarios | 58–60 / 57–59 | Flanking Attack positions existing Scouts; Defence Line includes all attacking recon in Probing Force; High Ground grants default defences | Does not require buying recon or automatically charge Soviet defence entries; verify cold-war scenario applicability separately |
+| Organization sheet | 61 / 60 | Fields for Points, BR, Officers, Scouts and purchase categories | Blank columns do not establish HQ/infantry minima or support ratios |
 
-## 3. 对现有歧义的处置
+## 3. Clarification consequences
 
-**A08基础书查阅缺口已补查，问题范围缩小。** 在这份本地基础书的相关组军章节与组织表中，未发现统一要求“至少一个HQ／步兵／侦察”的购买条款；也没有找到解释苏联Support units数量的通用购买额度规则。这个结论限定在所查资料与段落，不是作者对所有军表自由编成的保证。
+A08's initial base-book lookup gap was addressed. No universal at-least-one HQ/infantry/recon purchase clause was found in the reviewed list-building passages or organization sheet. That limited finding is not an author guarantee for every supplement. Remaining work concerns explicit supplement/edition applicability and supported full-rule coverage, not a blanket failure to read the base book.
 
-因此不再将A08笼统写成“还没查基础书”。剩余工作是具体补充资料的全局组军依据／版本适用核对；若正式支持范围明确限定为这些本地文件，需要建立相应规则覆盖清单，不能要求存在一份不存在的作者兼容声明作为永久验收前提。
+Do not require a nonexistent author compatibility declaration as a permanent acceptance gate. Conversely, do not infer unrestricted lists from absence of evidence.
 
-**纠正：A02已由用户明确解释，原候选推论撤回。** Support units是从对应全军支援类别选择的额度，Platoon Support Options是该排自己的附属菜单。它们是两个独立范围，不需要按场上单位数推导。T-72排4个、T-62排3个等直接记录在对应购买定义中；没有理由因为数值不同把它们列成资料歧义。
+A02 was resolved by the user, withdrawing the initial candidate interpretation: Support units are army-wide category choices; Platoon Support Options are local platoon menus. T-72's four choices and T-62's three are explicit purchase-definition values. They do not come from battlefield-unit counts.
 
-后续用户已明确A01、A03、A04、A07、A09，项目采用其解释，不再等待基础书或作者另行裁定；原文保留并关联修正记录。目前仅A05/A06在相关选项开放前需要明确，不影响当前基线。
+A01/A03/A04/A07/A09 were also explicitly resolved. A05/A06 were unresolved at the original review date but have since been resolved for the expanded list; consult the maintained register rather than historical review status.
 
-## 4. 对主样本和实现的影响
+## 4. Calibration and implementation impact
 
-B01购买账目仍为 **398 Points / 23 BR**，B02–B04费用和已确认违规断言均不变。用户澄清后，A02已解决并从unresolved移除；步兵排与T-72排各有4个全军支援选择，排内选项独立。完整覆盖状态暂保留A08，不再因Support units含义而阻断。新增S01/S02，两种额度分别计数。
+B01 remains **398 Points / 23 BR**. B02–B04 arithmetic and confirmed violation expectations remain unchanged. S01/S02 independently test army/local support scopes. A08 preserves partial coverage, not a Support units interpretation blocker.
 
-按目前选择，B01可作人工统计校准：Forward Headquarters的Senior Officer计1个Officer；T-72/BMP-1排指挥没有自动追加Officer。BRDM-2有Scout，计1个Scout；其他已选条目没有额外Scout。此处不模拟先手与对手侦察比较，统计仍需后续规则实现独立比对。
+B01's HQ Senior Officer contributes one Officer. Tank/BMP platoon-command roles do not automatically add Officers. BRDM-2 contributes one Scout. Do not simulate initiative or opponent scouting. Engine results must independently reproduce those auxiliary expectations.
 
-后续实现应把购买次数、实际组成数量、预备队到场计数、Officer数、Scout权重和支援额度分开；Classic允许的训练等级包括e，但不与NORTHAG等级记录共用。第一版不因核查了基础对局规则就扩张为战斗追踪器。
+Keep purchase count, actual composition, reserve arrivals, Officer count, Scout weight and support allowance separate. Classic Elite support does not imply shared NORTHAG training records. Reviewing battle-rule passages does not extend the editor into battle tracking.
 
-## 5. 修订与验收记录
+## 5. Evidence preservation
 
-新增C19–C25并补充C12/C13来源；更新A02/A08；扩展来源manifest的实际目视页。新增规则仍是资料约束，未实现自动规则引擎。运行现有M01检查，确认来源哈希未改变、14份手工账目与内部引用仍成立；不会用该检查宣称上述新规则已自动执行。
+This review added C19–C25 and supplemented C12/C13 sources, narrowed A08 and expanded the manifest's visual-review pages. Original PDF hashes and initial cost expectations were preserved. Later fixture additions bring the maintained set to 23 cases. The arithmetic script checks evidence and accounts, not automatic execution of every reviewed rule.

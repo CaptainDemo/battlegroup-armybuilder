@@ -19,7 +19,7 @@ Formation/member and transport identities are recorded; detailed weapon loads
 and combat stats are not complete. Profiles retain explicitly unknown stats.
 `purchases` declares purchase context, including eligible fixed member paths.
 The Classic rules module checks the implemented constraints separately. See the
-[formation acceptance](../../../docs/implementation/soviet-v41-formations-acceptance.md)
+[formation constraints](../../../docs/data/classic-constraints.md)
 for the data and rule coverage boundaries.
 
 `npm run check:catalogs` checks schemas, relationships, all release fingerprints,
@@ -37,7 +37,7 @@ immutable catalog bytes, saved selections, costs or legality coverage.
 It is not a complete resolved equipment loadout. Unverified vehicle profiles
 remain explicitly missing; optional missiles are not auto-equipped.
 The catalog check also validates this supplement and all its profile bindings.
-See [combat data acceptance](../../../docs/implementation/classic-unit-data.md).
+See [combat data guide](../../../docs/data/classic-unit-data.md).
 
 `reference/draft6-weapons-v1.json` adds 33 Classic-only weapon references from
 Draft 6. All 125 current catalog profiles have an explicit presentation kind:

@@ -16,3 +16,7 @@ coverage/
 
 # Local source material; never committed or published
 /references/
+
+# Local historical task, review and acceptance records
+/docs/implementation/
+/docs/consultations/

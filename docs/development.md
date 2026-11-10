@@ -1,348 +1,147 @@
 # Development Guide
 
-Engineering setup for the Battlegroup Army Builder. This documents what is
-actually implemented through milestone M11: contracts, versioned catalog,
-atomic editing commands, evaluation, Classic rules, the browser editor, local
-saving, JSON import/export and the print/PDF view. See
-[implementation modules](implementation_modules.md) for the delivery plan.
+This guide describes the implemented Classic workflow: versioned catalogs, pure commands/evaluation, scoped rules, two-column browser editing, local saving, JSON transfer and print/PDF. See the [documentation index](README.md) for maintained specifications and the [module plan](implementation_modules.md) for progress.
 
-## Prerequisites
+## Prerequisites and installation
 
-| Tool | Requirement | Verified version |
-| --- | --- | --- |
-| Node.js | >= 22.12 (Vite 8 / Vitest 5 engine requirement) | 22.22.2 |
-| npm | >= 10 (npm workspaces) | 10.9.7 |
-
-Do not switch package managers. The repository uses npm workspaces with a
-`package-lock.json`; clean installs should use `npm ci`.
-
-## Install
+Node.js >=22.12 and npm >=10 are required (previously verified with Node 22.22.2 / npm 10.9.7). Use npm workspaces and the committed package-lock.json; do not switch package managers.
 
 ```bash
-npm install
+npm ci
 ```
 
-This installs dependencies for all workspaces and creates the workspace
-symlinks (`node_modules/@battlegroup/*` point at `packages/` and `apps/`).
+This installs the locked workspace dependencies and links @battlegroup packages. Use npm install deliberately when changing dependency inputs.
 
-## Commands (root package.json scripts)
+## Commands
 
-| Command | What it does |
-| --- | --- |
-| `npm run dev` | Vite dev server for the web shell (hash routing at `http://localhost:5173`) |
-| `npm run typecheck` | `tsc --noEmit` for `packages/core`, `packages/rulesets/classic-coldwar` and `apps/web` in sequence |
-| `npm test` | Vitest run — core, ruleset, Web adapters/session and catalog release tests, without a DOM |
-| `npm run test:watch` | Same tests in watch mode |
-| `npm run build` | Static production build into `apps/web/dist` |
-| `npm run preview` | Preview server for the built app |
-| `npm run test:e2e` | Runs `npm run build`, then Playwright checks against a preview server of the built app (port 4173) |
+| Command | Purpose |
+|---|---|
+| npm run dev | Vite development server |
+| npm run typecheck | TypeScript checks for core, Classic ruleset and Web |
+| npm test | Vitest: contracts, commands, evaluation, rules, catalogs and Web adapters |
+| npm run test:watch | Vitest watch mode |
+| npm run check:catalogs | Catalog-release and combat-reference data gates |
+| npm run build | Data gates followed by Vite build into apps/web/dist |
+| npm run preview | Serve the existing production build |
+| npm run test:e2e | Build, then Playwright against a production preview |
 
-Playwright needs a local browser binary once per machine:
+On Windows use npm.cmd/npx.cmd when PowerShell execution policy prevents the .ps1 shims. Start a stable local preview with:
 
 ```bash
-npx playwright install chromium
+npm run preview --workspace @battlegroup/web -- --host 127.0.0.1 --port 4173 --strictPort
 ```
 
-On slow or offline networks you can run the checks against an installed system
-browser instead of the bundled Chromium:
+Browser checks require a local browser. Install bundled Chromium once with `npx playwright install chromium`, or set PLAYWRIGHT_CHANNEL=chrome (or msedge) for an installed system browser. For example, in PowerShell:
 
-```bash
-PLAYWRIGHT_CHANNEL=chrome npm run test:e2e      # or msedge
+```powershell
+$env:PLAYWRIGHT_CHANNEL = 'chrome'
+npm.cmd run test:e2e
 ```
 
-(The env var is optional; without it Playwright uses its bundled Chromium.)
+The root config uses port 4173 and reuses an existing server. Confirm that server serves the intended build, or use an isolated config/port with reuseExistingServer=false for independent validation. Local sandbox restrictions can affect Chrome startup or downloads; preserve those failures and distinguish environment errors from application failures.
 
-## Workspaces and dependency direction
+## Debug tools
+
+Normal pages expose the roster workflow. Open `http://localhost:5173/?debug=1#/` (or the same query before the hash on a production preview) for the independently verified 398 Points / 23 BR example and catalog diagnostics. The example uses normal commands and published entry IDs, never fixture expected totals.
+
+The flag is not persisted. Remove it and reload to hide the tools. It does not affect rule checks, versions, choices or saving. Browser tests that need the example opt in explicitly.
+
+Rule coverage summarizes partial coverage and checks blocked by data/settings. A nested Check diagnostics disclosure appears only under ?debug=1 and shows internal check IDs/notes. Printed sheets always use the concise player summary, even when opened in debug mode. Engineering progress belongs in the module plan, not a Roadmap application route.
+
+## Workspaces and dependencies
 
 ```text
-apps/web (@battlegroup/web)
-  ├── react / react-dom
-  ├── @battlegroup/core ────────────────> zod (pure schema library)
-  └── @battlegroup/classic-coldwar ──> @battlegroup/core + zod (declared directly)
+apps/web
+  ├── react / react-dom / dexie
+  ├── @battlegroup/core ──────────────> zod
+  └── @battlegroup/classic-coldwar ──> core + zod
 ```
 
-Rules enforced today (checked by
-`packages/core/src/dependencyBoundary.test.ts`):
+Core's only runtime dependency is Zod. A concrete ruleset importing Zod declares it directly. Core does not import React, DOM, storage or concrete rulesets; rulesets do not import one another. dependencyBoundary.test.ts checks the boundary. Both domain packages are side-effect-free and importable in Node tests. Internal packages export TypeScript source, compiled by Vite/Vitest.
 
-- `@battlegroup/core` declares exactly one runtime dependency: `zod` (M03).
-  No React, no DOM, no ruleset imports, no browser storage.
-- A ruleset module depends on core and declares `zod` directly when it
-  imports it — no reliance on hoisting. Ruleset modules never depend on each
-  other or on the web app.
-- Only `apps/web` composes ruleset modules.
-- Core and ruleset packages must stay importable from plain Node without a
-  DOM; their tests run in Vitest's `node` environment to prove it.
+## Contracts, commands and evaluation
 
-Internal packages consume TypeScript sources directly (`main`/`exports` point
-at `src/index.ts`), so Vite and Vitest compile them on the fly. Both packages
-declare `"sideEffects": false`, so the web bundle tree-shakes the schema code
-it does not use. The current editor includes Zod for catalog boundary checks.
+[Domain contracts](contracts/domain.md) describe the full API and responsibility split.
 
-## Domain contracts (M03)
+| Location | Responsibility |
+|---|---|
+| packages/core/src/contracts/ | Identities, value states, sources, catalog/roster/version/transfer schemas and result types |
+| packages/core/src/validation/ | Explicit catalog/roster relationship checks and stable member resolvers |
+| packages/core/src/roster/ | Pure create/edit commands, atomic batches and structural validation |
+| packages/core/src/evaluation/ | Generic composition, charges, live targets and resource allocation |
+| packages/rulesets/classic-coldwar/src/ | Classic training/combat/release schemas, game checks, eligibility and reference boundaries |
+| packages/core/src/samples/ | Synthetic and M01-based contract-test samples; never runtime releases |
 
-M05 exports `createRosterDocument` and `executeRosterCommands`: pure atomic edits
-with caller-provided ids/revisions and explicit invalidation notices. M06 exports
-`evaluateRoster`, `resolveChoiceTargets` and `allocateResources`: one deterministic
-derived snapshot with live selectors, charges, capacity matching and coverage.
-The catalog must already be validated. Concrete game checks arrive in M07;
-M06 always retains a game-rule coverage gap. See the [M05](implementation/m05-acceptance.md)
-and [M06](implementation/m06-acceptance.md) acceptance records.
+Core exports createRosterDocument / executeRosterCommands with caller-supplied IDs/revision, and evaluateRoster / resolveChoiceTargets / allocateResources. Classic exports evaluateClassicRoster / getClassicEntryAvailability / createClassicRuleset. The result protocol file itself contains interfaces; this does not mean the separately exported evaluators are unimplemented.
 
-M07 now provides `evaluateClassicRoster`, `getClassicEntryAvailability` and
-`createClassicRuleset` in `@battlegroup/classic-coldwar`. It uses an explicit
-catalog/purchase context, preserves the generic snapshot, and reports remaining
-full-rule coverage gaps. The initial 10-purchase release remains pinned at
-1.0.0. New rosters use 1.1.0, which expands the Soviet V4.1 static formation
-catalog to 151 purchase records.
-See [M07 acceptance](implementation/m07-acceptance.md) for enabled checks and
-which boundary cases use synthetic data instead of published purchases.
+Use explicit full identity (ruleset/catalog/revision/localId), independent selection IDs and stable member targets. Static member-path and explicit ownerSelectionId+nodePath attachment-member targets are different. Member-slot options cannot address arbitrary attachments; scope selectors can rebuild actual matching targets.
 
-M04 adds `npm run check:catalogs` and an independent partial Classic JSON release
-under `packages/catalogs/classic-coldwar/public/`. The normal production build
-runs this data gate before Vite. Only this explicit public directory is copied;
-the Web adapter loads exact indexed identities and verifies SHA-256 before parsing.
-See [M04 acceptance](implementation/m04-acceptance.md) for the covered entries,
-purchase contexts and failure states. Test fixtures are not runtime catalogs.
+Roster edit revision, evaluation inputRevision, catalog revision and storage saveRevision are different concepts. UI must consume a matching input/version snapshot. Base training is a tracked context token; Classic validates i/r/v/e, separately from numeric BR and explicit game size.
 
-Pure TypeScript + Zod contracts and structural validation live in
-`packages/core/src`:
+## Catalog loading and publication
 
-| Area | Entry points |
-| --- | --- |
-| Identity & references | `contracts/primitives.ts` — `CatalogIdentity`, `EntryReference`, `rulesetIds` |
-| Value states | `contracts/values.ts` — `TrackedValue` (`known`/`unknown`/`not_applicable`), `QuantityLimit`, `CostDelta` |
-| Sources & errata | `contracts/source.ts` — `SourceDocument` (authority / review / errata status separate), `SourceReference` (PDF page vs printed page) |
-| Versions | `contracts/versioning.ts` — `CATALOG_SCHEMA_VERSION`, `ROSTER_FORMAT_VERSION`, `CatalogManifest` |
-| Catalog shell | `contracts/catalog.ts` — sections tree, `UnitEntry` + composition (known / no-entities / pending), `OptionGroup`/`Option`, resource grants & consumptions |
-| Roster document | `contracts/roster.ts` — `RosterDocument`, selections with stable member paths, budget and game size stored independently |
-| Evaluation protocol | `contracts/evaluation.ts` — result-shape interfaces only (`Evaluation`, `Availability`, `RulesetModule`); there is intentionally no evaluate/pricing function yet |
-| Integrity checks | `validation/catalogRelations.ts`, `validation/rosterRelations.ts` — reference/relationship checks taking an explicit catalog; distinct from game rules |
+The application allowlist is packages/catalogs/classic-coldwar/public/catalogs/index.json. loadCatalog in the Web catalog adapter resolves only exact indexed identity, verifies SHA-256 before parsing and checks the required module/rules revision. Results distinguish ready, not-found, unsupported-version, network-error, digest-mismatch and invalid-data. An imported URL cannot become a catalog request.
 
-`packages/core/src/samples/` holds **synthetic contract-test fixtures** (three
-same-name ruleset catalogs proving isolation, plus the M01-facts Classic
-catalog and the 23 account-shaped roster documents). They are test data, not
-a publishable catalog.
+Release 1.0.0 remains the original ten-purchase release. New rosters use 1.1.0 with 120 top-level purchases, 31 attachment contexts and 203 options. Fixed platoons are included in the parent price. The actual catalogId is soviet-armoured-division-v4_1, not the asset directory's shorter name.
 
-Member paths address the selection's static composition. Purchased attachments
-use an `attachment-member` target carrying `ownerSelectionId` and its own
-relative node path; reordering identical purchases cannot retarget an option.
-Only scope-selector options can address attachments, not options restricted
-to declared static member slots. The document's edit `revision` is copied to
-`Evaluation.identity.inputRevision`; it is distinct from catalog revisions
-and the storage concurrency revision.
+Only the explicit public catalog directory is copied into static output. The normal build runs release/reference data gates first. Preserve immutable release bytes and LF endings. Fixtures are independent evidence, not runtime catalog authority. See the [catalog README](../packages/catalogs/classic-coldwar/README.md), [source baseline](data/classic-sample-scope.md) and [constraints](data/classic-constraints.md).
 
-`UnitEntry.baseTraining` carries an opaque tracked token per purchase context;
-Classic validates known levels as i/r/v/e. The Classic catalog and roster
-schemas also reject foreign ruleset identities. Entry, profile, option and
-errata source references are checked against the manifest's document registry.
-See [the contract guide](implementation/m03-contracts.md) and
-[M03 acceptance](implementation/m03-acceptance.md) for exact coverage.
+## Application and editing
 
-The Classic-specific schema boundary lives in
-`packages/rulesets/classic-coldwar/src`: training levels `i/r/v/e`
-(`training.ts`), tracked combat stats that stay honestly unknown until
-verified (`profiles.ts`), and the Classic catalog/roster refinements
-(`classicSchema.ts`, e.g. game sizes squad/platoon/company/battalion).
+Hash routes are #/ (My Rosters) and #/editor. Unknown paths render a not-found page. The workspace remains mounted across supported route navigation. After reopening, choose a saved roster from My Rosters; a direct editor link without an active roster offers a route back.
 
-See [M03 contracts](implementation/m03-contracts.md) for the full public API,
-the schema-vs-relationship check division, and the 23-account mapping.
+Strings live in apps/web/src/i18n/en.ts through t(). A later language dictionary can be a sibling module. Set VITE_BASE (for example /armybuilder/) for subpath builds; see apps/web/vite.config.ts. Hash routing avoids rewrite requirements but not asset-base verification.
 
-## Web shell notes
+RosterWorkspace composes catalog, commands, evaluation, save queue and UI. One matching evaluation drives totals, composition, charges and issues. session.ts retains at most 50 undo/redo snapshots, each restoration with a fresh edit revision. Name/budget/size changes are one batch/history step. Panel/search/selection state is separate from roster data.
 
-- **Routing:** hash routing (`#/`, `#/roadmap`) implemented in
-  `apps/web/src/app/hashRouter.ts`. Unknown paths render a not-found page.
-  Hash routing keeps the app deployable to any static host without rewrite
-  rules, but asset base paths still need verification per host.
-- **Strings:** all UI copy lives in the English dictionary
-  `apps/web/src/i18n/en.ts` and is read through `t()` from
-  `apps/web/src/i18n/index.ts`. A future Chinese dictionary can be added as a
-  sibling module.
-- **Asset base path:** set `VITE_BASE` (for example `VITE_BASE=/armybuilder/`
-  in `apps/web/.env.production`) to build for a sub-path deployment. See
-  `apps/web/vite.config.ts`.
-- **Save status:** local autosave reports saving, saved, failure and conflict
-  states. Game-rule coverage is reported separately.
+Desktop uses Roster left and Actions right. RosterTree renders section add buttons, company fixed platoons, support destinations, attachments and independent delete controls. Parent deletion cascades and can be undone. Actions switches between CatalogPanel candidates for the selected destination and selected-unit details/options. Adding leaves candidates open; selecting a purchase opens details. Instance ordinals distinguish identical purchases. Deleting a parent clears an invalid chooser. Small screens switch Roster/Actions; attachments do not create a third panel.
 
-## Browser editing (M08)
+Over-budget and other rule-breaking purchases remain editable. Availability can be allowed-with-issues, but ordinary candidates show no speculative warning banner. After editing, Problems updates and clears resolved issues. Invalid references/destinations remain blocked. Problems navigation selects the purchase or focuses the budget field as appropriate.
 
-The `#/` route manages multiple locally saved rosters. Create an empty
-Classic Soviet roster or use the 398 Points / 23 BR example. `#/editor` shows
-the active roster; a direct link with no session offers a route back to creation.
-The workspace stays mounted during hash navigation, so visiting Roadmap does
-not discard drafts. After reopening the browser, open a saved roster from the list.
+## Unit reference data
 
-`features/roster-editor/RosterWorkspace.tsx` composes the exact catalog release,
-M05 commands and M07 evaluation/availability. The UI reads totals, composition,
-charges and issues from one evaluation whose `inputRevision` must match the
-active document. `session.ts` keeps at most 50 undo/redo snapshots; restoring
-one creates a fresh edit revision. Applying name/budget/size is one command
-batch and one undo step. UI selection and small-screen panel state are separate
-from roster choices.
+The detail panel reads the evaluation's actual subtree using versioned Classic vehicle/weapon supplements. Vehicles have independent cards; infantry/teams display explicitly recorded carried weapons. Replacements and targeted tags drive PKM/RPG/SAM and Konkurs/Svir presentation. Unknown values/variants remain explicit, and reference display never prices a purchase. See [unit data](data/classic-unit-data.md) for sources, counts and gaps.
 
-Desktop uses two columns with Roster on the left and Actions on the right. Each
-catalog section has an add button. Fixed platoons appear inside their company
-with their own support menu and purchased attachments. `RosterTree.tsx` renders these destinations
-and a separate delete button on every purchase row. Deleting a parent cascades
-through its attachments and can be undone.
+## Local saving
 
-Actions switches between `CatalogPanel.tsx` (only candidates for the chosen
-section or parent instance) and the selected purchase's details/options. Adding
-keeps the candidate list open for repeated purchases; clicking a roster unit
-switches to its details. The destination and details headings include an instance
-ordinal to distinguish identical platoons. Deleting a target parent clears its
-attachment chooser. Selection/add-destination UI state is not saved as roster data.
+adapters/storage/ contains the port, Dexie implementation and save queue. Schema 2 adds rebuildable summaries and deletion markers while preserving original documents/exact catalogs. Per-roster writes serialize and coalesce; an older completion acknowledges only its edit revision. Transactions compare expected storage revision before save/delete.
 
-Purchases that exceed the budget or violate game rules can be added to a draft.
-The purchase preview returns `allowed-with-issues` with the resulting rule
-reasons. Invalid references or purchase destinations return `blocked`.
-After each edit, the editor reevaluates the current roster and updates the
-problem list, including clearing issues that the edit resolves.
+Conflicts offer reload or save-as-copy; failed writes retain the memory draft and offer retry/recovery JSON. Tombstones stop a stale tab from resurrecting a deleted roster. Raw recovery downloads remain importable by the transfer flow. Database schema migration must not upgrade game rules.
 
-The desktop action pane remains visible while scrolling a long roster, with
-its own scrolling for lengthy details. Small screens have only Roster / Actions
-panel buttons and a route back to the roster; no third panel is created for
-attachments. Issues select the offending purchase, or focus the budget input for
-a budget problem. See [two-column acceptance](implementation/m08-two-column-layout.md).
+## Import/export
 
-The runtime example uses published purchase IDs and normal commands. It never
-imports manual fixture expectations or supplies precalculated totals. Coverage
-and verified browser flows are recorded in [M08 acceptance](implementation/m08-acceptance.md).
+features/roster-transfer/ implements roster-file/1 and library-backup/1. Exports read current drafts even when unsaved. Backups merge drafts over stored rows and exclude tombstones. Imports enforce byte/depth/count limits, classify ready/original/error, preview without writes and apply only on confirmation.
 
-## Local saving (M09)
+Copies get fresh roster/edit IDs but retain internal choices/targets and catalog version. Explicit overwrite settles the queue and uses its last acknowledged page-known saveRevision, never a fresh database read. Concurrent remote changes therefore conflict. Full backups write atomically and reject the entire batch if any record is an error. Unsupported originals remain recoverable. See [transfer contracts](contracts/import-export.md) for exact limits and API semantics.
 
-Local saving is implemented in `adapters/storage/`. The storage port separates
-database revisions from edit revisions. Dexie schema version 2 adds rebuildable
-summaries and deletion markers to version 1 rows, preserving each original
-document and its exact catalog identity. The save queue serializes writes per
-roster and coalesces pending edits. A successful older save acknowledges only its
-own edit revision. A transaction compares the expected database revision before
-writing or deleting. Conflicts require reloading the saved version or saving a
-copy. Storage failures retain the memory draft and offer retry and recovery JSON.
-This recovery download contains the raw draft document. The M10 import workflow
-and backup bundle format are planned separately.
+## Print/PDF
 
-See [M09 acceptance](implementation/m09-acceptance.md) for the validation record.
+features/roster-output/ contains a pure projection and overlay. Verify roster ID, edit revision, all catalog identities and evaluation schema/rules/catalog stamps against the release. Reject stale/mismatched inputs. The snapshot supplies all composition/costs/problems; print adds no rules or repricing.
 
-## Import & export (M10)
+Print / PDF freezes the current draft/evaluation, shows revision, supports refresh/close and calls window.print. Unsaved/violating drafts can print without editing choices/history/save state. Fixed platoons, member-anchored attachments, optional rules, upgrades, versions, notes, issues and incomplete totals are preserved. Every member appears once, including legacy profile-bearing roots. Rule coverage uses the player summary rather than raw implementation records.
 
-Roster JSON transfer is implemented in `features/roster-transfer/` with
-envelope contracts in `packages/core/src/contracts/transfer.ts`. Exports read
-the current in-memory draft (unsaved and failed-save rosters included):
-**Export JSON** produces a `roster-file/1` single-roster file, **Download all
-rosters (backup)** a `library-backup/1` backup that merges memory drafts over
-stored rows and skips tombstones.
+Append vehicle and weapon data is off by default, survives refresh and resets on reopening. It groups equal vehicle configurations, isolates target upgrades, deduplicates weapon IDs and prints source/gap notes. It is never stored in RosterDocument. See [printing contracts](contracts/printing.md) for paper contents, identity reasons and A4 pagination.
 
-Imports run a fixed gate order — `File.size` before the bytes are even read
-(20 MiB), byte size again before `JSON.parse`, the 2 MiB single-roster cap on
-every single-file shape (envelope, bare M09 document, recognizable unknown
-format), then JSON depth (64, measured iteratively), then per-record
-classification: `ready` (exact indexed catalog loads and the document passes
-the same command-document check used for restore), `original` (unknown catalog
-revision or unknown format version — preserved verbatim as a recovery row,
-never evaluated or converted), or `error` (corrupt structure,
-cross-ruleset/orphan/cycle references, limits exceeded, or an indexed catalog
-that cannot be verified right now — rejected from the library). The preview
-writes nothing; confirm applies the default copy (fresh roster and edit ids,
-all player choices verbatim), an explicit single-target overwrite
-(compare-and-write against the page-known queue-anchored revision after all
-pending writes settle — never a fresh store read, so another tab's committed
-update conflicts instead of being silently replaced; a deleted/deleting target
-is refused), or an all-or-nothing `importBatch` transaction for full backups.
-A backup preview containing error records is rejected as a whole — the import
-button stays disabled with the reason shown. The M09 bare recovery document
-remains importable. Catalogs load only from the application index by exact
-identity — nothing in a file can direct a request. Limits and semantics:
-[M10 contracts](implementation/m10-contracts.md).
+## Verification
 
-## Print / PDF view (M11)
+Vitest covers schema/relation boundaries, commands, evaluation, rules, isolation, catalog/reference releases and Web storage/transfer adapters (including fake-indexeddb), without a DOM. Root configuration is vitest.config.ts.
 
-`features/roster-output/` contains the pure print projection
-(`printProjection.ts`) and the preview overlay (`PrintPreview.tsx`). The
-projection consumes exactly one (document, catalog release, evaluation)
-snapshot; it verifies rosterId, the edit revision (`inputRevision`), the
-exact catalog identity on all three sides, and the evaluation's stamped
-version triple (schemaVersion / rulesRevision / catalogRevision) against the
-release manifest — a mismatched or out-of-date evaluation is refused instead
-of printed. Totals, charge lines, composition and problems all come from that
-snapshot — the projection adds no pricing or rule logic of its own; its only
-arithmetic is summing the snapshot's charge lines into clearly labelled
-display subtotals. Every composition member prints exactly once per purchase
-(fixed platoons print as titled blocks and never repeat in the purchase's own
-rows), and a composition root that itself carries a profile (the exact 1.0.0
-BRDM-2 leaf) prints as a member.
+Playwright checks web shell/routing/small screens, indexed catalog assets, real download/file-selection/preview/import flows, conflicts and print snapshots/options. Print checks generate actual A4 PDFs under .tmp/m11/ and .tmp/m11-appendix/. Root configuration is playwright.config.ts. The suite serves built assets rather than only a development server. For print changes, inspect actual output where pagination/readability is affected.
 
-The editor toolbar's **Print / PDF** button freezes the current in-memory
-draft (saved or not, valid or violating) plus its evaluation into a preview.
-The preview states the frozen edit revision, offers refresh/close, and calls
-`window.print()`; the print stylesheet shows only the paper sheet on A4 with
-all editor chrome hidden. Closing or refreshing the preview never edits the
-roster, the undo history or the save state. Paper contents: header with
-settings (including selected optional rules), Points/BR (final totals vs
-known subtotals), rules/catalog/document versions and player notes; every
-purchase including fixed sub-platoons and member-anchored attachments,
-selected upgrades with per-target billing, and per-purchase price breakdowns;
-problems with rule ids and purchase location; support ledgers, statistics,
-check coverage and a vehicle/weapon quick reference aggregated from the
-verified reference packages (their versions and gaps are printed). Long
-blocks may split across pages; only small rows avoid page breaks, so no
-oversized block is clipped. See
-[M11 contracts](implementation/m11-contracts.md) for the full projection
-contract and [M11 delivery](implementation/m11-result.md) for the validation
-record.
+Run checks appropriate to a change. Documentation-only changes require link/consistency checks rather than repeating unrelated application tests. A passing build is not a substitute for independent source arithmetic or browser reopen/printing evidence.
 
-The preview's **PDF options → Append vehicle and weapon data** checkbox is
-off by default. Enabling it appends the current roster's vehicle cards and
-weapon properties on new pages. Equal vehicle configurations are grouped;
-targeted missile upgrades remain separate. Carried and mounted weapon
-references are deduplicated by ID. Unverified data is shown explicitly.
-This option changes presentation only: it survives Refresh snapshot, resets
-when reopening the preview, and is never saved into the roster document.
-See [PDF options](implementation/m11-pdf-options.md).
+## Build output and fixture checker
 
-## Tests
+npm run build writes apps/web/dist. It must not contain references/, tests/fixtures/, .tmp/, source PDFs or the working directory. dist/, dependencies, reports and .tmp/ are ignored. Preserve the existing chunk-size warning as a warning, not a failed build or a reason for an unrelated dependency change.
 
-- **Unit (Vitest):** `packages/core` and
-  `packages/rulesets/classic-coldwar` — contract schema shape checks,
-  catalog/roster relationship integrity positives and negatives, three-ruleset
-  isolation, the Classic schema boundary, and the dependency boundaries
-  above — plus the Web storage adapters and transfer pipeline (fake-indexeddb,
-  no DOM). Config: `vitest.config.ts` (root).
-- **Browser (Playwright):** `tests/e2e/web-shell.spec.ts` (shell, routing,
-  small viewport), `tests/e2e/roster-transfer.spec.ts` — real downloads,
-  file selection, preview/cancel, copy and overwrite import, exact-catalog
-  and unknown-version handling — and `tests/e2e/roster-print.spec.ts` —
-  current-draft printing, close/reopen freshness, editor-intact checks,
-  real A4 `page.pdf()` output of a long multi-page roster and a
-  violations/coverage roster (PDFs land in `.tmp/m11/` as acceptance
-  evidence, never in the published app). Config: `playwright.config.ts`
-  (root). The suite starts `vite preview` of the built app, so a pass
-  exercises the static artifacts.
-
-There are intentionally no unit tests for the page copy; the e2e checks cover
-the shell's main access paths without mirroring every string.
-
-## Build output
-
-`npm run build` writes `apps/web/dist`. The build bundles only the web app
-and its workspace dependencies. It must never include `references/`,
-`tests/fixtures/`, `.tmp/` or raw source PDFs — verify with a directory
-listing when changing build inputs. `dist/`, `node_modules/`, test reports
-and `.tmp/` are git-ignored.
-
-## Data checks (pre-existing, unchanged)
-
-The M01 fixture account checker predates the npm workspace and still runs on
-Python alone:
+The independent fixture checker runs without npm or pytest:
 
 ```bash
 python tools/data-import/check_m01_fixtures.py
 ```
 
-It verifies source fingerprints and arithmetic in the manual fixture
-accounts. It is not a rule engine and is unaffected by this repository's npm
-setup. On machines where `python` resolves to the Windows Store stub (exit
-code 49, no output), run it through the local uv interpreter instead:
+It checks source fingerprints and manual arithmetic, not game-rule execution. Where python is a Windows Store stub, a locally available interpreter can be selected with `uv run --python 3.12 python tools/data-import/check_m01_fixtures.py`. Verify local source paths when checking moved reference files rather than changing fingerprint expectations.
 
-```bash
-uv run --python 3.12 python tools/data-import/check_m01_fixtures.py
-```
+## Maintained and archived documentation
+
+Keep maintained documentation in English, using the [index](README.md). docs/implementation/ and docs/consultations/ contain ignored local historical reports; a fresh checkout must not depend on them. Durable APIs, deployment identity and source decisions have been consolidated into maintained contracts/guides. The tracked root AGENTS.md provides the project's standing agent guidance.

@@ -1,21 +1,17 @@
-# Classic 歧义与待核对项
+# Classic Clarifications and Coverage Questions
 
-初始登记于 2026-10-30。苏联 V4.1 目录 1.1.0 接入时补记 A05／A06 的用户澄清。基础书补查见[核对记录](classic-base-rulebook-review.md)。用户解释作为本项目的实现依据，原始 PDF 保留。
+Initial register: 2026-10-30. A05/A06 were subsequently resolved when expanding Soviet V4.1 to catalog 1.1.0. User clarifications are this project's implementation basis; original PDFs remain unchanged. The [base-rulebook review](classic-base-rulebook-review.md) records the evidence boundary.
 
-| ID | 已观察证据 | 候选解释／需要补充的证据 | 影响与当前处置 |
+| ID | Observed evidence | Confirmed interpretation / remaining question | Implementation consequence |
 |---|---|---|---|
-| A01（已解决） | SOV p.6 T-72 Company 总述误写10 T-80B，逐项为1+3+6辆T-72A | 用户确认是笔误，实际10 T-72A | 录入10 T-72A，1连指挥、3排指挥、6普通；600 Points / 25 BR；保留原文与修正记录，不再阻止连组成建模 |
-| A02（已解决） | 我将Support units的全军支援购买额度与Platoon Support Options的排内附属上限混淆 | 2026-10-30用户明确：前者从对应全军支援类别选择，后者是该排自身菜单。按条目4/12、4/9/3提供全军额度，不额外加1；连内固定子排不重复授予 | 撤回原“资料歧义／待作者解释”判断，移除验收阻断；更新C07/C08及样本，保留ID记录纠错 |
-| A03（已解决） | SOV p.2–5的all BMP选项作用于编制 | 用户明确all包含所有子排的BMP以及已购Platoon Support Options内的BMP | 递归收集本编制作用域内所有匹配BMP，包含指挥与附属运输；按实际目标计费且每辆一次；不扩展到其他独立购买或其他运输型号 |
-| A04（已解决） | SOV p.3/p.5有第二Fire Support Section，分别+20/+35 Points和+1 BR | 用户明确第二Section另占4个Platoon Support Options名额中的一个 | 第一与第二Section共用2个名额，第二Section是明确允许的重复例外；按所属排计数 |
-| A05（已解决） | T-80 全排 BV 升级标 Restricted，BMP-2D 整排升级标 Restricted 和 Unique，T-62 连允许最多 3 辆 Bastion 且标 Unique | 用户确认整次升级计一个名额 | 费用仍按原表的整编制或逐目标方式计收。T-62 连最多 3 辆共用一次 Unique，和独立 T-62MB 购买及排内 Bastion 升级共用同一 Unique 组 |
-| A06（已解决） | SOV p.3/p.5 的 MANPADS Section 块写有与所属排 SA-7 升级的互斥说明 | 用户确认每连最多一个排购买一个 SAM Section | 同连其他排不可再选。SA-14 替换保留 Section 的身份，且与所属连各排的 SA-7 升级互斥。不同连分别检查 |
-| A07（已解决） | p.10独立PT-76与Recon Command改PT-76均触发坦克选择限制 | 用户明确禁用其他坦克所有编制 | PT-76出现后，T-62系列以外坦克的连、排、额外单车等均不可取；递归检查所有购买及已选型号，不按名称含Platoon筛选；T-62M/MB仍属于T-62系列 |
-| A08 | 已定位基础书66页文本并目视核查相关章节；BASE PDF6/印刷5明确具体军表在补充资料，所查组军段和PDF61组织表未给统一HQ/步兵最低数 | 基础书查阅不足部分已补查；剩余为冷战具体全局组军依据及来源适用覆盖，不能从未发现条款推导所有军表自由购买，也不要求必须有作者兼容声明 | 不新增无来源的强制条件；398/23账目不变。A02已解决，不再作为本项前置；剩余仅为明确所承诺的规则覆盖范围 |
-| A09（已解决） | 部分选项仅列Points，无BR差额 | 用户明确仅列Points表示BR不变 | 该选项的BR差额明确为0；不视为未知，不覆盖原有BR，也不把未录入的基础BR当成0；明列BR变化仍按原值处理 |
+| A01 — resolved | SOV p.6 T-72 Company summary says ten T-80B; detailed rows show 1+3+6 T-72A | User confirms a typo: ten T-72A | One company command, three platoon command, six ordinary; 600 Points / 25 BR. Preserve the source and correction; no modeling blocker |
+| A02 — resolved | The initial review confused army-wide Support units with local Platoon Support Options | User clarified the two scopes on 2026-10-30 | Army allowances follow the exact entry (4/12 for BMP, 4/9/3 for tank contexts), with no additional +1 and no duplicate included-platoon grant. Withdraw the old ambiguity claim and retain this ID as correction history |
+| A03 — resolved | SOV pp.2–5 use all BMP options | User includes all fixed platoons and purchased local-support BMPs | Recursively target matching command/member/attachment transports in that purchase's scope; charge each actual vehicle once. Do not include unrelated purchases or other transport types |
+| A04 — resolved | Second Fire Support Section is +20/+35 Points and +1 BR in the respective p.3/p.5 menus | It consumes one of the four local option slots | First and second use two slots total; this is an explicit repeat exception, counted per platoon |
+| A05 — resolved | Whole-platoon T-80BV upgrade is Restricted; BMP-2D is Restricted+Unique; T-62 company allows up to three Unique Bastion vehicles | Count the complete upgrade event once | Retain printed once/per-target cost mode. The company event shares its Unique group with independent T-62MB and platoon Bastion upgrades |
+| A06 — resolved | MANPADS Section text on SOV pp.3/5 refers to squad SA-7 conflict | At most one platoon per company may buy one SAM Section | Other platoons in that company cannot buy another. SA-14 replacement preserves identity and conflict with SA-7 upgrades in that company. Different companies are independent |
+| A07 — resolved | Independent PT-76 and Recon Command PT-76 conversion both trigger tank exclusions | Exclude every non-T-62 tank purchase context | Check companies, platoons, additional individual tanks and nested selected models; do not filter names containing Platoon. T-62M/MB remain T-62 |
+| A08 — coverage question | Relevant passages in the 66-page local base book were searched/reviewed; BASE PDF6 / printed5 delegates lists to supplements; reviewed list-building passages and PDF61 show no universal HQ/infantry minimum | Remaining work concerns the declared supplement/edition and full-rule coverage, not an unreviewed base book | Do not invent minimum purchases or infer universally free composition from an absent clause. B01 remains 398/23 with an undetermined full-legality conclusion. No nonexistent author-compatibility statement is a permanent prerequisite |
+| A09 — resolved | Some options list only Points | User confirms unchanged BR | Represent an explicit zero option BR delta. Preserve base BR; do not treat it as unknown or turn an unrecorded base BR into zero. Explicit printed BR changes still apply |
 
-## 下一轮核对优先级
-
-已解决项进入约束和对应版本的验收。A08 记录基础书查阅和规则覆盖范围。
-
-对已解决项保留决定、依据、日期及受影响 fixture ID；若改变期望，追加修订记录，不改原始PDF。本轮没有向作者发送询问或把任何候选解释当作者答复。
+Resolved items belong in the constraints and released data, not in an open-blocker list. Retain decision, evidence and affected fixture IDs. If expectations change, record a revision rather than editing original PDFs. A08 is a scoped coverage statement, not evidence that a particular mandatory rule is missing. No candidate interpretation in this register is an author response.

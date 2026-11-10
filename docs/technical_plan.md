@@ -1,830 +1,173 @@
-# Battlegroup Army Builder — 项目技术设计方案
+# Battlegroup Army Builder — Technical Plan
 
-**文档版本：** 0.5
+Updated: 2026-11-10. This is the product and technology plan. The [architecture](architecture.md) defines domain boundaries, [contracts](contracts/domain.md) describe current APIs, and the [module plan](implementation_modules.md) records progress. Superseded flat-schema and calculate/validate examples have been consolidated into those maintained specifications.
 
-**更新日期：** 2026-11-03
+## 1. Product goal
 
-**项目状态（2026-11-03）：** M01–M08已实现并验证，包含首批独立Classic目录、纯编辑命令、统一评估／计价、Classic规则和网页基本编辑。支持当前页面会话内创建、购买、配装、检查、删除及撤销；刷新或关闭后不保留。M09存储、导入导出、打印与部署仍未实现。本轮按模块验证、提交和查询额度后结束；详细状态以[模块计划](implementation_modules.md)为准。
+Build a free community browser roster editor for Battlegroup cold-war tabletop games. Players choose a ruleset, nation and list; buy formations and equipment; inspect Points, Battle Rating (BR), restrictions and sources; save, restore, transfer and print their rosters.
 
-**配套文档：** [架构设计](architecture.md)细化模块边界、数据契约与运行流程；[实现模块与交付计划](implementation_modules.md)列出依赖、交付物和验收条件。本方案保留产品目标与总体路线；下文早期接口和简单数据示例以架构文档的细化约束为准，仍需通过真实样本验证。
+The initial success criterion is a practical Classic Soviet Armoured Division V4.1 workflow: create → purchase/configure → understand issues → reopen saved choices → export or print for play. My Rosters, the editor, unit details and printing form the initial product. Low running cost, data accuracy, maintainability and later ruleset expansion take priority over accounts, cloud sync, a public library or battle simulation.
 
-## 1. 项目概述
-
-### 1.1 项目目标
-
-开发一个供桌面战棋玩家免费使用的网页版军表编辑器，支持不同 Battlegroup 冷战规则体系。
-
-玩家通过浏览器即可：
-
-- 选择规则体系、国家与具体军表
-- 按照编制规则购买单位及附加装备
-- 自动计算 Points 与 Battle Rating（BR）
-- 自动检查编制限制和单位选择条件
-- 保存、导入、导出和打印军表
-- 查询单位数据及对应的规则来源
-
-项目优先考虑非商业社区使用、低运行成本、容易维护及后续扩展能力。
-
-首版成功标准：玩家能够使用 Classic Cold War 的苏联装甲师军表创建编制、调整配装、理解校验结果，在关闭并重新打开浏览器后恢复军表，并导出或打印用于桌面游戏。
-
-第一版围绕“我的军表、军表编辑器、单位详情、打印视图”完成实际使用流程。云同步、账户、公共军表库和完整战斗模拟不属于首版范围。
-
-### 1.2 支持的规则体系
-
-| 规则体系 | 性质 | 说明 |
-|---|---|---|
-| Unofficial Battlegroup: Cold War | 非官方 | RichardC 基于二战 Battlegroup 规则开发的冷战改编 |
-| AirLand Battlegroup | 非官方 | RichardC 进一步发展的冷战规则及军表体系 |
-| Battlegroup NORTHAG | 官方 | Plastic Soldier Company 出版的冷战规则 |
-| Battlegroup CENTAG | 官方扩展 | NORTHAG 的军表扩展内容，不单独作为规则引擎 |
-
-Classic、AirLand、NORTHAG 三套规则的单位与相关游戏数据完全隔离。即使名称、属性、点数或 BR 完全相同，也视作不同单位，分别定义、引用和维护。
-
-**当前实现顺序：Classic Cold War 优先，以本地苏联装甲师 V4.1 为首个建模样本。** AirLand 与 Classic 较接近，后续重点核对组军差异；NORTHAG 的核心规则也存在明显区别，接入时独立验证。三套规则是长期支持目标，不要求首版同时实现，也不以三套资料齐全作为启动 Classic 开发的前提。
-
----
-
-## 2. 核心技术决策
-
-### 2.1 采用统一工程
-
-**决定：采用 Monorepo 架构，不为 NORTHAG 单独创建 React 工程。**
-
-工程包含：
-
-1. 一个共享的 React Web 应用
-2. 一个通用的军表编辑和校验核心
-3. 按阶段增加的独立规则模块，首期仅实现 Classic
-4. 各规则体系独立的军表数据库
-5. 共享的保存、导入导出、打印能力，并预留多语言入口
-
-原则：
-
-- 共用基础功能，不强行统一游戏规则。
-- 规则模块不得直接依赖 React。
-- 一份玩家军表只能属于一个明确的规则体系。
-- 不允许直接混用不同体系的单位和点数。
-- 三套游戏数据不共用单位身份、属性、武器、购买条目或选项记录，也不采用跨体系继承、别名或差异覆盖；共享范围限于程序代码、数据结构和通用 UI 能力。
-- 规则与军表均支持独立版本管理。
-- 初期使用简单的 workspace 管理；不预先引入复杂构建编排或通用插件平台。
-
-### 2.2 技术栈
-
-| 功能 | 技术选择 |
+| Ruleset | Role |
 |---|---|
-| 前端框架 | React |
-| 开发语言 | TypeScript |
-| 项目构建 | Vite |
-| 数据格式 | JSON 为正式数据源，CSV 用于整理和导入 |
-| 数据结构验证 | Zod |
-| 浏览器本地数据库 | IndexedDB + Dexie |
-| 状态管理 | React 原生状态管理或 Zustand |
-| 单元测试 | Vitest |
-| 端到端测试 | Playwright |
-| 多语言 | i18next 或独立语言词典 |
-| 代码托管 | GitHub |
-| 测试部署 | ChatGPT / Codex Sites，初始保持私有 |
-| 正式托管候选 | Cloudflare Workers Static Assets 或 GitHub Pages，测试后决定 |
-| PDF 输出 | 优先使用浏览器打印样式 |
+| Unofficial Battlegroup: Cold War | Initial ruleset; RichardC's unofficial cold-war adaptation of Battlegroup |
+| AirLand Battlegroup | Independent later ruleset; verify list-building differences from Classic |
+| Battlegroup NORTHAG | Independent ruleset with materially different core assumptions |
+| Battlegroup CENTAG | NORTHAG expansion, not a fourth engine |
 
-第一阶段不使用专门的后端服务器。
+All Classic, AirLand and NORTHAG game data is completely isolated, including identical units, weapons, names, attributes, costs and options. Shared software does not mean shared game records. Start with Classic; another ruleset's incomplete sources do not block its release. The default later order is AirLand then NORTHAG unless the user reprioritizes it.
 
-保持普通 React + TypeScript + Vite 静态应用结构。初期不引入 Sites 专属身份、服务端数据库或连接器依赖；部署配置与业务代码分离。
+## 2. Technology decisions
 
----
+Use one monorepo, one React application and independent ruleset/data modules. Each roster belongs to one explicit ruleset. Do not create a separate NORTHAG React project or an early generic plugin platform.
 
-## 3. 软件架构
-
-### 3.1 推荐工程结构
-
-```text
-battlegroup-armybuilder/
-├── apps/
-│   └── web/
-│       └── src/                 # 页面、组件、编辑状态及本地存储适配
-│
-├── packages/
-│   ├── core/
-│   │   ├── types/
-│   │   ├── calculator/
-│   │   ├── validator/
-│   │   └── roster/
-│   │
-│   ├── rulesets/
-│   │   ├── classic-coldwar/
-│   │   ├── airland/             # 后续接入
-│   │   └── northag/             # 后续接入
-│   │
-│   └── catalogs/
-│       ├── classic-coldwar/
-│       ├── airland/             # 后续接入
-│       └── northag/             # 后续接入，含明确兼容的 CENTAG 扩展数据包
-│
-├── tests/
-│   ├── fixtures/
-│   ├── validation/
-│   └── integration/
-│
-├── tools/
-│   └── data-import/
-│
-├── references/                 # 本地原始资料，不自动打包到网站
-└── docs/
-```
-
-以上为目标职责结构，不要求一次创建所有目录或独立发布包。UI 组件先保留在 Web 应用中，出现实际复用需求后再提取 `shared-ui`。
-
-### 3.2 共享核心职责
-
-通用核心负责：
-
-- 军表选择的纯数据操作（增加、删除、替换和配置）
-- 单位和可选装备管理
-- Points / BR 计算框架
-- 数量、前置条件、互斥、比例等通用规则检查
-- 统一的校验结果输出
-- 军表序列化与反序列化
-- 数据版本兼容性检查
-
-规则模块负责：
-
-- 具体军表的编制结构
-- 各类单位的选择限制
-- 特殊单位的购买条件
-- 专属费用计算方法
-- 规则体系独有的校验逻辑
-
-Web 应用负责当前打开的军表、面板展开、编辑交互、撤销及保存状态；存储适配层负责 IndexedDB 读写。核心与规则模块不依赖 React、浏览器数据库或托管平台。总费用、展开组成和校验信息由当前选择推导，不维护多份可独立修改的计算结果。
-
-### 3.3 独立规则模块接口
-
-```typescript
-interface RulesetModule {
-  id: string;
-
-  getStructure(context: RulesetContext): ArmyStructure;
-
-  calculate(
-    roster: Roster,
-    context: RulesetContext
-  ): RosterTotals;
-
-  validate(
-    roster: Roster,
-    context: RulesetContext
-  ): ValidationResult[];
-
-  getAvailableEntries(
-    roster: Roster,
-    context: RulesetContext
-  ): UnitEntry[];
-}
-```
-
-这是早期的职责接口示意，具体类型应在真实军表样本验证后确定。架构设计进一步采用统一 `evaluate` 入口，共用组成展开、费用与校验快照；内部保留独立计算和校验函数。候选条目查询返回可用、不可用或未知及其原因，不能只隐藏不满足条件的条目。实现以[架构设计 §5](architecture.md#5-规则模块与评估流程)为基线。
-
-`RulesetContext` 提供已解析且版本匹配的数据包及对局设置，包括游戏规模、剧本身份和可选规则。它不是全局可变状态；计算和校验必须使用同一组输入。未满足购买条件的条目可仍展示并说明原因，具体可用性返回结构在实现时细化。
-
----
-
-## 4. 数据模型
-
-### 4.1 主要数据实体
-
-| 实体 | 功能 |
+| Area | Choice |
 |---|---|
-| RuleSet | 定义规则体系及其版本 |
-| ArmyList | 定义国家、军表及可用编制 |
-| ArmySection | 定义编制分区树，独立于购买实例的父子树 |
-| UnitProfile | 保存战斗单位的实际游戏属性 |
-| UnitEntry | 表示可以在军表中购买的编制条目 |
-| OptionGroup | 描述装备替换、附加单位等可选项目 |
-| ValidationRule | 描述军表合法性限制 |
-| Roster | 保存玩家购买的单位与选项 |
-| SourceReference | 记录规则及数据的原始出处 |
+| UI / language / build | React / TypeScript / Vite |
+| Packages | npm workspaces and package-lock.json |
+| Runtime data | Versioned JSON; CSV/OCR are preparation tools |
+| Boundary validation | Zod |
+| Local persistence | IndexedDB with Dexie |
+| UI state | React state; consider additional libraries only for demonstrated needs |
+| Unit / browser checks | Vitest / Playwright |
+| Localization | Independent English dictionary with a later translation entry point |
+| PDF | Browser print styles, without a dedicated PDF engine |
+| Initial hosting | Existing Sites test deployment |
+| Later hosting candidates | Cloudflare Workers Static Assets or GitHub Pages |
 
-### 4.2 UnitProfile 与 UnitEntry 分离
+There is no required business backend. Keep hosting-specific configuration outside domain code. Do not introduce Sites-only identity, databases or connectors merely to host the app.
 
-以 T-72 为例：
+## 3. Software organization
 
-- T-72 作为坦克的战斗属性，属于 UnitProfile。
-- 一份苏联装甲师军表中的坦克排，属于 UnitEntry。
-- 玩家购买的具体坦克排实例，属于 Roster Selection。
-
-UnitEntry 可以引用同一规则体系中的一个或多个 UnitProfile。同一体系内部是否复用属性记录由具体军表建模决定，不允许跨体系引用。
+Web composes concrete rulesets; rulesets depend on core. Core and rulesets remain pure TypeScript without React, browser storage, filesystem, network, clock or random-ID dependencies. Web supplies infrastructure, IDs and editing sessions.
 
-这样可以表示：
+- `apps/web/`: pages, sessions, presentation, catalog/storage adapters, transfer and printing.
+- `packages/core/`: contracts, structural validation, commands and generic evaluation.
+- `packages/rulesets/<ruleset>/`: concrete schemas, eligibility, game checks and statistics.
+- `packages/catalogs/<ruleset>/`: independently maintained runtime releases and reference supplements.
+- `tests/fixtures/`: hand-verified input and expected results, never runtime catalog authority.
+- `tools/data-import/`: preparation and release checks.
+- `docs/`: maintained English specifications and rule evidence.
+- `references/` and `.tmp/`: local sources/evidence excluded from Git and publication.
 
-- 单车单位
-- 坦克排
-- 机械化步兵排
-- 混合编制
-- 包含指挥单位的编制
-- 可增加或替换组成单位的编制
+Create packages only when needed. Keep shared UI in Web until actual reuse justifies extraction. See [architecture](architecture.md) for the detailed structure.
 
-购买实例需要保留连、排、班、车辆和附属选项的父子关系，以及指挥等角色。展开后的单位清单用于统计和打印，不能替代原始编制结构。编制自身的 Points / BR 使用军表给定值，不默认等于组成单位分别购买后的总和；附加选项只在其计费层级累计一次。
+## 4. Data model
 
-### 4.3 不同规则体系之间的数据隔离
+### 4.1 Distinct entities
 
-**决定：三份规则数据完全独立，不建立跨体系共享的装备或单位身份层。** 同一种现实装备在三个体系中是三个独立的数据实体，即使当前所有字段都相同，也不合并或自动同步。
+Separate the combat profile (a T-72's attributes), purchase entry (a list-specific tank platoon) and selection (the player's particular platoon). One entry can contain multiple roles, profiles, squads, platoons and paid attachments. A formation's printed price/BR is not inferred by adding individually purchased children.
 
-例如：
+ArmyList and ArmySection express the list's section tree. Parent selection and member paths express purchased composition. An expanded model list supports statistics/printing without replacing purchase ownership.
 
-```text
-classic-coldwar/profiles/t72
-airland/profiles/t72
-northag/profiles/t72
-```
+### 4.2 Choices and identity
 
-以上三个 ID 无共享基类记录或别名关系。具体约束：
+Persist format version, roster ID/name, exact catalog reference, army list, explicit budget/size/scenario/optional rules, stable selection IDs/parents, option choices and notes. Derive rather than store authoritative totals and expanded combat data.
 
-- 隔离覆盖单位名称及身份信息、战斗属性、武器数据、购买条目、组成、费用、选项、特殊规则与编制限制等游戏数据。
-- ID 与引用解析以规则体系为边界；可使用体系前缀或等价的组合键，不按显示名称或属性相同自动匹配。
-- 不采用“Classic 基础数据 + AirLand 差异覆盖”的运行时结构；每份发布数据包必须独立完整，不依赖另一体系的数据包。
-- 同一修正若适用于多个体系，分别核对来源、修改记录及发布版本；修改 Classic 不应改变 AirLand 或 NORTHAG 的数据和计算结果。
-- 数据导入、加载与校验拒绝跨体系引用，不因同名或属性相同自动替换单位。跨体系自动转换军表不属于当前范围。
-- 共享 TypeScript 类型、验证器实现、计算工具和 UI 组件，不代表共享任何具体游戏数据记录。
+Stable member paths and explicit attachment owners identify option targets. Group, per-option and per-target limits are distinct. Charge once, per target or through an explicitly supported algorithm. Replacement, removal, training changes, prerequisites, mutual exclusion, resource effects and negative/zero differences must be explicit.
 
-CENTAG 仍属于 NORTHAG 体系的扩展数据；隔离边界是 Classic / AirLand / NORTHAG 三个规则体系，CENTAG 不因此成为第四个规则引擎。
+### 4.3 Ruleset isolation
 
-### 4.4 单位数据建议
+Classic, AirLand and NORTHAG each own complete records and references. For example, their T-72 profiles have unrelated full identities even if localId/name/stats match. Prohibit cross-ruleset inheritance, aliases, runtime overlays and automatic conversion. Loading one data set must not require another. Apply corrections separately after verifying each source. CENTAG may extend only a declared compatible NORTHAG version set.
 
-下例仅表示早期简单条目的基础字段，不是最终 schema。平铺的 `composition` 不足以表达嵌套和局部选项；`categoryId` 不代替明确的 `sectionId`；`null` 不同时表示未知与不适用。最终契约遵循[架构设计 §4](architecture.md#4-领域模型)，阶段 0 通过样本验证。
+### 4.4 Value and composition states
 
-```typescript
-interface UnitEntry {
-  id: string;
-  armyListId: string;
-  name: string;
-  categoryId: string;
+Known zero, unknown and not applicable are different. Limits additionally distinguish finite and unlimited. Explicitly no-entities support/request purchases differ from pending composition. Numeric BR and training are separate; Classic i/r/v/e and NORTHAG c/p/e are independent definitions. Budget does not silently determine game size.
 
-  composition: Array<{
-    profileId: string;
-    count: number;
-  }>;
+## 5. Rules and validation
 
-  cost: {
-    points: number | null;
-    br: number | null;
-  };
+Use supported declarative configuration plus generic tools and tested ruleset-specific functions. Implement real sample needs before extracting abstractions. Do not execute JavaScript from JSON or build an unrestricted rules DSL.
 
-  optionGroupIds: string[];
-  tags: string[];
+Potential rule families include minima/maxima, prerequisites, exclusions, option counts, ratios, shared resources, budget, conditional eligibility, tiered costs and uniqueness. Each implemented rule declares scope, counted object, applicable version, severity and source. A list of possible families is not a claim that every family is implemented.
 
-  source: {
-    documentId: string;
-    page?: number;
-    status:
-      | "verified"
-      | "draft"
-      | "pending";
-  };
-}
-```
+One evaluation resolves exact context, checks relationships, expands actual composition, creates attributed charges, allocates resources and runs concrete rules. Totals, statistics, problems and coverage share that input/version snapshot. Errors represent confirmed mandatory violations; warnings/info carry their appropriate meaning. Coverage is independent: an error-free partial result is not a full legality claim. Label incomplete totals as known subtotals.
 
-未录入或尚未核实的点数必须明确标记为缺失，不能默认成 0。
+Allow rule-breaking drafts, including over-budget purchases, and update Problems after each edit. Structural corruption remains blocked. Do not display speculative purchase-warning banners.
 
-进一步区分已知值、未知和明确不适用；限制字段另区分有限上限与无上限。费用的已知零不能任意改写为不适用。无实体的场外支援／请求属于明确的购买类型，与组成尚未录入分别表示。战斗属性和训练等级保留体系自己的 schema，不强制使用 Classic 列结构。
+### 5.1 Classic evidence
 
-选项模型还需明确：
+Representative cases include BMP platoons/companies and local supports (Soviet pp.2–5), tank formations/upgrades (pp.6–7), Restricted/Unique (Draft 6 pp.31–32), defences (Soviet p.9), PT-76 restrictions (p.10) and off-table support (pp.13–15).
 
-- 作用于整个编制、某个子编制、单个车辆还是指定数量的成员。
-- 费用是整组一次、每个目标分别收取，还是替换／降级的差额；BR 也可能变化。
-- 增加、替换和升级的目标、前置型号、互斥关系与数量限制。
-- 升级引入的 Restricted / Unique 等标记及其计数范围。
-- 军表级支援额度与排内附属支援分别记录；明确各条目产生和消耗哪些额度，避免重复计数。
+User clarifications establish the T-72 company typo correction, independent army/platoon support pools, recursive all-BMP targets, the second Fire Support slot, upgrade-event Restricted/Unique counting, company-local SAM restrictions, PT-76 exclusions and unchanged BR for Points-only options. Preserve them in the [clarification register](data/classic-ambiguities.md), not as unresolved implementation blockers.
 
-具体计数语义以原始资料核对结果为准。数字 BR 与训练等级（Classic为i/r/v/e，包含Elite）分别保存，不将后缀混入数值；基础书补查依据见[核对记录](data/classic-base-rulebook-review.md)。
+### 5.2 AirLand requirements to verify
 
-### 4.5 玩家军表数据
+Verify reconnaissance as frontline choices, revised support categories, compulsory formation mechanisms, tiered artillery pricing, speculative equipment and experimental versus confirmed rules. Author proposals are not enforced before their source status is established. Reuse algorithms only after comparing real samples; do not inherit Classic data.
 
-Roster 至少包含：
+### 5.3 NORTHAG requirements to verify
 
-- 数据格式版本
-- 唯一 ID
-- 军表名称
-- 规则体系 ID 与修订版本
-- 所使用军表及数据版本
-- 点数上限
-- 游戏规模、适用的剧本身份及可选规则设置
-- 单位购买实例
-- 购买实例的稳定 ID 与父子关系
-- 各单位的选项选择
-- 玩家备注
+Keep nested sections separate from purchases; same-name entries in different sections retain independent identities. Verify explicit size, training, Scout/statistics, one-each limits, non-entity fire support and static reinforcement requests. Record edition, errata and compatibility; do not mix 2020, Omnibus or community-card material automatically. See [NORTHAG preparation](data/northag-notes.md). Battle rolls, arrival and dynamic BR remain out of scope.
 
-原则上只保存玩家选择，不重复复制所有单位数据库。
+## 6. Version policy
 
----
+Manage database schema, roster and file formats, catalog schema, rules revision, catalog revision, source edition/printing and applied errata separately. Published catalogs are immutable; revisions produce new releases. An exact original catalog plus compatible rule implementation is required to reproduce historical behavior.
 
-## 5. 编制规则与校验系统
+Format migration must not change rules. A future game-data upgrade is a deliberate user operation with before/after Points, BR and option differences, unmapped-item reporting and an upgraded copy. Preserve unsupported originals for recovery rather than guessing the latest version. Current releases 1.0.0 and 1.1.0 remain separately loadable.
 
-### 5.1 设计原则
+## 7. User experience
 
-采用：
+My Rosters is the home page. Show only published usable rulesets/lists. Creation records budget, game size and relevant scenario settings explicitly. Later rulesets are not presented as already supported.
 
-**声明式规则配置 + 通用校验器 + 系统专属扩展**
+Use two columns on desktop: left roster with section add buttons and per-purchase deletion; right candidate list or selected-unit details/upgrades. Fixed company platoons and attachments stay in the left hierarchy. On small screens switch Roster / Actions. Provide undo/redo, keyboard/touch access, search, source details and current save state.
 
-普通限制通过 JSON 声明，复杂规则使用特定 TypeScript 函数实现。
+Hide debug examples and internal implementation records from normal pages. `?debug=1` enables the verified example and editor diagnostics without changing saved choices. Rule coverage remains understandable to players. Printing expands every purchased member regardless of editor folding and can optionally append vehicle/weapon data.
 
-先实现 Classic 样本实际需要的规则，再根据其他军表提取共性。不以完整通用规则语言、全部规则类型或全部规则体系作为首版开发前提。
+## 8. Sources and maintenance
 
-不得在 JSON 中执行任意 JavaScript 代码。
+Local Classic material is under `references/Coldwar/`: the base rulebook, Cold War Draft 6, Soviet V4.1 list, New Orders / Special Rules and Soviet AFV cards. NORTHAG material is under `references/NORTHAG/`, including a local rulebook and the Soviet reference package. File presence does not establish printing, compatibility or verified values.
 
-### 5.2 通用规则类型
+Preserve source identity, PDF page versus printed page, review status and errata status. Text extraction locates passages; numbers, columns and suspected errors require original-page review. Record corrections without changing sources.
 
-| 规则 | 用途 |
-|---|---|
-| minCount | 最小单位数量 |
-| maxCount | 最大单位数量 |
-| requires | 前置购买要求 |
-| excludes | 互斥选择 |
-| choiceLimit | 选项组限制 |
-| ratioLimit | 单位数量比例限制 |
-| sharedPool | 共用购买额度 |
-| pointLimit | 总点数上限 |
-| conditional | 条件性启用规则 |
-| tieredCost | 分段费用计算 |
-| unique | 唯一单位限制 |
+Preparation follows collection → transcription → source review/clarification → formal JSON → schema/relation checks → independent sample comparison → release. JSON is the sole runtime data authority. Validate uniqueness, references, scopes, costs, targets and release coverage. Use issue reports and reviewed changes for community maintenance; data fixes should not require pricing changes in React components.
 
-规则必须明确：
+## 9. Hosting
 
-- 作用范围
-- 计数对象
-- 适用的规则版本
-- 错误级别
-- 原始规则出处
+Sites is the initial test host; the main Git checkout remains the application source of truth. The existing hosted snapshot and access history are in [deployment](deployment.md). A source commit does not automatically update the site.
 
-### 5.3 校验执行过程
+Keep a normal Vite static build and explicit release assets. A hosting-specific source snapshot must trace to the main revision rather than become an independent business-code branch. Verify asset bases, direct navigation, refresh, indexed catalog requests and printing on each host. Hash routing does not eliminate asset-path requirements.
 
-1. 读取玩家当前军表及对局设置，解析匹配版本的数据包与规则模块。
-2. 检查所有单位与选项 ID、所属规则体系、实例父子关系是否有效。
-3. 在保留原始层级的前提下展开组成，计算数量及支援额度的产生和消耗。
-4. 计算基础 Points、BR 与附加选项费用。
-5. 执行通用限制检查。
-6. 执行对应规则体系的特殊校验。
-7. 返回费用统计和违规信息。
+Cloudflare Workers Static Assets and GitHub Pages remain project-selected candidates. Recheck their current limits/workflows when actually migrating; this document is not a current quota or pricing comparison. Keep static hosting and any future backend execution requirements distinct.
 
-所有核心计算函数应当是可独立测试的纯函数。
+IndexedDB is origin-bound. Moving protocol, host or port requires JSON backup/import to transfer rosters. Preserve database name/schema compatibility when keeping the same origin. Publish only application assets and selected released data, never references, fixtures or .tmp.
 
-### 5.4 校验结果分级
+## 10. Delivery approach
 
-**Error**
+1. Verify Classic sources, limits, ambiguities and independent hand accounts.
+2. Establish contracts, releases, commands, evaluation and concrete rules.
+3. Deliver the Classic browser workflow, local restore, transfer and printing.
+4. Test on Sites, fix real feedback and choose longer-term hosting separately.
+5. Add AirLand and NORTHAG through independent source audits, samples, data and rule modules; add compatible CENTAG material after NORTHAG.
+6. Consider more nations, richer source indexes, localization, sharing or PWA only as separate scoped work.
 
-违反已确认的强制规则，例如单位数量超限或缺少必要编制。
+The [module plan](implementation_modules.md) defines dependencies and acceptance boundaries. Do not make Classic depend on three complete rulebooks or a universal schema.
 
-**Warning**
+## 11. Verification
 
-使用实验性装备、存在未确认规则，或存在需要玩家核对的情况。
+Use independent hand-calculated rosters, not expected values fed back into engine outputs. Cover nested fixed-price members, whole/per-target upgrades, zero/negative differences, support pools, Restricted/Unique and conditional eligibility. Test same-name cross-ruleset isolation, independent loading and unchanged unrelated records.
 
-**Info**
+Separate invalid structure, confirmed rule violations, missing inputs and unknown costs. Verify exact-version restore and unsupported-original recovery. Exercise actual browser reopen, rapid saves, stale acknowledgements, conflicts, failed-save export and backup round trips. Validate small-screen interaction and complete long-roster/PDF output, not merely compilation.
 
-规则解释、版本信息、点数余额等一般提示。
+Run applicable data, domain, browser and build checks for releases. Keep local tests, actual publication and hosted verification distinct. Existing deployment does not prove subsequently added features are online.
 
-允许玩家保存非法军表草稿，但必须显示其不合法的原因。
+## 12. Distribution
 
-校验消息至少包含稳定规则 ID、关联购买实例 ID、实际值／允许值（适用时）、原因及来源，支持在界面定位问题。
+The application's MIT code license is separate from game-data redistribution permission. Maintain the unofficial community-tool notice. Classic/AirLand adaptations and commercial NORTHAG/CENTAG source material require their own redistribution basis; do not infer permission from a publicly accessible PDF.
 
-整体状态另行表达“已确认合法、已确认违规、无法完整判断”。消息严重程度与校验完整性是两个维度：已发现违规时仍可同时标记校验不完整；费用缺失、数据版本不可用或规则解释未定时，不能仅因没有 Error 就宣称军表合法。费用不完整时显示已知小计及缺失项，不将小计作为最终总额。
+## 13. Decisions already made
 
-### 5.5 AirLand 特别需求
+One static React/TypeScript monorepo; pure shared code; independent rulesets and game records; Classic Soviet V4.1 first; CENTAG under NORTHAG; exact versions; local persistence without signup; browser PDF; Sites testing with portable hosting; references local and documentation in docs.
 
-需要预留：
+## 14. Open work
 
-- 侦察单位作为一线单位的选择
-- 更新后的支援单位分类
-- 新的编制强制选择机制
-- 按购买次数分段计费的炮击选项
-- 推测性装备标记
-- 测试规则与已确认规则的区分
+Confirm future ruleset restrictions, source editions and release permissions; establish independently checked examples; choose later hosting/domain and public data scope. Custom units, speculative equipment policy, same-ruleset house rules, cloud features and additional UI libraries require separate decisions. Resolved Classic clarifications are not open questions.
 
-其中部分规则仍属于作者提出的方案，必须在取得正式规则依据之后才能启用强制校验。
+## 15. Reference entry points
 
-### 5.6 NORTHAG 特别需求
+- [Cold War / WARPAC lists](https://coldwarhot.blogspot.com/p/my-cold-war-to.html), [NATO lists](https://coldwarhot.blogspot.com/p/us-army-in-europe-to.html), [rules and aircraft material](https://coldwarhot.blogspot.com/p/scenarios.html).
+- [AirLand list-structure article](https://coldwarhot.blogspot.com/2026/08/prototype-airland-battlegroup-army-list.html).
+- [NORTHAG product page](https://www.battlegroup.uk/products/battlegroup-northag-ruleset), [CENTAG product page](https://www.battlegroup.uk/products/battlegroup-centag-supplement-book).
+- [React](https://react.dev/), [TypeScript](https://www.typescriptlang.org/), [Vite](https://vite.dev/), [Zod](https://zod.dev/), [Dexie](https://dexie.org/).
+- [Vite static deployment](https://vite.dev/guide/static-deploy.html), [Dexie schema design](https://dexie.org/docs/Tutorial/Design), [browser storage](https://developer.mozilla.org/en-US/docs/Web/API/Storage_API/Storage_quotas_and_eviction_criteria).
+- [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/), [GitHub Pages publishing](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
 
-新增参考包揭示以下架构需求，详见[设计影响评估](consultations/2026-10-29-northag-design-impact.md)：
-
-- 分区树与购买树分别建模；Main Force 下含 Vanguard 与 Main Column，不能简化为五个平级分类。同名条目在不同分区有独立购买身份及作用域。
-- 游戏规模显式选择，不从预算自动推定；训练等级、Scout 等统计由 NORTHAG 自己定义。
-- Additional Fire Support、Reinforcement Requests 等允许无实体购买；静态请求费用／额度与未来对局中的成功、到场及动态 BR 分离。首版不实现对局状态。
-- 选项组总上限与逐选项上限分别表达；字段区分未知、不适用与已知零。
-- 来源身份区分基础书版次、勘误与目录修订；NORTHAG / CENTAG 数据组合需明确兼容，不自动混合不同印次或 Omnibus。
-
-资料包仍是候选输入，不能原样发布为完整军表；具体阈值、费用和规则仍需逐条核对。结构补充不改变 Classic 优先路线，也不直接采用传统 Battlegroup 的规则配置代替 NORTHAG。
-
-### 5.7 Classic 首批建模验证点
-
-以下来自本地资料初读，用于指定核对和测试样本，不代表整套规则已经完成校验；页码均指 PDF 文件页序：
-
-| 样本 | 需要验证的模型能力 | 资料位置 |
-|---|---|---|
-| BMP 步兵排／连 | 层级组成、排内支援上限、局部唯一及跨子编制互斥 | 苏联军表 V4.1 第 2–5 页 |
-| T-72 等坦克排／连 | 编制独立定价与 BR、整组和单车升级、支援额度 | 苏联军表 V4.1 第 6–7 页 |
-| Restricted / Unique | 随游戏规模变化的额度、唯一性、升级后的标记 | Cold War Draft 6 第 31–32 页 |
-| 防御设施 | 依赖剧本类型及防守方身份的可用性 | 苏联军表 V4.1 第 9 页 |
-| PT-76 侦察选择 | 跨条目的坦克型号限制 | 苏联军表 V4.1 第 10 页 |
-| 场外火力 | 不必对应场上模型的购买条目、零 BR 与缺失值的区别 | 苏联军表 V4.1 第 13–15 页 |
-
-原始资料修正与解释分别记录出处。军表第6页T-72连的T-80B总述已由用户确认是笔误，实际为10 T-72A；all BMP包含全部子排及已购排内支援BMP；第二Fire Support另占一个排内名额；PT-76禁用其他坦克的所有编制；仅列Points的选项不改变BR。这些已是实现依据，不再等待额外确认。整组升级的Restricted/Unique作用域等剩余事项见[登记表](data/classic-ambiguities.md)。
-
----
-
-## 6. 规则版本管理
-
-至少区分三个版本概念：
-
-1. **Schema Version**：程序数据格式版本
-2. **Ruleset Revision**：游戏规则修订版本
-3. **Catalogue Revision**：具体军表的数据版本
-
-玩家军表保存时，记录它使用的所有版本信息。
-
-目录发布身份另记录来源基础版本／印次及已应用勘误集合，避免 NORTHAG 2020、其勘误版本和其他出版版本混淆。勘误仅对明确匹配的同体系目标应用，构建时生成最终 JSON；保留旧值、新值、来源和状态。
-
-数据升级策略：
-
-- 已发布的数据包尽量保持不可变。
-- 新修订生成新的版本号。
-- 在声明的支持范围内，旧军表使用对应的原始数据和兼容规则实现计算。
-- 用户可以主动执行版本升级。
-- 升级前显示点数、BR、单位和选项变化。
-- 无法转换的单位必须提示玩家手动处理。
-
-仅保存版本号不足以复现旧军表：还需保留对应数据包、可兼容的规则实现及人工核算测试。首版先声明支持的版本集合，不承诺任意历史版本都能执行。无法取得旧版本时保留原始选择、允许备份并提示不兼容，不静默套用最新版。
-
-IndexedDB 的数据库结构版本与军表文件格式、游戏规则及数据包版本分别管理。数据库迁移不能顺便改变用户选择的游戏规则版本。版本升级优先生成军表副本，保留原稿供比较和恢复。
-
----
-
-## 7. 用户界面设计
-
-### 7.1 首页与创建军表
-
-首页优先显示“我的军表”，提供继续编辑、新建、复制和导入。创建时选择规则体系；长期目标包括：
-
-1. Unofficial Battlegroup: Cold War
-2. AirLand Battlegroup
-3. Battlegroup NORTHAG / CENTAG
-
-首版只开放已有可用数据的 Classic 入口，后续体系不展示为已经可用的功能。
-
-然后选择：
-
-- 国家
-- 军表
-- 规则版本
-- 点数上限
-- 游戏规模和影响组军的对局设置
-
-### 7.2 主编辑界面
-
-推荐桌面端使用三栏布局：
-
-**左栏：单位列表**
-
-- 按军表原始分类显示
-- 搜索单位
-- 查看单位简介和费用
-- 选择单位与附加选项
-
-**中栏：当前军表**
-
-- 显示已购买单位
-- 调整数量和配装
-- 组织编制结构
-- 删除或复制选择
-- 展开连／排层级，查看升级的作用对象
-- 撤销删除或批量配装等编辑操作
-
-**右栏：统计与校验**
-
-- 总 Points
-- 总 BR
-- 单位数量
-- 各类选择额度
-- 违规提示
-- 校验完整性、缺失数据及待核对事项
-- 数据版本信息
-
-移动设备使用单栏或标签切换布局。
-
-单位详情展示战斗属性、特殊规则名称与来源；打印视图专门编排编制、配装、Points、BR、版本和备注。编辑器的展开状态不应导致打印遗漏单位。
-
-### 7.3 本地军表管理
-
-支持：
-
-- 创建和重命名军表
-- 保存多份军表
-- 复制已有军表
-- 自动保存
-- JSON 导入和导出
-- 全部军表备份
-- 打印及 PDF 输出
-
-第一阶段不要求注册账号。
-
-保存与恢复要求：
-
-- 明确显示保存中、已保存、保存失败；失败时保留当前编辑内容并提供导出。
-- 导入先校验文件格式和引用，默认创建新军表；覆盖已有军表必须是用户明确动作。
-- 检测同一军表的多标签页编辑冲突，或限制同时编辑，避免后写入静默覆盖。
-- 验证浏览器关闭重开后的恢复；本地保存不等于云备份，也不保证清理浏览器数据后仍可恢复。
-- IndexedDB 按来源（协议、主机和端口）隔离。迁移到新域名时用导出／导入转移军表；保持同一来源、数据库名称及兼容结构时，才可继续读取原有数据。
-
----
-
-## 8. 数据录入与维护
-
-### 8.1 数据来源
-
-当前 `references/` 已提供的资料：
-
-| 文件 | 用途 |
-|---|---|
-| `battlegroup rulebook.pdf` | 基础规则和游戏规模等共用概念 |
-| `Unofficial Battlegroup CW Rules. - Draft 6pdf.pdf` | Classic 冷战改动与特殊规则 |
-| `SOVIET ARMOURED DIVISION BATTLEGROUP V4.1.pdf` | 首个建模军表的编制、费用、BR、选项和限制 |
-| `BGCW Soviet AFV data cards.pdf` | 车辆属性与武器资料，需核对其与军表版本的对应关系 |
-| `NORTHAG_Soviet_Agent_Reference/` | NORTHAG 2020 与勘误 v9 的结构归纳、候选卡片及索引；有缺失与待核对项，不是正式完整目录 |
-
-以上为本地参考基线，尚未完成逐项录入和核实。来源书版本与本项目数据包修订号分别记录；不从文件名推断所有资料天然属于同一版本。
-
-Classic / AirLand：
-
-- 原作者公开的规则 PDF
-- 各国 Army List PDF
-- Weapon / Vehicle Data
-- FAQ、勘误和更新文章
-
-NORTHAG：
-
-- 官方 NORTHAG 规则书
-- CENTAG 补充规则书
-- 官方勘误
-- 经核实并获许可的补充军表
-
-### 8.2 数据整理流程
-
-1. 收集原始文档及版本信息
-2. 提取单位、属性、点数和编制限制
-3. 使用 CSV 等工具整理，再生成或编辑正式 JSON 数据
-4. 进行数据结构验证
-5. 人工对照原始文档
-6. 建立合法和非法军表测试
-7. 发布经过验证的数据版本
-
-PDF 提取结果不能直接视为已验证数据。
-
-每个规则和单位记录均建议保留来源文档、页码以及验证状态。
-
-JSON 是程序读取的唯一正式数据源，避免 CSV 与 JSON 成为两份需手工同步的权威数据。来源引用区分 PDF 页序与书内印刷页码。构建前检查结构、ID 唯一性、引用完整性、费用缺失及规则目标；资料提取文本和临时工具缓存不作为发布数据。
-
-### 8.3 社区维护
-
-初期通过 GitHub Issues 收集错误报告。
-
-后续允许社区通过 Pull Request 提交单位与规则修订，并由维护者审核。
-
-建议将程序代码与游戏数据分目录管理，使规则修订不必修改 React 组件。
-
----
-
-## 9. 网站部署
-
-### 9.1 先 Sites 测试，再决定正式托管
-
-**已确定：先通过 ChatGPT / Codex Sites 发布测试版本，之后再考虑 Cloudflare Workers Static Assets 或 GitHub Pages。** 当前只是部署计划，本项目尚未创建或发布 Site。
-
-- 当前 Git 仓库作为主工程，GitHub 用于代码和数据版本管理。
-- Sites 用于早期测试；新测试站初始保持私有，邀请玩家时再明确访问范围。
-- IndexedDB 保存玩家本地军表；首期不接入业务后端。
-- 第一个可用编辑流程完成后即部署测试，不等 AirLand / NORTHAG 完成。
-- Sites 的托管额度、目标账户访问能力和实际发布流程在部署时确认，不预设无限额度或无需登录的公开访问。
-
-Sites 若需要托管专用源码同步，作为部署步骤维护，与主工程保持可追溯对应，不形成另一份独立演进的业务代码。
-
-### 9.2 可迁移的构建与部署
-
-- 使用 Vite 产出的静态文件；Web 应用的构建产物目录以实际配置为准（默认 `dist/`）。
-- Sites 所需的 `.openai/hosting.json` 等配置在真正创建部署时生成，不提前编造项目 ID。
-- 不为测试引入 Sites 专属账户、服务端存储或连接器；业务代码不依赖平台域名和运行时。
-- 网站只打包明确选定的程序和发布数据，不把 `references/`、`.tmp/` 或完整工作目录作为公开静态资源。
-- 迁移时配置资源基础路径、单页应用路由／刷新行为及自定义域名，并验证直接访问与刷新编辑页面。
-- 更换来源前提供军表备份与导入说明；正式域名尽量在公开测试前确定。
-
-正式平台选择保留到测试后：
-
-| 候选 | 适用条件 |
-|---|---|
-| Cloudflare Workers Static Assets | 当前优先候选；静态托管，并可按需求逐步增加后端 |
-| GitHub Pages | 希望代码与纯静态部署集中在 GitHub；通过 Actions 构建发布 |
-| Cloudflare Pages | 仍可使用；但当前官方建议新项目优先采用 Workers，因此不再作为默认方案 |
-
-以上平台方向依据 2026-10-22 查阅的官方资料；正式部署时重新核对限制。Cloudflare 的静态资源托管与 Worker 后端执行额度分开考虑。
-
-后续 GitHub 自动部署应先通过数据检查、测试与构建，再发布到选定平台。Sites 测试阶段使用其实际支持的版本保存与部署流程，不预设 GitHub 提交会自动更新 Site。
-
-### 9.3 后续扩展
-
-未来根据实际需求增加：
-
-- PWA 离线使用
-- 云端军表同步
-- 短链接分享
-- 用户账户
-- 社区公共军表库
-- 多语言支持
-
-这些功能不属于最初 MVP 的必要条件。
-
----
-
-## 10. 开发路线
-
-### 阶段 0：Classic 样本建模验证
-
-以本地 Cold War Draft 6 和苏联装甲师 V4.1 为基准，选择坦克排、机械化步兵排／连、支援单位和场外火力等代表性条目。
-
-重点确认：
-
-- 能否表达层级编制、局部选项、编制独立费用／BR 和支援额度
-- 哪些限制适合声明式规则
-- 哪些机制必须使用专属校验器
-- 是否存在模型无法表达的特殊情况
-
-形成有出处的约束清单、歧义记录及人工核算样本。这是 Classic 核心实现前的必要验证；不等待其他两套规则资料齐备，也不在此阶段冻结适用于所有规则的最终接口。
-
-### 阶段 1：共享核心
-
-完成：
-
-- TypeScript 数据结构
-- JSON 数据验证
-- 单位选择与选项系统
-- Points / BR 计算
-- 基础规则校验
-- 单元测试
-
-### 阶段 2：Classic 可用流程与 Sites 私有测试
-
-以苏联装甲师样本打通我的军表、编辑器、单位详情和打印视图。
-
-实现创建、配装、Points / BR、可定位的校验、自动保存、JSON 导入导出和打印。覆盖英文界面及基本移动布局。第一个可用编辑流程完成后就部署 Sites 私有测试版，在测试中补齐完整流程；未覆盖的数据与规则明确标记。
-
-### 阶段 3：完善与正式托管选择
-
-依据实际使用反馈修正数据、编辑交互、保存恢复、导入和打印。核对发布范围与资料许可，决定是否迁移到 Cloudflare Workers Static Assets 或 GitHub Pages，并完成域名、路由、构建发布和军表迁移验证。
-
-需要玩家测试时明确访问范围，建立错误报告流程。Classic 的公开测试不以 AirLand / NORTHAG 支持为前提。
-
-### 阶段 4：AirLand 支持
-
-取得对应资料后核对与 Classic 的实际差异，重点验证组军结构、分类和特殊限制。通过真实样本判断共享模块是否需要调整。
-
-### 阶段 5：NORTHAG / CENTAG 支持
-
-取得规则依据后独立建模 NORTHAG 的编制组织及校验机制，不套用 Classic 的核心假设。在基础功能稳定后逐步增加 CENTAG 数据。
-
-### 阶段 6：扩展
-
-- 更多国家及军表
-- 完整规则来源索引
-- 中英文支持
-- 高级分享功能
-- 社区协作维护
-
----
-
-## 11. 测试策略
-
-核心规则引擎应独立于 UI 进行测试。
-
-至少覆盖：
-
-- 合法的基础军表
-- 缺少强制单位
-- 超过最大购买数量
-- 不符合支援单位要求
-- 互斥装备同时选择
-- 条件性选择未满足
-- 分段费用计算
-- 缺失点数或 BR 数据
-- 跨规则体系引用非法单位
-- 三套同名且属性完全相同的单位仍有独立身份，导入和引用解析不自动合并
-- 单独加载一个体系的数据包即可解析其全部引用，不依赖其他体系
-- 修改一个体系的数据或修订版本，不影响其他体系的记录与计算结果
-- 旧军表版本升级
-- JSON 文件损坏或数据不匹配
-
-每套已实现规则至少准备一份人工核算过的测试军表；待实现体系不阻塞 Classic 的首版验收。
-
-首批还需覆盖：
-
-- 嵌套编制费用不重复累计；整组／单车升级及 BR 变化正确。
-- 支援额度产生与消耗、Restricted / Unique 的明确作用范围。
-- 规则或数据不完整时，不输出误导性的合法状态或完整费用。
-- 创建、修改、关闭重开恢复、导出再导入后选择一致。
-- 保存失败不丢失编辑内容；多标签页冲突得到提示或阻止。
-- 数据库迁移不静默升级军表规则；旧版本不可用时保留原稿。
-- Sites 测试站及正式候选平台的资源路径、直接访问和刷新行为。
-- 小屏设备完成主要编辑操作，打印包含全部编制及配装。
-
-核心和数据变更以针对性测试验证；部署前运行适用的数据检查、核心测试、关键浏览器流程与构建。仅有构建成功不能替代真实军表核算或浏览器持久化验证。
-
----
-
-## 12. 版权及发布事项
-
-Classic / AirLand 为公开分享的非官方改编资料，但仍应向原作者确认数据再发布许可。
-
-NORTHAG / CENTAG 属于商业出版的官方规则书。
-
-在公开发布其完整军表数据之前，需要确认相关使用许可。
-
-项目应明确声明自身为非官方社区工具，不暗示与 PSC 或规则作者存在官方合作关系。
-
-程序的开源许可与游戏资料的再发布许可应分别处理。
-
----
-
-## 13. 已确定事项
-
-- [x] 开发独立 React 网页
-- [x] 使用 TypeScript
-- [x] 支持 Classic、AirLand、NORTHAG
-- [x] 上述三套为长期目标，首期以 Classic 为标准
-- [x] 首个建模样本采用本地苏联装甲师 V4.1
-- [x] 将 CENTAG 归入 NORTHAG 体系
-- [x] 采用一个 Monorepo
-- [x] 共享军表编辑器核心
-- [x] 使用独立规则模块
-- [x] 三套规则的全部单位与游戏数据完全隔离，同名同属性也不共享记录
-- [x] 使用可配置规则校验机制
-- [x] 保留规则及军表版本信息
-- [x] 首期采用静态网站部署
-- [x] 玩家无需注册账号即可编表
-- [x] 先在 Sites 私有测试，之后再选择正式托管平台
-- [x] 保持静态构建可迁移，首期不依赖 Sites 专属后端能力
-- [x] 原始参考资料放在 references，工程文档放在 docs
-
-## 14. 尚待确认事项
-
-- [ ] 核实三套规则的详细军表限制
-- [ ] 确定苏联样本首个可用版本的条目覆盖范围及公开首发数据范围
-- [ ] 核实并整理 Classic PDF 与新增 NORTHAG 参考包，补充 AirLand 和缺失的 NORTHAG 原书依据
-- [ ] 明确支援额度、升级计数及疑似原文错误的处理
-- [ ] 明确首版支持的历史版本集合和数据保留策略
-- [ ] 在部署时核对 Sites 额度、访问范围和项目兼容性
-- [ ] 测试后确定正式托管平台及域名
-- [ ] 决定是否允许用户创建自定义单位
-- [ ] 确定推测性装备的处理方式
-- [ ] 确定是否支持同一体系内的房规；跨 Classic / AirLand / NORTHAG 混用不在当前架构范围
-- [ ] 确认 NORTHAG 数据发布许可
-- [ ] 最终确定公开项目名称
-- [ ] 选择具体 UI 组件库及视觉设计
-
----
-
-## 15. 主要参考资料
-
-**Unofficial Battlegroup Cold War / AirLand**
-
-- [Cold War Hot Hot Hot — USSR and WARPAC Lists](https://coldwarhot.blogspot.com/p/my-cold-war-to.html)
-- [Cold War Hot Hot Hot — NATO Lists](https://coldwarhot.blogspot.com/p/us-army-in-europe-to.html)
-- [规则与直升机、航空器数据](https://coldwarhot.blogspot.com/p/scenarios.html)
-- [2026 AirLand 新军表结构说明](https://coldwarhot.blogspot.com/2026/08/prototype-airland-battlegroup-army-list.html)
-
-**Battlegroup NORTHAG / CENTAG**
-
-- [Battlegroup NORTHAG 官方产品页](https://www.battlegroup.uk/products/battlegroup-northag-ruleset)
-- [Battlegroup CENTAG 官方产品页](https://www.battlegroup.uk/products/battlegroup-centag-supplement-book)
-
-**技术文档**
-
-- [React](https://react.dev/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Vite](https://vite.dev/)
-- [Zod](https://zod.dev/)
-- [Dexie](https://dexie.org/)
-- [Cloudflare Pages](https://developers.cloudflare.com/pages/)
-- [Vite 静态部署](https://vite.dev/guide/static-deploy.html)
-- [Dexie 数据库版本管理](https://dexie.org/docs/Tutorial/Design)
-- [浏览器存储与清理机制](https://developer.mozilla.org/en-US/docs/Web/API/Storage_API/Storage_quotas_and_eviction_criteria)
-- [ChatGPT / Codex Sites](https://learn.chatgpt.com/docs/sites)
-- [Cloudflare 新项目平台建议](https://developers.cloudflare.com/pages/framework-guides/)
-- [Cloudflare Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/)
-- [GitHub Pages 构建发布](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)
-
----
-
-## 16. 总结
-
-项目采用“统一编辑器、独立规则模块、版本化数据包”的设计。
-
-优先解决军表数据准确性和规则可配置性，再逐步完善网页功能。
-
-项目第一阶段的成功标准是：用 Classic 苏联军表证明数据模型和编制校验可行，并完成可恢复、可导出、可打印的网页组军流程。后续规则接入时再逐步验证共性和差异。
-
-**路线：Classic 样本与约束核对 → 核心与编辑器 → Sites 私有测试 → 完善并选择正式托管 → 扩展其他规则。**
-
-**进展（2026-10-30）：M01的[资料基线](data/classic-sample-scope.md)已交付，主样本398 Points / 23 BR。A01/A02/A03/A04/A07/A09已按用户解释解决，现有23份账目。A05/A06仅影响对应选项，A08为范围说明，不阻塞当前基线与M02/M03。外部咨询取舍见[咨询报告](consultations/2026-10-22-technical-plan-review.md)。**
+External links are source-navigation references retained from the design, not claims that their current contents were re-audited during documentation cleanup.

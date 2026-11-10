@@ -1,84 +1,57 @@
 # Battlegroup Army Builder
 
-A free community web roster editor for tabletop players of Battlegroup cold-war
-rulesets. The goal flow is: pick a ruleset / nation / army list, buy formations
-and configure options, see Points and Battle Rating (BR) with list validation,
-save and restore rosters, and export or print them.
+A free community browser roster editor for Battlegroup cold-war tabletop games. Choose an army list, buy formations and configure equipment, inspect Points / Battle Rating and rule issues, save locally, transfer JSON backups and print rosters with an optional vehicle/weapon data appendix.
 
-**Current status: early development.** M02 supplies the web shell and build
-tooling; M03 adds domain contracts and schemas; M04–M06 add the initial Classic
-JSON catalog, pure editing commands and generic evaluation/pricing.
-M07 adds scoped Classic rule checks and availability reasons.
-M08 connects a browser editor: create rosters, purchase formations and
-attachments, configure options, inspect totals and problems, and undo/redo.
-M09 saves drafts in this browser using IndexedDB, with save status, retries and
-conflict recovery. M10 adds JSON import/export: single-roster files, full
-backups, preview-before-write, copy or explicit-overwrite import, and recovery
-of rosters whose catalog version this app cannot open. M11 adds the print /
-PDF view: a frozen print preview of the current draft and its evaluation —
-all purchases, fixed sub-platoons, anchored attachments, selected upgrades,
-versions, notes, violations and coverage gaps — printed through the browser
-to A4 with no editing controls on the paper. See the
-[roadmap](docs/implementation_modules.md) and the in-app `#/roadmap` page.
+Classic Cold War (Unofficial Battlegroup: Cold War, Draft 6) is supported first, using Soviet Armoured Division V4.1. The default catalog is 1.1.0 with 120 top-level purchases, 31 attachment contexts and 203 options; exact 1.0.0 rosters remain separately supported. Combat data and full-rule coverage are explicitly partial. Classic, AirLand and NORTHAG game records are fully isolated; AirLand/NORTHAG remain future independent implementations, with CENTAG under NORTHAG.
 
-The first ruleset in scope is **Classic Cold War** (Unofficial Battlegroup:
-Cold War, Draft 6) with the Soviet Armoured Division V4.1 list as the initial
-sample. Classic Cold War, AirLand and NORTHAG keep their game data fully
-separate; only code and UI are shared.
+The local app includes editing, undo/redo, IndexedDB autosave/conflict recovery, JSON import/export and browser print/PDF. The existing Sites test deployment is an earlier snapshot; see [deployment](docs/deployment.md) before assuming local changes are online.
 
 ## Quick start
 
-Requires Node.js >= 22.12 (verified with 22.22.2) and npm >= 10 (verified with
-10.9.7).
+Requires Node.js >=22.12 and npm >=10.
 
 ```bash
-npm ci               # install the locked workspace dependencies
-npm run dev          # start the Vite dev server
+npm ci
+npm run dev
 ```
 
-Other commands — see [docs/development.md](docs/development.md) for the full
-list and details:
+Open the printed local URL and choose Create roster. Desktop has the roster on the left and candidates or selected-unit details on the right. Fixed platoons and attachments remain nested in the roster. You can keep an over-budget or otherwise violating draft and resolve Problems afterward.
+
+The 398 Points / 23 BR calibration example is a debug tool, hidden on normal pages. Add `?debug=1` before the hash, for example `http://localhost:5173/?debug=1#/`, to expose it and editor check diagnostics. Remove the query and reload to hide them.
 
 | Command | Purpose |
-| --- | --- |
-| `npm run typecheck` | TypeScript check for all workspace packages |
-| `npm test` | Vitest unit tests for `packages/*` (Node environment, no DOM) |
-| `npm run build` | Static production build of the web app (`apps/web/dist`) |
-| `npm run test:e2e` | Build, then run Playwright checks against the built app |
+|---|---|
+| npm run typecheck | Check all implemented workspace TypeScript |
+| npm test | Domain, ruleset, catalog and Web-adapter unit checks |
+| npm run build | Data gates and static production build into apps/web/dist |
+| npm run preview | Serve the built app |
+| npm run test:e2e | Build and run browser checks |
 
-Open the app and choose **Create roster** or **Create the 398 Points / 23 BR
-example**. The default Classic Soviet V4.1 catalog is 1.1.0 with 120 top-level
-purchases, 31 attachment purchase contexts and 203 options. Company platoons and
-their attachments appear in the roster pane. Combat attributes and overall rule
-coverage remain partial. See the [Soviet V4.1 formation acceptance](docs/implementation/soviet-v41-formations-acceptance.md).
+See [development](docs/development.md) for browser setup, Windows commands, version loading and debug behavior.
 
 ## Repository layout
 
 ```text
-apps/web/                            React editor, catalog adapter, session history, hash routing
-packages/core/                       Contracts, atomic commands, pricing and evaluation utilities
-packages/rulesets/classic-coldwar/   Classic Cold War ruleset module (rules from M07)
-packages/catalogs/                   Independent versioned Classic JSON release and index
-tests/fixtures/                      Manually verified source samples (read-only input)
-tests/e2e/                           Browser checks for the web shell
-tools/data-import/                   Catalog publishing checks and Python fixture checker
-docs/                                Design, data verification and delivery records
-references/                          Original PDF references; never published or bundled
+apps/web/                           React UI, sessions, adapters, transfer and printing
+packages/core/                      Pure contracts, commands and evaluation tools
+packages/rulesets/classic-coldwar/  Classic schemas and rule implementation
+packages/catalogs/                  Independent versioned game releases and references
+tests/fixtures/                     Independent manual source/calculation expectations
+tests/e2e/                          Browser workflows
+tools/data-import/                  Source and catalog release checks
+docs/                               Maintained English design, contracts and source guides
+references/                         Local read-only source material; ignored and unpublished
+.tmp/                               Local evidence/caches; ignored and unpublished
 ```
 
-Dependency direction is one-way: `apps/web` composes ruleset modules,
-ruleset modules depend on `packages/core`; core's only runtime dependency is Zod.
-Game data (units, weapons, options, points) is fully isolated per ruleset.
+Dependencies run Web → concrete ruleset → core. Core's only runtime dependency is Zod; it does not depend on React, storage or hosting. No account/backend is required to build rosters. Local saves belong to a browser origin; export/import backups when moving sites or browsers.
 
 ## Documentation
 
-- [Architecture](docs/architecture.md) — layering, domain model, evaluation flow
-- [Implementation modules and delivery plan](docs/implementation_modules.md)
-- [Technical plan](docs/technical_plan.md)
-- [Development guide](docs/development.md)
+Start with the [documentation index](docs/README.md), [architecture](docs/architecture.md), [technical plan](docs/technical_plan.md), [module plan](docs/implementation_modules.md) and [development guide](docs/development.md).
+
+Completed task dispatches, external-model reports, review iterations and acceptance logs under docs/implementation/ and docs/consultations/ are preserved locally but no longer tracked. Current specifications and source decisions do not depend on these archives.
 
 ## License
 
-[MIT](LICENSE). This is an unofficial community tool and is not affiliated
-with the rules authors or publishers. Redistribution permissions for the
-game data itself are handled separately from the code license.
+[MIT](LICENSE). This is an unofficial community tool, not affiliated with the rules authors or publishers. Game-data redistribution permissions are separate from the application's code license.
