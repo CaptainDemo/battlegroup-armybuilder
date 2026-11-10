@@ -147,6 +147,14 @@ async function createExample(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Create the 398 Points / 23 BR example' }).click();
   await expect(page).toHaveURL(/#\/editor$/);
   await expect(page.getByTestId('points-total')).toHaveText('398');
+  await expect(page.getByTestId('officers-total')).toHaveText('1');
+  await expect(page.getByTestId('scouts-total')).toHaveText('1');
+  await expect(page.getByTestId('remaining')).toHaveText('102');
+  await expect(page.getByTestId('roster-summary')).toContainText('/ 500');
+  await expect(page.getByText('Support use & statistics', { exact: true })).toHaveCount(0);
+  const recon = page.getByRole('region', { name: 'Reconnaissance', exact: true });
+  await expect(recon.locator('.section-count')).toContainText('1 selected');
+  await expect(recon.locator('.section-count')).toContainText('1 / 7 choices');
 }
 
 async function importAndOpen(page: Page, file: ReturnType<typeof rosterFile>): Promise<void> {
@@ -167,6 +175,8 @@ function countPdfPages(path: string): number {
 async function openPrint(page: Page): Promise<void> {
   await page.getByRole('button', { name: 'Print / PDF', exact: true }).click();
   await expect(page.locator('#print-sheet')).toBeVisible();
+  await expect(page.getByText('Support use & statistics', { exact: true })).toHaveCount(0);
+  await expect(page.locator('#print-sheet')).not.toContainText('army-support-choice');
 }
 
 test.describe('roster print', () => {
@@ -295,8 +305,7 @@ test.describe('roster print', () => {
     // Same snapshot as the editor: totals identical.
     await expect(page.getByTestId('print-points-total')).toHaveText(editorPoints ?? '');
     await expect(page.getByTestId('print-br-total')).toHaveText(/^\d+$/);
-    // This long roster breaks no implemented rule; coverage stays partial.
-    await expect(page.getByTestId('print-legality')).toContainText('Not fully determined');
+    await expect(page.getByTestId('print-issues-total')).toHaveCount(0);
     // Three companies, each with its fixed platoons; attachments anchor to the
     // exact fixed platoon, not to a name guess.
     await expect(sheet).toContainText('T-72 MBT Company · 3');
@@ -379,16 +388,16 @@ test.describe('roster print', () => {
     await importAndOpen(page, rosterFile('violation-print-roster.json', violationDocument));
     await openPrint(page);
     const sheet = page.locator('#print-sheet');
-    await expect(page.getByTestId('print-legality')).toHaveText('Violations confirmed');
+    await expect(page.getByTestId('print-issues-total')).toHaveCount(0);
     const issues = page.getByTestId('print-issues');
     await expect(issues).toContainText('C01');
     await expect(issues).toContainText('C02');
     await expect(issues).toContainText('C16');
     await expect(issues.locator('li[data-severity="error"]').first()).toBeVisible();
-    // Coverage stays independent from confirmed violations.
-    await expect(page.getByTestId('print-coverage')).toContainText('Automatic checks cover part of the army-list rules.');
-    await expect(page.getByTestId('print-coverage')).not.toContainText('classic/full-army-coverage');
-    await expect(page.getByTestId('print-coverage')).not.toContainText('user clarification');
+    await expect(page.getByTestId('print-coverage')).toHaveCount(0);
+    await expect(sheet).not.toContainText('Partial coverage');
+    await expect(sheet).not.toContainText('Coverage is partial');
+    await expect(sheet).not.toContainText('full-army-coverage');
     // Player-entered markup renders as text, never as HTML in the printout.
     await expect(sheet).toContainText('<img src=x onerror="window.__printXss=1">');
     await expect(sheet.locator('img')).toHaveCount(0);
@@ -410,7 +419,7 @@ test.describe('roster print', () => {
     // Closing the preview returns to an editable draft that still shows the problems.
     await page.getByRole('button', { name: 'Close preview' }).click();
     await expect(page.getByTestId('points-total')).toBeVisible();
-    await expect(page.locator('.totals-strip')).toContainText('Issues found');
+    await expect(page.getByRole('region', { name: 'Problems', exact: true })).toContainText('Points exceed the chosen budget.');
   });
 
   test('prints the exact legacy 1.0.0 catalog with its leaf composition root', async ({ page }) => {

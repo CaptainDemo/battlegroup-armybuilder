@@ -110,7 +110,7 @@ My Rosters is the home page. Show only published usable rulesets/lists. Creation
 
 Use two columns on desktop: left roster with section add buttons and per-purchase deletion; right candidate list or selected-unit details/upgrades. Fixed company platoons and attachments stay in the left hierarchy. On small screens switch Roster / Actions. Provide undo/redo, keyboard/touch access, search, source details and current save state.
 
-Hide debug examples and internal implementation records from normal pages. `?debug=1` enables the verified example and editor diagnostics without changing saved choices. Rule coverage remains understandable to players. Printing expands every purchased member regardless of editor folding and can optionally append vehicle/weapon data.
+Hide debug examples and internal implementation records from normal pages. `?debug=1` enables the verified example and catalog diagnostics without changing saved choices. Show the Problems list rather than rule-coverage declarations. Printing expands every purchased member regardless of editor folding and can optionally append vehicle/weapon data.
 
 ## 8. Sources and maintenance
 

@@ -110,3 +110,11 @@ Synthetic isolation catalogs deliberately reuse t72a/shared-t72-platoon names, I
 Core's only runtime dependency is Zod. A ruleset importing Zod declares it directly. Packages remain side-effect-free and importable in Node; core cannot depend on React, browser storage or concrete rulesets. The core/samples subpath is for tests and is not the production catalog index.
 
 Source relation checks prove references exist, not that PDF values/pages were reviewed. Release hashing/compatibility belongs to catalog loading. Combat references do not affect pricing. Unsupported formats/catalogs remain recoverable under [transfer contracts](import-export.md); a general game-data upgrader and battle-state engine are not implemented.
+## Shared summary statistics
+
+RosterStatistic reserves the common display IDs officers and scout-weight for
+Officer and Scout totals. Each ruleset owns their calculation, including
+weighted Scouts; this shares a result protocol, not game records or thresholds.
+The UI labels the latter Scouts. Missing/unverified statistics display a dash,
+while a confirmed zero stays zero. The editor and print sheet share the same
+summary component and snapshot statistics.

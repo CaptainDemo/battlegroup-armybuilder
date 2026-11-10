@@ -215,11 +215,14 @@ small { display: block; color: var(--text-muted); font-size: .8rem; }
 .editor-heading p { margin: .2rem 0; }
 .eyebrow { text-transform: uppercase; letter-spacing: .08em; font-size: .75rem; color: var(--text-muted); }
 .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
-.totals-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .75rem; }
+.totals-strip { display: grid; grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr)); gap: .75rem; }
 .metric { display: flex; flex-direction: column; padding: .75rem 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
 .metric span { color: var(--text-muted); font-size: .85rem; }
 .metric strong { font-size: 1.5rem; }
-.metric--error { border-color: #b8543d; }
+.points-amount { display: flex; align-items: baseline; gap: .4rem; white-space: nowrap; }
+.points-limit { font-size: .95rem; }
+.points-remaining { color: var(--text-muted); font-size: .8rem; }
+.points-metric--over .points-remaining { color: #a33; }
 .settings-form { display: flex; flex-wrap: wrap; align-items: end; gap: .8rem; margin-bottom: 1rem; }
 .settings-form label { flex: 1 1 10rem; }
 .settings-form button { flex: 0 0 auto; }
@@ -231,7 +234,11 @@ small { display: block; color: var(--text-muted); font-size: .8rem; }
 .editor-tabs { display: none; }
 .roster-section { border-top: 1px solid var(--border); padding: .8rem 0; }
 .roster-section[data-adding='true'] { border-top-color: var(--accent); }
-.roster-section-heading h4 { margin: 0 0 .6rem; color: var(--text-muted); font-size: .85rem; text-transform: uppercase; }
+.roster-section-heading, .print-section-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: .35rem .7rem; margin-bottom: .6rem; }
+.roster-section-heading h4 { margin: 0; color: var(--text-muted); font-size: .85rem; text-transform: uppercase; }
+.section-count { display: inline-flex; flex-wrap: wrap; gap: .2rem .65rem; color: var(--text-muted); font-size: .75rem; }
+.section-count--over { color: #a33; }
+.section-shared { border-bottom: 1px dotted currentColor; }
 .add-slot { width: 100%; text-align: left; border-style: dashed; color: var(--link); }
 .add-slot[aria-pressed='true'] { border-color: var(--accent); }
 .action-toolbar { display: flex; flex-wrap: wrap; gap: .5rem; }
@@ -265,6 +272,8 @@ legend { font-size: .9rem; }
 .unit-data-weapons th:first-child { text-align: left; white-space: normal; min-width: 6rem; }
 .unit-data-source, .unit-data-missing { font-size: .75rem; overflow-wrap: anywhere; }
 .issue-list { padding-left: 1rem; }
+.roster-problems > h3 { margin-top: 0; }
+.roster-problems .issue-list { margin-bottom: 0; }
 .issue-link { border: 0; padding: .3rem 0; text-align: left; font-size: .85rem; color: var(--link); text-decoration: underline; }
 details { font-size: .85rem; }
 summary { cursor: pointer; }
@@ -299,7 +308,8 @@ details ul { padding-left: 1rem; }
   #editor-actions { position: static; max-height: none; overflow: visible; scrollbar-gutter: auto; }
   .mobile-roster-back { display: inline-block; }
   .action-toolbar { margin-bottom: .8rem; }
-  .totals-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .totals-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .totals-strip .points-metric { grid-column: 1 / -1; }
   .metric strong { font-size: 1.25rem; }
 }
 
@@ -438,12 +448,12 @@ details ul { padding-left: 1rem; }
 
 .print-totals {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  grid-template-columns: minmax(0, 1.8fr) repeat(3, minmax(0, 1fr));
   gap: 0.6rem;
   margin: 0.6rem 0;
 }
 
-.print-totals div {
+.print-totals > .metric {
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 0.45rem 0.6rem;
@@ -509,8 +519,7 @@ details ul { padding-left: 1rem; }
 }
 
 .print-issues,
-.print-plain,
-.print-coverage {
+.print-plain {
   padding-left: 1.1rem;
   margin: 0.35rem 0;
 }
@@ -654,6 +663,8 @@ details ul { padding-left: 1rem; }
 }
 
 @media (max-width: 640px) {
+  .print-totals { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .print-totals .points-metric { grid-column: 1 / -1; }
   .print-overlay {
     padding: 0 0.4rem 1.5rem;
   }

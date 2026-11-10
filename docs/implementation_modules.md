@@ -93,7 +93,7 @@ Acceptance: choices, hierarchy, targets/settings and exact versions survive roun
 
 ### M11 — Printing
 
-A pure projection validates roster/edit/catalog identity and the evaluation schema/rules/catalog version triple. Freeze the current draft/evaluation, print every member once, and preserve fixed platoons, anchored attachments, selected upgrades, optional rules, notes, versions, issues and incomplete values. Use player-facing coverage summaries; keep raw engine diagnostics out of paper output.
+A pure projection validates roster/edit/catalog identity and the evaluation schema/rules/catalog version triple. Freeze the current draft/evaluation, print every member once, and preserve fixed platoons, anchored attachments, selected upgrades, optional rules, notes, versions, issues and incomplete values. Report the existing Problems list; keep coverage declarations and raw engine diagnostics out of paper output.
 
 The optional vehicle/weapon appendix is off by default. Group identical configurations, preserve targeted upgrades, deduplicate weapon IDs and show unavailable data explicitly. The option survives snapshot refresh but resets on reopening and is not saved to the roster. See [printing contracts](contracts/printing.md).
 

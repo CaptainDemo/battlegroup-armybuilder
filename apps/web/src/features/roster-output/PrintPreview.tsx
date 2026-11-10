@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import type { Evaluation, RosterDocument, TrackedValue } from '@battlegroup/core';
 import type { ClassicCatalogRelease } from '@battlegroup/classic-coldwar';
 import { t } from '../../i18n';
+import { issueMessage } from '../../i18n/issueMessage';
 import {
   projectPrintableRoster,
   type PrintableRoster,
@@ -12,7 +13,8 @@ import {
   type PrintPurchaseView,
 } from './printProjection';
 import { PrintUnitDataAppendix } from './PrintUnitDataAppendix';
-import { RuleCoverage } from '../../components/RuleCoverage';
+import { RosterSummary } from '../../components/RosterSummary';
+import { SectionCount } from '../../components/SectionCount';
 
 /**
  * Frozen print preview (M11). The snapshot is captured when the preview opens
@@ -108,32 +110,7 @@ function RosterSheet({ roster, options }: { roster: PrintableRoster; options: Pr
       <header className="print-head">
         <h1>{roster.name}</h1>
         <p className="print-sub">{roster.armyListLabel}</p>
-        <div className="print-totals" data-testid="print-totals">
-          <div>
-            <span>{t('editor.points')}</span>
-            <strong data-testid="print-points-total">
-              {amount(roster.totals.points)}
-              {!roster.totals.points.complete && <small> {t('print.someUnknown')}</small>}
-            </strong>
-          </div>
-          <div>
-            <span>{t('editor.br')}</span>
-            <strong data-testid="print-br-total">
-              {amount(roster.totals.br)}
-              {!roster.totals.br.complete && <small> {t('print.someUnknown')}</small>}
-            </strong>
-          </div>
-          <div>
-            <span>{t('editor.remaining')}</span>
-            <strong data-testid="print-remaining">
-              {roster.budgetRemaining === null ? '—' : String(roster.budgetRemaining)}
-            </strong>
-          </div>
-          <div>
-            <span>{t('editor.checks')}</span>
-            <strong data-testid="print-legality">{t('print.legality.' + roster.legality)}</strong>
-          </div>
-        </div>
+        <RosterSummary totals={roster.totals} budget={roster.settings.budgetPoints} statistics={roster.statistics} print />
         <dl className="print-meta">
           <div>
             <dt>{t('print.meta.ruleset')}</dt>
@@ -203,7 +180,7 @@ function RosterSheet({ roster, options }: { roster: PrintableRoster; options: Pr
           <ul className="print-issues" data-testid="print-issues">
             {roster.issues.map((issue, index) => (
               <li key={index} data-severity={issue.severity}>
-                <strong>{issue.ruleId}</strong> {issue.message}
+                <strong>{issue.ruleId}</strong> {issueMessage(issue.message)}
                 {issue.actual !== undefined || issue.limit !== undefined ? (
                   <span className="muted">
                     {' '}
@@ -220,43 +197,15 @@ function RosterSheet({ roster, options }: { roster: PrintableRoster; options: Pr
 
       {roster.sections.map((section) => (
         <section className="print-block" key={section.sectionId} aria-label={section.label}>
-          <h2>{section.label}</h2>
+          <div className="print-section-heading">
+            <h2>{section.label}</h2>
+            {section.allowance && <SectionCount allowance={section.allowance} />}
+          </div>
           {section.purchases.map((purchase) => (
             <PurchaseBlock key={purchase.selectionId} purchase={purchase} />
           ))}
         </section>
       ))}
-
-      <section className="print-block" aria-label={t('editor.support')}>
-        <h2>{t('editor.support')}</h2>
-        {roster.resources.length === 0 && roster.statistics.length === 0 && <p>—</p>}
-        {roster.resources.length > 0 && (
-          <ul className="print-plain">
-            {roster.resources.map((resource, index) => (
-              <li key={index}>
-                {resource.resourceKind} · {resource.scope}: {resource.consumed} /{' '}
-                {tracked(resource.capacity)} ({resource.status.replaceAll('-', ' ')})
-              </li>
-            ))}
-          </ul>
-        )}
-        {roster.statistics.length > 0 && (
-          <ul className="print-plain">
-            {roster.statistics.map((stat) => (
-              <li key={stat.statId}>
-                {stat.label}: {stat.value}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section className="print-block" aria-label={t('editor.coverage')}>
-        <h2>{t('editor.coverage')}</h2>
-        <div className="print-coverage" data-testid="print-coverage">
-          <RuleCoverage checks={roster.coverage} />
-        </div>
-      </section>
 
       <section className="print-block" aria-label={t('print.reference.title')}>
         <h2>{t('print.reference.title')}</h2>

@@ -42,8 +42,10 @@ test.describe('web shell', () => {
     await page.goto('/');
     await page.getByRole('button', { name: 'Create roster', exact: true }).click();
 
-    await page.getByText('Rule coverage', { exact: true }).click();
-    await expect(page.getByText('Automatic checks cover part of the army-list rules.', { exact: false })).toBeVisible();
+    await expect(page.getByTestId('issues-total')).toHaveCount(0);
+    await expect(page.getByRole('region', { name: 'Problems', exact: true })).toContainText('No issues found.');
+    await expect(page.getByText('Rule coverage', { exact: true })).toHaveCount(0);
+    await expect(page.getByText('Partial coverage', { exact: true })).toHaveCount(0);
     await expect(page.getByText('Check diagnostics', { exact: true })).toHaveCount(0);
     await expect(page.getByText('classic/full-army-coverage', { exact: false })).toHaveCount(0);
 

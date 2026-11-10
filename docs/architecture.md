@@ -155,7 +155,7 @@ An evaluation has two independent dimensions:
 - Confirmed issues: stable rule ID, severity, reason, purchase/member location, actual/limit and source.
 - Coverage: which checks ran, and which are unimplemented, blocked by unknown data or missing input.
 
-Confirmed mandatory violations yield a violation conclusion, even alongside partial coverage. Only all applicable checks with no violations can justify full legality under the declared version/settings. Otherwise retain an undetermined conclusion and clearly label known subtotals. Current Classic evaluation retains partial coverage. Player pages summarize it; `?debug=1` exposes raw diagnostic records in the editor. Printing uses the concise summary.
+Confirmed mandatory violations yield an internal violation conclusion, even alongside partial coverage. Only all applicable checks with no violations can justify full legality under the declared version/settings. Otherwise retain an internal undetermined conclusion and clearly label known subtotals. Coverage remains evaluation metadata for tests and developer inspection. Player pages and printing show the Problems list, without displaying coverage records, completeness declarations or a full-legality claim.
 
 ## 5. Ruleset modules and evaluation
 
@@ -187,6 +187,18 @@ A successful edit updates choices/revision, reevaluates, enters bounded history 
 Desktop has two columns: the roster on the left, and either add candidates or selected-unit details/options on the right. Fixed platoons and their attachments stay in the left roster; attachments never create a third column. On small screens use Roster / Actions switching. Support keyboard/touch operation without requiring dragging. Keep English UI strings separate from domain error codes for later translation.
 
 My Rosters handles creation, opening, import, export, backup and deletion. The editor shows exact versions, totals, issues, selected-unit data and save state. Print is a separate frozen projection of every purchase, independent of collapsed editor branches. Debug examples and engineering records are opt-in rather than ordinary product content.
+
+### Shared roster overview
+
+The editor and print sheet share a four-card summary: Points with budget,
+remaining amount on one line; BR; Officers; Scouts. Statistics come from the
+current evaluation's common officers/scout-weight IDs, with each ruleset owning
+its calculation. Unknown statistics are not inferred as zero. Section headings
+show selected top-level purchases and applicable shared-choice usage/allowance,
+without exposing raw resource IDs. Display allowance accounts for other
+sections through the canonical resource allocator. Exempt selections count as
+purchases without consuming a choice. The former support/statistics panel is
+not a separate user-facing area.
 
 ## 7. Persistence, transfer and versions
 

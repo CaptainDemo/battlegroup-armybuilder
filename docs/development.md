@@ -46,7 +46,7 @@ Normal pages expose the roster workflow. Open `http://localhost:5173/?debug=1#/`
 
 The flag is not persisted. Remove it and reload to hide the tools. It does not affect rule checks, versions, choices or saving. Browser tests that need the example opt in explicitly.
 
-Rule coverage summarizes partial coverage and checks blocked by data/settings. A nested Check diagnostics disclosure appears only under ?debug=1 and shows internal check IDs/notes. Printed sheets always use the concise player summary, even when opened in debug mode. Engineering progress belongs in the module plan, not a Roadmap application route.
+Pages and printed sheets display the Problems list, without rule-coverage declarations or legality-status wording. Evaluation coverage remains internal metadata for developer inspection and tests, and is not rendered even in debug mode. Engineering progress belongs in the module plan, not a Roadmap application route.
 
 ## Workspaces and dependencies
 
@@ -94,6 +94,8 @@ Strings live in apps/web/src/i18n/en.ts through t(). A later language dictionary
 
 RosterWorkspace composes catalog, commands, evaluation, save queue and UI. One matching evaluation drives totals, composition, charges and issues. session.ts retains at most 50 undo/redo snapshots, each restoration with a fresh edit revision. Name/budget/size changes are one batch/history step. Panel/search/selection state is separate from roster data.
 
+Roster settings precede the shared Points/BR/Officers/Scouts summary. Points displays its current value, budget and remaining amount on one line, without a progress bar. Problems is a separate full-width section immediately below that summary, outside the editor panels, so it remains displayed when switching between adding, unit details or small-screen panels. Clicking a purchase-related issue opens its unit details; global issues retain input-field navigation.
+
 Desktop uses Roster left and Actions right. RosterTree renders section add buttons, company fixed platoons, support destinations, attachments and independent delete controls. Parent deletion cascades and can be undone. Actions switches between CatalogPanel candidates for the selected destination and selected-unit details/options. Adding leaves candidates open; selecting a purchase opens details. Instance ordinals distinguish identical purchases. Deleting a parent clears an invalid chooser. Small screens switch Roster/Actions; attachments do not create a third panel.
 
 Over-budget and other rule-breaking purchases remain editable. Availability can be allowed-with-issues, but ordinary candidates show no speculative warning banner. After editing, Problems updates and clears resolved issues. Invalid references/destinations remain blocked. Problems navigation selects the purchase or focuses the budget field as appropriate.
@@ -118,7 +120,7 @@ Copies get fresh roster/edit IDs but retain internal choices/targets and catalog
 
 features/roster-output/ contains a pure projection and overlay. Verify roster ID, edit revision, all catalog identities and evaluation schema/rules/catalog stamps against the release. Reject stale/mismatched inputs. The snapshot supplies all composition/costs/problems; print adds no rules or repricing.
 
-Print / PDF freezes the current draft/evaluation, shows revision, supports refresh/close and calls window.print. Unsaved/violating drafts can print without editing choices/history/save state. Fixed platoons, member-anchored attachments, optional rules, upgrades, versions, notes, issues and incomplete totals are preserved. Every member appears once, including legacy profile-bearing roots. Rule coverage uses the player summary rather than raw implementation records.
+Print / PDF freezes the current draft/evaluation, shows revision, supports refresh/close and calls window.print. Unsaved/violating drafts can print without editing choices/history/save state. Fixed platoons, member-anchored attachments, optional rules, upgrades, versions, notes, issues and incomplete totals are preserved. Every member appears once, including legacy profile-bearing roots. The shared summary contains Points with budget/remaining, BR, Officers and Scouts; rule coverage and legality-status declarations are not printed.
 
 Append vehicle and weapon data is off by default, survives refresh and resets on reopening. It groups equal vehicle configurations, isolates target upgrades, deduplicates weapon IDs and prints source/gap notes. It is never stored in RosterDocument. See [printing contracts](contracts/printing.md) for paper contents, identity reasons and A4 pagination.
 
@@ -145,3 +147,26 @@ It checks source fingerprints and manual arithmetic, not game-rule execution. Wh
 ## Maintained and archived documentation
 
 Keep maintained documentation in English, using the [index](README.md). docs/implementation/ and docs/consultations/ contain ignored local historical reports; a fresh checkout must not depend on them. Durable APIs, deployment identity and source decisions have been consolidated into maintained contracts/guides. The tracked root AGENTS.md provides the project's standing agent guidance.
+
+## Shared summary and section counts
+
+components/RosterSummary.tsx is reused by the editor and print sheet. It reads
+Officers from the common officers statistic ID and Scouts from scout-weight.
+Each ruleset calculates its own values/weights; an unavailable statistic shows
+a dash rather than a fabricated zero. Points retains its numeric test target,
+with budget and remaining amount inside the same card. Overspending stays
+negative and visible; an incomplete cost has no invented remaining amount.
+
+Section headings show the top-level purchase count and, where applicable,
+used/allowed choices. A dash means no section-wide quantity cap, not exemption
+from individual purchase rules. Paid local attachments are not counted as
+extra top-level formations. Exempt purchases increase selected count without
+consuming a choice. Shared choices have an explicit shared marker.
+
+features/roster-editor/sectionAllowances.ts reuses allocateResources to find
+how much each section can use while holding purchases in other sections fixed.
+It allows reassignment between overlapping eligible pools rather than simply
+subtracting the current arbitrary pool assignment. This is display-only;
+commands and evaluation still decide structural validity and actual issues.
+The same frozen-choice counters accompany printed section headings. Raw
+resource IDs and the separate Support use & statistics panel are not rendered.

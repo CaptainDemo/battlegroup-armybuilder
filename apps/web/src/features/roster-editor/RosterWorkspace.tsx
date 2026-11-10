@@ -18,6 +18,7 @@ import {
   type CatalogLoadResult,
 } from '../../adapters/catalog/catalogLoader';
 import { t } from '../../i18n';
+import { issueMessage } from '../../i18n/issueMessage';
 import { RosterTree, type AddTarget } from './RosterTree';
 import { CatalogPanel } from './CatalogPanel';
 import { OptionEditor } from './OptionEditor';
@@ -38,7 +39,8 @@ import type { ImportApplyResult } from '../roster-transfer/applyImport';
 import { downloadSingleRoster } from '../roster-transfer/rosterExport';
 import { UnitDataPanel } from './UnitDataPanel';
 import { PrintPreview, type PrintSnapshot } from '../roster-output/PrintPreview';
-import { RuleCoverage } from '../../components/RuleCoverage';
+import { RosterSummary } from '../../components/RosterSummary';
+import { projectSectionAllowances } from './sectionAllowances';
 
 function sameCatalogIdentity(
   a: ClassicCatalogRelease,
@@ -639,6 +641,12 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
   }
 
   const totals = currentEvaluation?.totals;
+  const sectionAllowances = useMemo(
+    () => roster && release
+      ? projectSectionAllowances(roster, release.catalog, new Set(release.purchases.filter(access => access.kind === 'top-level').map(access => access.entryId)))
+      : new Map(),
+    [roster, release],
+  );
   const notice = state.notice || (
     !load
       ? t('editor.loading')
@@ -819,58 +827,6 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
               </button>
             </div>
           </div>
-          <div className="totals-strip">
-            <Metric
-              label={t('editor.points')}
-              amount={
-                totals
-                  ? (totals.points.complete
-                      ? ''
-                      : t('editor.knownSubtotal') + ' ') +
-                    totals.points.knownSubtotal
-                  : '—'
-              }
-            />
-            <Metric
-              label={t('editor.br')}
-              amount={
-                totals
-                  ? (totals.br.complete
-                      ? ''
-                      : t('editor.knownSubtotal') + ' ') +
-                    totals.br.knownSubtotal
-                  : '—'
-              }
-            />
-            <Metric
-              label={t('editor.remaining')}
-              amount={
-                totals?.points.complete
-                  ? String(
-                      roster.settings.budgetPoints -
-                        totals.points.knownSubtotal,
-                    )
-                  : '—'
-              }
-            />
-            <div
-              className={
-                'metric ' +
-                (currentEvaluation?.legality === 'violations-confirmed'
-                  ? 'metric--error'
-                  : '')
-              }
-            >
-              <span>{t('editor.checks')}</span>
-              <strong>
-                {t(
-                  currentEvaluation?.legality === 'violations-confirmed'
-                    ? 'editor.violations'
-                    : 'editor.incomplete',
-                )}
-              </strong>
-            </div>
-          </div>
           <SettingsForm
             key={roster.revision}
             document={roster}
@@ -881,6 +837,33 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
               ])
             }
           />
+          {totals && <RosterSummary totals={totals} budget={roster.settings.budgetPoints} statistics={currentEvaluation?.statistics ?? []} />}
+          <section className="card roster-problems" aria-label={t('editor.problems')}>
+            <h3>{t('editor.problems')}</h3>
+            {!currentEvaluation?.issues.length && (
+              <p>{t('editor.noProblems')}</p>
+            )}
+            <ul className="issue-list">
+              {currentEvaluation?.issues.map((issue, index) => (
+                <li key={index}>
+                  <button
+                    type="button"
+                    className="issue-link"
+                    onClick={() => {
+                      if (issue.selectionId) {
+                        selectPurchase(issue.selectionId);
+                      } else
+                        window.document
+                          .getElementById('budget-input')
+                          ?.focus();
+                    }}
+                  >
+                      <strong>{issue.ruleId}</strong> {issueMessage(issue.message)}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
           <nav className="editor-tabs" aria-label={t('editor.panels')}>
             {['roster', 'actions'].map((value) => (
               <button
@@ -906,6 +889,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
                 selectedId={state.selectedId}
                 selectedMemberPath={state.selectedMemberPath}
                 addTarget={addTarget}
+                allowances={sectionAllowances}
                 onSelect={selectPurchase}
                 onAdd={beginAdding}
                 onRemove={(selectionId) =>
@@ -1083,56 +1067,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
                   )}
                 </>
               )}
-              <h3>{t('editor.problems')}</h3>
-              {!currentEvaluation?.issues.length && (
-                <p>{t('editor.noProblems')}</p>
-              )}
-              <ul className="issue-list">
-                {currentEvaluation?.issues.map((issue, index) => (
-                  <li key={index}>
-                    <button
-                      type="button"
-                      className="issue-link"
-                      onClick={() => {
-                        if (issue.selectionId) {
-                          setState((current) => ({
-                            ...current,
-                            selectedId: issue.selectionId!,
-                            selectedMemberPath: null,
-                          }));
-                          setAddTarget(null);
-                          setTab('roster');
-                        } else
-                          window.document
-                            .getElementById('budget-input')
-                            ?.focus();
-                      }}
-                    >
-                      <strong>{issue.ruleId}</strong> {issue.message}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              <details>
-                <summary>{t('editor.support')}</summary>
-                <ul>
-                  {currentEvaluation?.resources.map((resource, index) => (
-                    <li key={index}>
-                      {resource.resourceKind} · {resource.scope}:{' '}
-                      {resource.consumed} / {value(resource.capacity)}
-                    </li>
-                  ))}
-                  {currentEvaluation?.statistics.map((stat) => (
-                    <li key={stat.statId}>
-                      {stat.label}: {stat.value}
-                    </li>
-                  ))}
-                </ul>
-              </details>
-              <details>
-                <summary>{t('editor.coverage')}</summary>
-                <RuleCoverage checks={currentEvaluation?.coverage ?? []} debug={debugToolsEnabled} />
-              </details>
+
             </section>
           </div>
         </>
@@ -1276,24 +1211,6 @@ function SettingsForm({
       </label>
       <button type="submit">{t('editor.applySettings')}</button>
     </form>
-  );
-}
-function Metric({ label, amount }: { label: string; amount: string }) {
-  return (
-    <div className="metric">
-      <span>{label}</span>
-      <strong
-        data-testid={
-          label === 'Points'
-            ? 'points-total'
-            : label === 'Battle rating'
-              ? 'br-total'
-              : undefined
-        }
-      >
-        {amount}
-      </strong>
-    </div>
   );
 }
 function CompositionTree({

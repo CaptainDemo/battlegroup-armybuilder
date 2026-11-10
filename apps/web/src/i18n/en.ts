@@ -19,14 +19,7 @@ export const en = {
   debug: {
     title: 'Debug tools',
     catalogEntries: 'Catalog purchase records:',
-    omitted: 'Catalog coverage exclusions',
-    checks: 'Check diagnostics',
-  },
-  coverage: {
-    partial: 'Automatic checks cover part of the army-list rules. No reported problems does not guarantee a fully legal roster.',
-    complete: 'All available rule checks have run. See Problems for any violations.',
-    unknownData: 'Some checks could not be completed because required data is unavailable.',
-    missingInput: 'Some checks need additional roster settings, such as the scenario or player role.',
+    omitted: 'Catalog exclusions',
   },
   editor: {
     loading: 'Loading army lists…',
@@ -40,9 +33,14 @@ export const en = {
     scenario: 'Scenario', playerRole: 'Player role', unspecified: 'Not specified', attackDefence: 'Attack-Defence', attacker: 'Attacker', defender: 'Defender',
     noRoster: 'Create or open a roster first', back: 'Back to My Rosters',
     catalogVersion: 'Catalog', points: 'Points', br: 'Battle rating', remaining: 'Budget remaining',
-    checks: 'Rule checks', violations: 'Issues found', incomplete: 'Partial coverage',
+    remainingShort: 'remaining', officers: 'Officers', scouts: 'Scouts',
+    selectedCount: 'selected', choicesCount: 'choices', limit: 'limit',
+    armySupportChoice: 'army support choice', platoonSupportSlots: 'platoon support slot',
+    sharedChoices: 'shared',
+    sharedChoicesNote: 'These choices are shared with other sections. The allowance accounts for current purchases in those sections.',
+    noSectionLimit: 'No section-wide quantity limit. Individual purchase restrictions still apply.',
     knownSubtotal: 'Known subtotal', unknown: 'Unknown', notApplicable: 'Not applicable',
-    charges: 'Price breakdown', baseCost: 'Base price (fixed members included)', support: 'Support use & statistics',
+    charges: 'Price breakdown', baseCost: 'Base price (fixed members included)',
     undo: 'Undo', redo: 'Redo', copy: 'Copy formation', remove: 'Remove formation',
     catalog: 'Catalog', roster: 'Roster', details: 'Details & checks', panels: 'Editor panels',
     actions: 'Actions', backToRoster: 'Back to roster', doneAdding: 'Done adding', delete: 'Delete',
@@ -56,8 +54,8 @@ export const en = {
     chooseSelection: 'Select a purchased formation to configure it.',
     composition: 'Current composition', noEntities: 'This purchase has no on-table entities.',
     attributesUnknown: 'Missing combat data remains unknown. Unknown values are not zero.',
-    sources: 'Sources', problems: 'Problems', noProblems: 'No violations found within implemented checks. Coverage is partial.',
-    coverage: 'Rule coverage', target: 'target', name: 'Roster name', ruleset: 'Ruleset', army: 'Army list',
+    sources: 'Sources', problems: 'Problems', noProblems: 'No issues found.',
+    target: 'target', name: 'Roster name', ruleset: 'Ruleset', army: 'Army list',
     budget: 'Points budget', gameSize: 'Game size', create: 'Create roster', applySettings: 'Apply settings',
   },
   storage: {
@@ -182,11 +180,6 @@ export const en = {
     chargeLine: 'Charge line',
     units: 'Units',
     issueCountLabel: 'reported problem(s)',
-    legality: {
-      legal: 'No violations within implemented checks',
-      'violations-confirmed': 'Violations confirmed',
-      undetermined: 'Not fully determined — partial coverage',
-    },
     meta: {
       ruleset: 'Ruleset',
       catalog: 'Catalog',
@@ -197,10 +190,10 @@ export const en = {
     },
     reference: {
       title: 'Vehicle & weapon quick reference',
-      note: 'Aggregated from the evaluated roster using the verified community reference packages. Gaps are listed, not guessed.',
+      note: 'Vehicles and weapons included in this roster.',
     },
     footerNote:
-      'Printed from the current in-memory draft of this roster. Partial rule coverage means this sheet is not proof of full legality.',
+      'Printed from the current roster draft.',
   },
   notFound: {
     title: 'Page not found',

@@ -16,16 +16,17 @@ import type {
   UnitEntry,
 } from '@battlegroup/core';
 import { manifestVersionIdentity } from '@battlegroup/core';
-import { classicTrainingLevelLabels, findClassicCombatCard, type ClassicCombatCard, type ClassicWeapon } from '@battlegroup/classic-coldwar';
+import { classicTrainingLevelLabels, findClassicCombatCard, type ClassicCombatCard, type ClassicWeapon, type ClassicCatalogRelease } from '@battlegroup/classic-coldwar';
 import { collectUnitReferenceData, combatReference, weaponReference } from '../roster-editor/unitData';
 import { sectionLabel } from '../roster-editor/sectionLabel';
+import { projectSectionAllowances, type SectionAllowance } from '../roster-editor/sectionAllowances';
 
 /**
  * Pure print projection (M11). Everything below derives from ONE evaluation
  * snapshot plus the document and catalog it was computed against — the
- * projection never re-prices, re-counts targets or re-runs a rule. The only
- * arithmetic it does is summing the snapshot's own charge lines for display
- * subtotals, flagged incomplete exactly like the evaluation flags its totals.
+ * projection never re-prices or re-runs game validation. Display subtotals
+ * sum the snapshot's charge lines. Section counters reuse the canonical
+ * resource allocator over the same frozen choices; they do not add issues.
  *
  * A mismatched or out-of-date snapshot is rejected (`status: 'stale'`) instead
  * of being silently printed: identity checks cover rosterId, edit revision and
@@ -35,7 +36,7 @@ import { sectionLabel } from '../roster-editor/sectionLabel';
 export interface PrintSnapshotInput {
   readonly document: RosterDocument;
   /** The same release the evaluation consumed; ClassicCatalogRelease satisfies this structurally. */
-  readonly release: { readonly catalog: CatalogShell };
+  readonly release: { readonly catalog: CatalogShell; readonly purchases?: ClassicCatalogRelease['purchases'] };
   readonly evaluation: Evaluation;
 }
 
@@ -131,6 +132,7 @@ export interface PrintPurchaseView {
 export interface PrintSectionView {
   readonly sectionId: string;
   readonly label: string;
+  readonly allowance?: SectionAllowance | undefined;
   readonly purchases: readonly PrintPurchaseView[];
 }
 
@@ -426,10 +428,14 @@ export function projectPrintableRoster(input: PrintSnapshotInput): PrintProjecti
   };
 
   const armyList = catalog.armyLists.find((list) => list.armyListId === document.armyListId);
+  const allowances = release.purchases
+    ? projectSectionAllowances(document, catalog, new Set(release.purchases.filter(access => access.kind === 'top-level').map(access => access.entryId)))
+    : new Map<string, SectionAllowance>();
   const sections: PrintSectionView[] = (armyList?.structure.sections ?? [])
     .map((section) => ({
       sectionId: section.sectionId,
       label: sectionLabel(identity, section),
+      allowance: allowances.get(section.sectionId),
       purchases: document.selections
         .filter((item) => item.parentSelectionId === null && item.sectionId === section.sectionId)
         .map((item) => buildPurchase(item, 'top-level', null)),

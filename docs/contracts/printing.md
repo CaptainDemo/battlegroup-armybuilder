@@ -17,7 +17,7 @@ Implementation: `apps/web/src/features/roster-output/printProjection.ts`, PrintP
 | evaluation-rules-revision | stamped rulesRevision matches the release manifest |
 | evaluation-catalog-revision | stamped catalogRevision matches the release manifest |
 
-On success return ready with projected data. Costs, composition, issues and coverage come from that evaluation. Do not reevaluate or reprice. The only arithmetic is summing its own charge lines into display subtotals, retaining independent measure completeness.
+On success return ready with projected data. Costs, composition, issues and coverage come from that evaluation. Do not reevaluate or reprice. Display subtotals sum its charge lines with independent measure completeness. Section-choice counters reuse the canonical resource allocator over the same frozen choices, without adding issues or changing game validation.
 
 ## 2. Snapshot lifecycle
 
@@ -25,15 +25,14 @@ Opening captures the current document/evaluation in React state, without writing
 
 ## 3. Paper contents
 
-1. Header: roster/list identity, Points and BR, budget remaining only for complete Points, legality conclusion, exact catalog/rules/document/schema versions, snapshot revision, budget/size/scenario/role, selected optional rules as text, source edition and titles.
+1. Header: roster/list identity, Points including its budget and remaining amount, BR, Officers and Scouts from the evaluation, exact catalog/rules/document/schema versions, snapshot revision, budget/size/scenario/role, selected optional rules as text, source edition and titles.
 2. Player notes as plain text with line breaks preserved.
-3. Every issue with ruleId, severity, message, actual/limit when present and purchase location. Global issues remain visible. An empty list means no violations within implemented checks, not full legality.
-4. Complete section-ordered purchases with titles/instance ordinals, training, issue counts, base/included-member explanation, cost subtotal, actual evaluated composition, fixed platoons, direct/member-anchored attachments, selected upgrades and full charge breakdown.
-5. Support ledgers with consumption/capacity/status, and named statistics.
-6. A player-facing rule-coverage summary, including unknown-data/missing-input limitations when present. Do not print internal coverage IDs, user-clarification implementation notes or the historical full-army diagnostic. Raw records remain in the projection for diagnostics; concise output does not change legality.
-7. Aggregated vehicle/weapon quick reference with source versions and unverified/unclassified gaps.
-8. Optional full vehicle/weapon appendix, when enabled.
-9. Footer identifying the memory draft/snapshot and the partial-coverage limit.
+3. Every issue with ruleId, severity, message, actual/limit when present and purchase location. Global issues remain visible. An empty list displays No issues found.
+4. Section headings show selected purchase counts and applicable choice allowances, marking shared pools and exempt purchases separately. Complete section-ordered purchases with titles/instance ordinals, training, issue counts, base/included-member explanation, cost subtotal, actual evaluated composition, fixed platoons, direct/member-anchored attachments, selected upgrades and full charge breakdown.
+5. The shared summary contains the common Officer/Scout statistics. Raw resource ledgers and a separate support/statistics section are not printed.
+6. Aggregated vehicle/weapon quick reference with source versions and unverified/unclassified gaps.
+7. Optional full vehicle/weapon appendix, when enabled.
+8. Footer identifying the memory draft/snapshot. Rule-coverage notices and full-legality claims are not printed. Coverage records remain internal to the projection for diagnostics and do not change the domain evaluation.
 
 Known zero, Unknown and Not applicable stay distinct. Points/BR completeness is independent. Do not print a remaining budget based on an incomplete subtotal. Optional rule text does not itself implement a rule effect.
 

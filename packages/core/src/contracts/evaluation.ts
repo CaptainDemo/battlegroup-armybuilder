@@ -117,7 +117,8 @@ export interface ResourceLedgerSnapshot {
   readonly status: CheckStatus;
 }
 
-/** Named statistic (officers, scout weight, ...), values sourced by ruleset rules. */
+/** Named statistic, calculated by each ruleset. Shared header IDs are
+ * `officers` and `scout-weight`; labels/weighting never imply shared game data. */
 export interface RosterStatistic {
   readonly statId: string;
   readonly label: string;

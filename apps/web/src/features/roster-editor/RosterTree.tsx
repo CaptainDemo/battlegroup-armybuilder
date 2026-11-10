@@ -7,6 +7,8 @@ import type {
 import type { ClassicCatalogRelease } from '@battlegroup/classic-coldwar';
 import { t } from '../../i18n';
 import { sectionLabel } from './sectionLabel';
+import { SectionCount } from '../../components/SectionCount';
+import type { SectionAllowance } from './sectionAllowances';
 
 /** A UI destination, separate from the player's stored purchase tree. */
 export type AddTarget =
@@ -19,6 +21,7 @@ interface TreeProps {
   selectedId: string | null;
   selectedMemberPath: string[] | null;
   addTarget: AddTarget | null;
+  allowances: ReadonlyMap<string, SectionAllowance>;
   onSelect: (id: string, memberPath?: string[]) => void;
   onRemove: (id: string) => void;
   onAdd: (target: AddTarget) => void;
@@ -69,6 +72,7 @@ export function RosterTree(props: TreeProps) {
             >
               <div className="roster-section-heading">
                 <h4>{label}</h4>
+                {props.allowances.get(section.sectionId) && <SectionCount allowance={props.allowances.get(section.sectionId)!} />}
               </div>
               {document.selections
                 .filter(
