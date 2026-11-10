@@ -1,9 +1,9 @@
 # Development Guide
 
 Engineering setup for the Battlegroup Army Builder. This documents what is
-actually implemented through milestone M10: contracts, versioned catalog,
+actually implemented through milestone M11: contracts, versioned catalog,
 atomic editing commands, evaluation, Classic rules, the browser editor, local
-saving and JSON import/export. Printing remains future work; see
+saving, JSON import/export and the print/PDF view. See
 [implementation modules](implementation_modules.md) for the delivery plan.
 
 ## Prerequisites
@@ -254,6 +254,51 @@ remains importable. Catalogs load only from the application index by exact
 identity — nothing in a file can direct a request. Limits and semantics:
 [M10 contracts](implementation/m10-contracts.md).
 
+## Print / PDF view (M11)
+
+`features/roster-output/` contains the pure print projection
+(`printProjection.ts`) and the preview overlay (`PrintPreview.tsx`). The
+projection consumes exactly one (document, catalog release, evaluation)
+snapshot; it verifies rosterId, the edit revision (`inputRevision`), the
+exact catalog identity on all three sides, and the evaluation's stamped
+version triple (schemaVersion / rulesRevision / catalogRevision) against the
+release manifest — a mismatched or out-of-date evaluation is refused instead
+of printed. Totals, charge lines, composition and problems all come from that
+snapshot — the projection adds no pricing or rule logic of its own; its only
+arithmetic is summing the snapshot's charge lines into clearly labelled
+display subtotals. Every composition member prints exactly once per purchase
+(fixed platoons print as titled blocks and never repeat in the purchase's own
+rows), and a composition root that itself carries a profile (the exact 1.0.0
+BRDM-2 leaf) prints as a member.
+
+The editor toolbar's **Print / PDF** button freezes the current in-memory
+draft (saved or not, valid or violating) plus its evaluation into a preview.
+The preview states the frozen edit revision, offers refresh/close, and calls
+`window.print()`; the print stylesheet shows only the paper sheet on A4 with
+all editor chrome hidden. Closing or refreshing the preview never edits the
+roster, the undo history or the save state. Paper contents: header with
+settings (including selected optional rules), Points/BR (final totals vs
+known subtotals), rules/catalog/document versions and player notes; every
+purchase including fixed sub-platoons and member-anchored attachments,
+selected upgrades with per-target billing, and per-purchase price breakdowns;
+problems with rule ids and purchase location; support ledgers, statistics,
+check coverage and a vehicle/weapon quick reference aggregated from the
+verified reference packages (their versions and gaps are printed). Long
+blocks may split across pages; only small rows avoid page breaks, so no
+oversized block is clipped. See
+[M11 contracts](implementation/m11-contracts.md) for the full projection
+contract and [M11 delivery](implementation/m11-result.md) for the validation
+record.
+
+The preview's **PDF options → Append vehicle and weapon data** checkbox is
+off by default. Enabling it appends the current roster's vehicle cards and
+weapon properties on new pages. Equal vehicle configurations are grouped;
+targeted missile upgrades remain separate. Carried and mounted weapon
+references are deduplicated by ID. Unverified data is shown explicitly.
+This option changes presentation only: it survives Refresh snapshot, resets
+when reopening the preview, and is never saved into the roster document.
+See [PDF options](implementation/m11-pdf-options.md).
+
 ## Tests
 
 - **Unit (Vitest):** `packages/core` and
@@ -263,11 +308,15 @@ identity — nothing in a file can direct a request. Limits and semantics:
   above — plus the Web storage adapters and transfer pipeline (fake-indexeddb,
   no DOM). Config: `vitest.config.ts` (root).
 - **Browser (Playwright):** `tests/e2e/web-shell.spec.ts` (shell, routing,
-  small viewport) and `tests/e2e/roster-transfer.spec.ts` — real downloads,
+  small viewport), `tests/e2e/roster-transfer.spec.ts` — real downloads,
   file selection, preview/cancel, copy and overwrite import, exact-catalog
-  and unknown-version handling. Config: `playwright.config.ts` (root). The
-  suite starts `vite preview` of the built app, so a pass exercises the
-  static artifacts.
+  and unknown-version handling — and `tests/e2e/roster-print.spec.ts` —
+  current-draft printing, close/reopen freshness, editor-intact checks,
+  real A4 `page.pdf()` output of a long multi-page roster and a
+  violations/coverage roster (PDFs land in `.tmp/m11/` as acceptance
+  evidence, never in the published app). Config: `playwright.config.ts`
+  (root). The suite starts `vite preview` of the built app, so a pass
+  exercises the static artifacts.
 
 There are intentionally no unit tests for the page copy; the e2e checks cover
 the shell's main access paths without mirroring every string.

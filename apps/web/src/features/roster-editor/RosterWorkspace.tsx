@@ -37,6 +37,7 @@ import { ImportPanel } from '../roster-transfer/ImportPanel';
 import type { ImportApplyResult } from '../roster-transfer/applyImport';
 import { downloadSingleRoster } from '../roster-transfer/rosterExport';
 import { UnitDataPanel } from './UnitDataPanel';
+import { PrintPreview, type PrintSnapshot } from '../roster-output/PrintPreview';
 
 function sameCatalogIdentity(
   a: ClassicCatalogRelease,
@@ -92,6 +93,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
   const [search, setSearch] = useState('');
   const [tab, setTab] = useState('roster');
   const [addTarget, setAddTarget] = useState<AddTarget | null>(null);
+  const [printSnapshot, setPrintSnapshot] = useState<PrintSnapshot | null>(null);
   useEffect(() => queue.subscribe(() => setSaves(queue.snapshot())), [queue]);
   useEffect(() => {
     let cancelled = false;
@@ -281,6 +283,17 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
     setAddTarget(target);
     setSearch('');
     setTab('actions');
+  }
+
+  // Printing freezes the current draft + its evaluation. Nothing is saved or
+  // edited by the preview; closing and reopening captures the latest draft.
+  function openPrint(): void {
+    if (!roster || !release || !currentEvaluation) {
+      setPrintSnapshot(null);
+      setState((current) => ({ ...current, notice: t('print.notReady') }));
+      return;
+    }
+    setPrintSnapshot({ document: roster, release, evaluation: currentEvaluation });
   }
 
   function selectPurchase(selectionId: string, memberPath?: string[]): void {
@@ -792,6 +805,9 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
               >
                 {t('transfer.exportRoster')}
               </button>
+              <button type="button" onClick={openPrint}>
+                {t('print.open')}
+              </button>
               <button
                 type="button"
                 disabled={!session?.past.length}
@@ -1132,6 +1148,13 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
             </section>
           </div>
         </>
+      )}
+      {printSnapshot && (
+        <PrintPreview
+          snapshot={printSnapshot}
+          onClose={() => setPrintSnapshot(null)}
+          onRefresh={openPrint}
+        />
       )}
     </div>
   );

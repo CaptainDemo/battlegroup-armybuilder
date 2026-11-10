@@ -14,9 +14,12 @@ attachments, configure options, inspect totals and problems, and undo/redo.
 M09 saves drafts in this browser using IndexedDB, with save status, retries and
 conflict recovery. M10 adds JSON import/export: single-roster files, full
 backups, preview-before-write, copy or explicit-overwrite import, and recovery
-of rosters whose catalog version this app cannot open. Printing is planned —
-see the [roadmap](docs/implementation_modules.md) and the in-app `#/roadmap`
-page.
+of rosters whose catalog version this app cannot open. M11 adds the print /
+PDF view: a frozen print preview of the current draft and its evaluation —
+all purchases, fixed sub-platoons, anchored attachments, selected upgrades,
+versions, notes, violations and coverage gaps — printed through the browser
+to A4 with no editing controls on the paper. See the
+[roadmap](docs/implementation_modules.md) and the in-app `#/roadmap` page.
 
 The first ruleset in scope is **Classic Cold War** (Unofficial Battlegroup:
 Cold War, Draft 6) with the Soviet Armoured Division V4.1 list as the initial

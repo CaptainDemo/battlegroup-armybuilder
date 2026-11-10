@@ -1,6 +1,6 @@
 # 实现模块与交付计划
 
-版本：0.10。日期：2026-11-09。状态：M01–M10 已实现并验证。Classic 编辑器使用苏联装甲师 V4.1 目录 1.1.0，包含 151 个购买记录及 203 个配装选项。编制验收见[苏联 V4.1 编制验收](implementation/soviet-v41-formations-acceptance.md)，本地自动保存、恢复与冲突处理见[M09 验收](implementation/m09-acceptance.md)，JSON 导入导出与兼容处理见[M10 交付](implementation/m10-result.md)。M11–M12 待实现。
+版本：0.11。日期：2026-11-10。状态：M01–M11 已实现并通过主 Agent 验收；M12 部署记录见[Sites 测试](implementation/m12-sites-test.md)，完整闭环验收在 M11 后补齐。Classic 编辑器使用苏联装甲师 V4.1 目录 1.1.0，包含 151 个购买记录及 203 个配装选项。编制验收见[苏联 V4.1 编制验收](implementation/soviet-v41-formations-acceptance.md)，本地自动保存、恢复与冲突处理见[M09 验收](implementation/m09-acceptance.md)，JSON 导入导出与兼容处理见[M10 交付](implementation/m10-result.md)，打印与 PDF 视图见[M11 交付](implementation/m11-result.md)。
 
 依据[架构设计](architecture.md)和[技术方案](technical_plan.md)。模块是职责与验收单位，不等于服务、独立仓库或 npm 发布包。先完成 Classic 的可用闭环，再接入其他规则；不一次性搭建所有目录和抽象。
 
@@ -150,6 +150,10 @@ M12 的测试设施和用例随各模块建立，最终阶段只是组合验收�
 **验收：** 导出再导入后选择、层级、目标、设置和版本一致，只有文档身份等预期字段变化；损坏或跨体系引用不进入正常计算；不支持版本可以保留原稿并再次导出；覆盖失败不破坏原军表；未从文件内任意 URL 加载资源。
 
 ### M11 打印与 PDF 视图
+
+2026-11-10 补充 PDF 选项：默认关闭的载具／武器数据附录，可在打印预览勾选后附上当前军表实际使用的数据。按型号和配置合并、武器去重，保留目标升级及未知提示。见 [PDF 选项](implementation/m11-pdf-options.md)。
+
+**状态：已通过主 Agent 独立验收，2026-11-10。** 纯打印投影核对 rosterId／inputRevision／精确目录身份及评估版本三元组（schemaVersion／rulesRevision／catalogRevision），拒绝过期或错配评估；预览冻结当前草稿及同一次 Evaluation，明示快照 revision，可刷新／关闭且不影响草稿、撤销与保存。纸面含设置（含已选可选规则）、版本、备注、全部购买（固定子排成员各印一次、成员锚定附件、逐目标配装与计价、叶子根组成完整）、问题定位、支援账本、覆盖状态及复用已核实资料包的车辆／武器速查；A4 打印样式隐藏全部编辑控件，长块可分页。r2 依 [a1 审查](implementation/m11-review-a1.md)修复四类缺陷；主 Agent 六项独立检查原样通过，13 项投影单测、22 项 Chrome 浏览器检查（含三份真实 A4 PDF 输出）通过；契约见 [M11 契约](implementation/m11-contracts.md)，验证记录见 [M11 交付](implementation/m11-result.md)，独立复跑及 15 页 PDF 人工核对见 [M11 验收](implementation/m11-acceptance.md)。
 
 **交付物：** 基于当前选择及 Evaluation 的打印投影和打印样式。
 

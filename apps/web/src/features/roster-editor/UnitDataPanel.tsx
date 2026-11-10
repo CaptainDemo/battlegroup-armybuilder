@@ -45,7 +45,7 @@ export function UnitDataPanel({ node, release }: { node: EvaluatedCompositionNod
   );
 }
 
-function CombatCard({ card, replacesCardAtgm }: { card: ClassicCombatCard; replacesCardAtgm: boolean }) {
+export function CombatCard({ card, replacesCardAtgm, sourceNotesExpanded = false }: { card: ClassicCombatCard; replacesCardAtgm: boolean; sourceNotesExpanded?: boolean }) {
   const weapons = card.weapons.filter(weapon => !replacesCardAtgm || !weapon.name.endsWith(' ATGM'));
   return (
     <div className="unit-data-body">
@@ -77,16 +77,19 @@ function CombatCard({ card, replacesCardAtgm }: { card: ClassicCombatCard; repla
         </div>
       ) : <p className="muted">{t('unitData.noWeaponTable')}</p>}
       <p className="muted">{t('unitData.dashNote')}</p>
-      {card.notes.length > 0 && <details>
+      {card.notes.length > 0 && (sourceNotesExpanded ? <div className="unit-data-source-notes">
+        <strong>{t('unitData.sourceNotes')}</strong>
+        {card.notes.map(note => <p className="muted" key={note}>{note}</p>)}
+      </div> : <details>
         <summary>{t('unitData.sourceNotes')}</summary>
         {card.notes.map(note => <p className="muted" key={note}>{note}</p>)}
-      </details>}
+      </details>)}
       <p className="muted unit-data-source">{combatReference.source.title} · {combatReference.revision} · {t('unitData.sourceCard')} {card.name} · {t('unitData.page')} {card.page} · {card.position}</p>
     </div>
   );
 }
 
-function WeaponDetails({ weapon }: { weapon: ClassicWeapon }) {
+export function WeaponDetails({ weapon }: { weapon: ClassicWeapon }) {
   const stats = [
     [t('unitData.rateOfFire'), weapon.rateOfFire],
     [t('unitData.range'), weapon.range],
