@@ -1,0 +1,293 @@
+{
+  "purpose": "Hand-calculated source evidence only; not runtime catalog or complete legality acceptance",
+  "samples": [
+    {
+      "id": "forward-screen/armoured-car-patrol",
+      "name": "Armoured Car Patrol",
+      "source": {
+        "sourceId": "book",
+        "printedPage": 69,
+        "pdfPage": 70
+      },
+      "points": 24,
+      "br": 2,
+      "training": {
+        "state": "known",
+        "value": "c"
+      },
+      "compositionNote": "2 BRDM-2",
+      "verification": "original-page-checked"
+    },
+    {
+      "id": "forward-screen/forward-observation-officer",
+      "name": "Forward Observation Officer",
+      "source": {
+        "sourceId": "book",
+        "printedPage": 69,
+        "pdfPage": 70
+      },
+      "points": 12,
+      "br": 2,
+      "training": {
+        "state": "known",
+        "value": "c"
+      },
+      "compositionNote": "Command team in foxholes; +5 Artillery Spotter option deleted by errata p.7",
+      "verification": "original-page-checked"
+    },
+    {
+      "id": "vanguard/tank-company",
+      "name": "Tank Company",
+      "source": {
+        "sourceId": "book",
+        "printedPage": 70,
+        "pdfPage": 71
+      },
+      "points": 180,
+      "br": 20,
+      "training": {
+        "state": "known",
+        "value": "c"
+      },
+      "compositionNote": "10 T-62",
+      "verification": "original-page-checked"
+    },
+    {
+      "id": "main-column/motor-rifle-platoon",
+      "name": "Motor Rifle Platoon",
+      "source": {
+        "sourceId": "book",
+        "printedPage": 71,
+        "pdfPage": 72
+      },
+      "points": 44,
+      "br": 10,
+      "training": {
+        "state": "known",
+        "value": "c"
+      },
+      "compositionNote": "3 Fire Teams and 3 AT Teams in 3 BTR-60/70",
+      "verification": "original-page-checked"
+    },
+    {
+      "id": "main-column/battlegroup-commander",
+      "name": "Battlegroup Commander",
+      "source": {
+        "sourceId": "book",
+        "printedPage": 71,
+        "pdfPage": 72
+      },
+      "points": 24,
+      "br": 4,
+      "training": {
+        "state": "known",
+        "value": "c"
+      },
+      "compositionNote": "Command team in BMP-1K or BMP-2K",
+      "verification": "original-page-checked"
+    },
+    {
+      "id": "main-column/120mm-mortar-battery",
+      "name": "120mm Mortar Battery",
+      "source": {
+        "sourceId": "book",
+        "printedPage": 72,
+        "pdfPage": 73
+      },
+      "points": 48,
+      "br": 0,
+      "training": {
+        "state": "not_applicable",
+        "reason": "No experience grade printed for this off-table purchase"
+      },
+      "compositionNote": "4 off-table 120mm mortars",
+      "verification": "original-page-checked"
+    },
+    {
+      "id": "additional-fire-support/timed-122mm-artillery-strike",
+      "name": "Timed 122mm Artillery Strike",
+      "source": {
+        "sourceId": "book",
+        "printedPage": 73,
+        "pdfPage": 74
+      },
+      "points": 14,
+      "br": 0,
+      "training": {
+        "state": "not_applicable",
+        "reason": "No experience grade printed for this off-table purchase"
+      },
+      "compositionNote": "One pre-planned strike",
+      "verification": "original-page-checked"
+    }
+  ],
+  "additionalArithmeticInputs": [
+    {
+      "id": "main-column/tactical-command-centre",
+      "points": 16,
+      "br": 3,
+      "source": {
+        "sourceId": "book",
+        "printedPage": 72,
+        "pdfPage": 73
+      }
+    },
+    {
+      "id": "tcc/forward-air-controller",
+      "points": 12,
+      "br": 2,
+      "source": {
+        "sourceId": "book",
+        "printedPage": 72,
+        "pdfPage": 73
+      }
+    },
+    {
+      "id": "tcc/electronic-warfare-team",
+      "points": 16,
+      "br": 3,
+      "source": {
+        "sourceId": "book",
+        "printedPage": 72,
+        "pdfPage": 73
+      }
+    },
+    {
+      "id": "tcc/supply-truck",
+      "points": 9,
+      "br": 0,
+      "source": {
+        "sourceId": "book",
+        "printedPage": 72,
+        "pdfPage": 73
+      }
+    },
+    {
+      "id": "tcc/ambulance",
+      "points": 10,
+      "br": 0,
+      "source": {
+        "sourceId": "book",
+        "printedPage": 72,
+        "pdfPage": 73
+      }
+    },
+    {
+      "id": "reinforcement-requests/additional-request",
+      "points": 30,
+      "br": 0,
+      "source": {
+        "sourceId": "book",
+        "printedPage": 74,
+        "pdfPage": 75
+      }
+    }
+  ],
+  "fragments": [
+    {
+      "id": "screen-and-vanguard",
+      "selections": [
+        {
+          "sampleId": "forward-screen/armoured-car-patrol",
+          "count": 1
+        },
+        {
+          "sampleId": "vanguard/tank-company",
+          "count": 1
+        }
+      ],
+      "expected": {
+        "points": 204,
+        "br": 22
+      },
+      "fullLegality": "not-assessed"
+    },
+    {
+      "id": "tcc-with-one-each",
+      "selections": [
+        {
+          "sampleId": "forward-screen/armoured-car-patrol",
+          "count": 1
+        },
+        {
+          "sampleId": "vanguard/tank-company",
+          "count": 1
+        },
+        {
+          "sampleId": "main-column/tactical-command-centre",
+          "count": 1
+        },
+        {
+          "sampleId": "tcc/forward-air-controller",
+          "count": 1
+        },
+        {
+          "sampleId": "tcc/electronic-warfare-team",
+          "count": 1
+        },
+        {
+          "sampleId": "tcc/supply-truck",
+          "count": 1
+        },
+        {
+          "sampleId": "tcc/ambulance",
+          "count": 1
+        }
+      ],
+      "expected": {
+        "points": 267,
+        "br": 30
+      },
+      "fullLegality": "not-assessed"
+    },
+    {
+      "id": "two-additional-requests",
+      "selections": [
+        {
+          "sampleId": "forward-screen/armoured-car-patrol",
+          "count": 1
+        },
+        {
+          "sampleId": "vanguard/tank-company",
+          "count": 1
+        },
+        {
+          "sampleId": "main-column/tactical-command-centre",
+          "count": 1
+        },
+        {
+          "sampleId": "tcc/forward-air-controller",
+          "count": 1
+        },
+        {
+          "sampleId": "tcc/electronic-warfare-team",
+          "count": 1
+        },
+        {
+          "sampleId": "tcc/supply-truck",
+          "count": 1
+        },
+        {
+          "sampleId": "tcc/ambulance",
+          "count": 1
+        },
+        {
+          "sampleId": "reinforcement-requests/additional-request",
+          "count": 2
+        }
+      ],
+      "expected": {
+        "points": 327,
+        "br": 30
+      },
+      "fullLegality": "not-assessed",
+      "requests": {
+        "enabled": true,
+        "free": 1,
+        "paid": 2,
+        "total": 3,
+        "platoonCap": 3
+      }
+    }
+  ]
+}

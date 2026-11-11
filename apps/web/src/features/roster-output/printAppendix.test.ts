@@ -6,7 +6,8 @@ import { classicCatalogReleaseSchema, evaluateClassicRoster } from '@battlegroup
 import currentRelease from '../../../../../packages/catalogs/classic-coldwar/public/catalogs/classic-coldwar/soviet-armoured-division/1-1-0/catalog.json';
 import legacyRelease from '../../../../../packages/catalogs/classic-coldwar/public/catalogs/classic-coldwar/soviet-armoured-division/1-0-0/catalog.json';
 import { projectPrintableRoster } from './printProjection';
-import { PrintUnitDataAppendix, appendixWeapons } from './PrintUnitDataAppendix';
+import { ClassicPrintUnitDataAppendix as PrintUnitDataAppendix, appendixWeapons } from '../../rulesets/classic/PrintUnitDataAppendix';
+import { classicReferenceData } from '../../rulesets/classic/printReference';
 
 function project(entries: Array<{entry: string; choices?: OptionChoice[]}>, raw: unknown = currentRelease) {
   const release = classicCatalogReleaseSchema.parse(raw);
@@ -22,7 +23,7 @@ function project(entries: Array<{entry: string; choices?: OptionChoice[]}>, raw:
   const result = projectPrintableRoster({document:added.document,release,evaluation});
   expect({document:added.document,evaluation}).toEqual(before);
   if (result.status !== 'ready') throw Error('projection failed');
-  return result.roster;
+  return {...result.roster, reference: classicReferenceData(result.roster.reference)};
 }
 
 it('attaches only the selected profiles, with one data card per configuration',()=>{

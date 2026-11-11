@@ -3,10 +3,8 @@ import type {
   RosterSelection,
   TrackedValue,
 } from '@battlegroup/core';
-import {
-  getClassicEntryAvailability,
-  type ClassicCatalogRelease,
-} from '@battlegroup/classic-coldwar';
+import type { AppCatalogRelease } from '../../rulesets/types';
+import { rulesets } from '../../rulesets/registry';
 import { t } from '../../i18n';
 import type { AddTarget } from './RosterTree';
 import { sectionLabel } from './sectionLabel';
@@ -20,7 +18,7 @@ export function CatalogPanel({
   onAdd,
 }: {
   document: RosterDocument;
-  release: ClassicCatalogRelease;
+  release: AppCatalogRelease;
   target: AddTarget;
   search: string;
   onSearch: (search: string) => void;
@@ -68,6 +66,7 @@ export function CatalogPanel({
       (item) => item.entryId === entry.localId,
     );
     return (
+      entry.armyListIds.includes(document.armyListId) &&
       (target.kind === 'section'
         ? access?.kind === 'top-level' &&
           entry.sectionIds.includes(target.sectionId)
@@ -110,7 +109,7 @@ export function CatalogPanel({
       </label>
       {!entries.length && <p className="muted">{t('editor.noCandidates')}</p>}
       {entries.map((entry) => {
-        const available = getClassicEntryAvailability(
+        const available = rulesets.require(document.catalogRef.rulesetId).availability(
           document,
           release,
           entry.localId,

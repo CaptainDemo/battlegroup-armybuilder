@@ -1,6 +1,6 @@
+import { rulesets } from '../../rulesets/registry';
 import {
   rosterDocumentSchema,
-  validateRosterCommandDocument,
   type RosterDocument,
 } from '@battlegroup/core';
 import {
@@ -12,6 +12,7 @@ import type { StoredRoster } from '../../adapters/storage/rosterStore';
 export async function restoreRoster(
   row: StoredRoster,
   loader = loadCatalog,
+  validate = rulesets.validateRoster,
 ): Promise<{
   document: RosterDocument;
   catalog: Extract<CatalogLoadResult, { status: 'ready' }>;
@@ -28,7 +29,7 @@ export async function restoreRoster(
   const catalog = await loader(parsed.data.catalogRef);
   if (
     catalog.status !== 'ready' ||
-    validateRosterCommandDocument(parsed.data, catalog.release).length
+    validate(parsed.data, catalog.release).length
   )
     return null;
   return { document: parsed.data, catalog };

@@ -8,6 +8,7 @@ import {
   type UnitEntry,
 } from '@battlegroup/core';
 import { t } from '../../i18n';
+import { rulesets } from '../../rulesets/registry';
 
 export function OptionEditor({
   document,
@@ -24,6 +25,7 @@ export function OptionEditor({
   memberPath: string[] | null;
   onChoices: (choices: OptionChoice[]) => void;
 }) {
+  const runtime = rulesets.require(document.catalogRef.rulesetId);
   function update(
     groupId: string,
     option: Option,
@@ -119,26 +121,7 @@ export function OptionEditor({
                           ? ' · ' + t('editor.perTarget')
                           : ''}
                       </small>
-                      {option.specialRules?.some(
-                        (rule) =>
-                          rule === 'restricted-choice' ||
-                          rule.startsWith('unique-choice:'),
-                      ) && (
-                        <small>
-                          {[
-                            option.specialRules.includes('restricted-choice')
-                              ? 'Restricted'
-                              : '',
-                            option.specialRules.some((rule) =>
-                              rule.startsWith('unique-choice:'),
-                            )
-                              ? 'Unique'
-                              : '',
-                          ]
-                            .filter(Boolean)
-                            .join(' / ')}
-                        </small>
-                      )}
+                      {!!runtime.optionBadges?.(option).length && <small>{runtime.optionBadges(option).join(' / ')}</small>}
                     </span>
                   </label>
                   {option.target.kind === 'member-slots' &&

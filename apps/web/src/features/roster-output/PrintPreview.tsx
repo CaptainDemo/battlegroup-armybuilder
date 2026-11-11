@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import type { Evaluation, RosterDocument, TrackedValue } from '@battlegroup/core';
-import type { ClassicCatalogRelease } from '@battlegroup/classic-coldwar';
+import type { AppCatalogRelease } from '../../rulesets/types';
 import { t } from '../../i18n';
 import { issueMessage } from '../../i18n/issueMessage';
 import {
@@ -11,6 +11,7 @@ import {
   type PrintMeasure,
   type PrintOptionChoiceView,
   type PrintPurchaseView,
+  type PrintSectionView,
 } from './printProjection';
 import { PrintUnitDataAppendix } from './PrintUnitDataAppendix';
 import { RosterSummary } from '../../components/RosterSummary';
@@ -24,7 +25,7 @@ import { SectionCount } from '../../components/SectionCount';
  */
 export interface PrintSnapshot {
   readonly document: RosterDocument;
-  readonly release: ClassicCatalogRelease;
+  readonly release: AppCatalogRelease;
   readonly evaluation: Evaluation;
 }
 
@@ -180,7 +181,7 @@ function RosterSheet({ roster, options }: { roster: PrintableRoster; options: Pr
           <ul className="print-issues" data-testid="print-issues">
             {roster.issues.map((issue, index) => (
               <li key={index} data-severity={issue.severity}>
-                <strong>{issue.ruleId}</strong> {issueMessage(issue.message)}
+                <strong>{issue.ruleId}</strong> {issueMessage(issue.message, roster.versions.rulesetId)}
                 {issue.actual !== undefined || issue.limit !== undefined ? (
                   <span className="muted">
                     {' '}
@@ -195,17 +196,7 @@ function RosterSheet({ roster, options }: { roster: PrintableRoster; options: Pr
         )}
       </section>
 
-      {roster.sections.map((section) => (
-        <section className="print-block" key={section.sectionId} aria-label={section.label}>
-          <div className="print-section-heading">
-            <h2>{section.label}</h2>
-            {section.allowance && <SectionCount allowance={section.allowance} />}
-          </div>
-          {section.purchases.map((purchase) => (
-            <PurchaseBlock key={purchase.selectionId} purchase={purchase} />
-          ))}
-        </section>
-      ))}
+      {roster.sections.map(section => <SectionBlock key={section.sectionId} section={section} />)}
 
       <section className="print-block" aria-label={t('print.reference.title')}>
         <h2>{t('print.reference.title')}</h2>
@@ -248,7 +239,7 @@ function RosterSheet({ roster, options }: { roster: PrintableRoster; options: Pr
         </p>
       </section>
 
-      {options.includeUnitData && <PrintUnitDataAppendix reference={roster.reference} />}
+      {options.includeUnitData && <PrintUnitDataAppendix reference={roster.reference} rulesetId={roster.versions.rulesetId} />}
       <footer className="print-footer">
         <p>
           {t('print.footerNote')} · {t('print.meta.snapshot')}: {roster.versions.editRevision}
@@ -256,6 +247,16 @@ function RosterSheet({ roster, options }: { roster: PrintableRoster; options: Pr
       </footer>
     </div>
   );
+}
+
+function SectionBlock({section}: {section: PrintSectionView}) {
+  return <section className="print-block" aria-label={section.label}>
+    <div className="print-section-heading"><h2>{section.label}</h2>
+      {section.allowance && <SectionCount allowance={section.allowance} />}
+    </div>
+    {section.purchases.map(purchase => <PurchaseBlock key={purchase.selectionId} purchase={purchase} />)}
+    {section.children.map(child => <SectionBlock key={child.sectionId} section={child} />)}
+  </section>;
 }
 
 function PurchaseBlock({ purchase }: { purchase: PrintPurchaseView }) {

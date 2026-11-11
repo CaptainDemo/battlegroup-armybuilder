@@ -17,10 +17,10 @@ This installs the locked workspace dependencies and links @battlegroup packages.
 | Command | Purpose |
 |---|---|
 | npm run dev | Vite development server |
-| npm run typecheck | TypeScript checks for core, Classic ruleset and Web |
+| npm run typecheck | TypeScript checks for core, all installed ruleset workspaces and Web |
 | npm test | Vitest: contracts, commands, evaluation, rules, catalogs and Web adapters |
 | npm run test:watch | Vitest watch mode |
-| npm run check:catalogs | Catalog-release and combat-reference data gates |
+| npm run check:catalogs | Catalog-release, combat-reference and indexed-asset publication gates |
 | npm run build | Data gates followed by Vite build into apps/web/dist |
 | npm run preview | Serve the existing production build |
 | npm run test:e2e | Build, then Playwright against a production preview |
@@ -80,11 +80,11 @@ Roster edit revision, evaluation inputRevision, catalog revision and storage sav
 
 ## Catalog loading and publication
 
-The application allowlist is packages/catalogs/classic-coldwar/public/catalogs/index.json. loadCatalog in the Web catalog adapter resolves only exact indexed identity, verifies SHA-256 before parsing and checks the required module/rules revision. Results distinguish ready, not-found, unsupported-version, network-error, digest-mismatch and invalid-data. An imported URL cannot become a catalog request.
+The application allowlist is assembled explicitly in packages/catalogs/registry.ts from independent ruleset indexes (currently Classic only). loadCatalog in the Web catalog adapter resolves only exact indexed identity, verifies SHA-256 before parsing with the registered module and checks the required module/rules revision. Results distinguish ready, not-found, unsupported-version, network-error, digest-mismatch and invalid-data. An imported URL cannot become a catalog request. See the [ruleset integration handoff](ruleset-integration.md) for the runtime, settings and presentation seams.
 
 Release 1.0.0 remains the original ten-purchase release. New rosters use 1.1.0 with 120 top-level purchases, 31 attachment contexts and 203 options. Fixed platoons are included in the parent price. The actual catalogId is soviet-armoured-division-v4_1, not the asset directory's shorter name.
 
-Only the explicit public catalog directory is copied into static output. The normal build runs release/reference data gates first. Preserve immutable release bytes and LF endings. Fixtures are independent evidence, not runtime catalog authority. See the [catalog README](../packages/catalogs/classic-coldwar/README.md), [source baseline](data/classic-sample-scope.md) and [constraints](data/classic-constraints.md).
+Only explicitly indexed catalog files and the combined index are emitted into static output; neighboring public-directory files are not copied. Development serves the same asset map. The normal build runs release/reference and asset gates first. Preserve immutable release bytes and LF endings. Fixtures are independent evidence, not runtime catalog authority. See the [catalog README](../packages/catalogs/classic-coldwar/README.md), [source baseline](data/classic-sample-scope.md) and [constraints](data/classic-constraints.md).
 
 ## Application and editing
 

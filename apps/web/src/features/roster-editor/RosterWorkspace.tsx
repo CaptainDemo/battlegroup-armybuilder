@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   createRosterDocument,
   executeRosterCommands,
@@ -8,10 +8,9 @@ import {
   type TrackedValue,
   type EvaluatedCompositionNode,
 } from '@battlegroup/core';
-import {
-  evaluateClassicRoster,
-  type ClassicCatalogRelease,
-} from '@battlegroup/classic-coldwar';
+import type { AppCatalogRelease } from '../../rulesets/types';
+import { rulesets, sameCatalogIdentity as sameIdentity } from '../../rulesets/registry';
+import { CreateForm, SettingsForm, type CreationChoice } from './RosterForms';
 import {
   catalogIndex,
   loadCatalog,
@@ -40,11 +39,10 @@ import { downloadSingleRoster } from '../roster-transfer/rosterExport';
 import { UnitDataPanel } from './UnitDataPanel';
 import { PrintPreview, type PrintSnapshot } from '../roster-output/PrintPreview';
 import { RosterSummary } from '../../components/RosterSummary';
-import { projectSectionAllowances } from './sectionAllowances';
 
 function sameCatalogIdentity(
-  a: ClassicCatalogRelease,
-  b: ClassicCatalogRelease,
+  a: AppCatalogRelease,
+  b: AppCatalogRelease,
 ): boolean {
   const left = a.catalog.manifest.identity;
   const right = b.catalog.manifest.identity;
@@ -80,6 +78,8 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
   const [debugToolsEnabled] = useState(
     () => new URLSearchParams(window.location.search).get('debug') === '1',
   );
+  const creationChoices = useMemo(() => rulesets.creationChoices(catalogIndex), []);
+  const [creationChoice, setCreationChoice] = useState<CreationChoice>(() => creationChoices[0]!);
   const [load, setLoad] = useState<CatalogLoadResult | null>(null);
   const [retry, setRetry] = useState(0);
   const [store] = useState(() => new DexieRosterStore());
@@ -89,7 +89,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
   const [storageError, setStorageError] = useState(false);
   const [storageRetry, setStorageRetry] = useState(0);
   const [unavailable, setUnavailable] = useState<StoredRoster[]>([]);
-  const [catalogs, setCatalogs] = useState<ClassicCatalogRelease[]>([]);
+  const [catalogs, setCatalogs] = useState<AppCatalogRelease[]>([]);
   const [state, setState] = useState<WorkspaceState>({
     sessions: [],
     activeId: null,
@@ -178,11 +178,15 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
   }, [state.sessions, saves]);
   useEffect(() => {
     let cancelled = false;
-    const identity = catalogIndex.releases[0]?.identity;
+    const identity = creationChoice?.army.identity;
+    setLoad(null);
     if (identity)
       void loadCatalog(identity)
         .then((result) => {
-          if (!cancelled) setLoad(result);
+          if (!cancelled) {
+            setLoad(result);
+            if (result.status === 'ready') setCatalogs(current => current.some(item => sameCatalogIdentity(item, result.release)) ? current : [...current, result.release]);
+          }
         })
         .catch(() => {
           if (!cancelled)
@@ -191,8 +195,8 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
     return () => {
       cancelled = true;
     };
-  }, [retry]);
-  const defaultRelease = load?.status === 'ready' ? load.release : null;
+  }, [retry, creationChoice]);
+  const defaultRelease = load?.status === 'ready' && sameIdentity(load.release.catalog.manifest.identity, creationChoice.army.identity) ? load.release : null;
   const session = state.sessions.find(
     (item) => item.document.rosterId === state.activeId,
   );
@@ -210,7 +214,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
       ) ?? null)
     : defaultRelease;
   const evaluation = useMemo(
-    () => (roster && release ? evaluateClassicRoster(roster, release) : null),
+    () => (roster && release ? rulesets.require(roster.catalogRef.rulesetId).evaluate(roster, release) : null),
     [roster, release],
   );
   const currentEvaluation =
@@ -332,6 +336,8 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
           ...current,
           notice: result.problems.map((problem) => problem.message).join(' '),
         };
+      const boundary = rulesets.validateRoster(result.document, release!);
+      if (boundary.length) return {...current, notice: boundary.map(issue => issue.message).join(' ')};
       const desired = selectId ?? current.selectedId;
       const selectedId = result.document.selections.some(
         (item) => item.selectionId === desired,
@@ -367,7 +373,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
         revision: id(),
         name,
         catalogRef: creationRelease.catalog.manifest.identity,
-        armyListId: creationRelease.catalog.armyLists[0]!.armyListId,
+        armyListId: creationChoice.army.armyListId,
         settings: { budgetPoints: budget, gameSizeId: size, optionalRules: [] },
       },
       creationRelease,
@@ -379,38 +385,14 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
       }));
       return;
     }
+    const boundary = rulesets.validateRoster(created.document, creationRelease);
+    if (boundary.length) {
+      setState(current => ({...current, notice: boundary.map(issue => issue.message).join(' ')}));
+      return;
+    }
     let document = created.document;
     if (example) {
-      const plan = [
-        'fhq',
-        't72-platoon',
-        'bmp1-platoon',
-        'bmp1-platoon-medic',
-        'bmp1-platoon-fire-support',
-        'bmp1-platoon-agl',
-        'brdm2-recon',
-        'zsu23-4',
-        'artillery-request-priority3',
-      ];
-      const ids = plan.map(() => id());
-      const commands: RosterCommand[] = plan.map((entryId, i) => {
-        const entry = creationRelease.catalog.entries.find(
-          (item) => item.localId === entryId,
-        )!;
-        const attachment =
-          creationRelease.purchases.find((item) => item.entryId === entryId)!
-            .kind === 'attachment';
-        return {
-          kind: 'add',
-          selection: {
-            selectionId: ids[i]!,
-            entryReference: { ...document.catalogRef, localId: entryId },
-            parentSelectionId: attachment ? ids[2]! : null,
-            ...(!attachment ? { sectionId: entry.sectionIds[0]! } : {}),
-            optionChoices: [],
-          },
-        };
-      });
+      const commands = creationChoice.runtime.exampleCommands?.(creationRelease, id) ?? [];
       const populated = executeRosterCommands(
         document,
         commands,
@@ -595,7 +577,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
 
   function transferOverwritten(
     document: RosterDocument,
-    release: ClassicCatalogRelease,
+    release: AppCatalogRelease,
   ): void {
     setCatalogs((current) =>
       current.some((item) => sameCatalogIdentity(item, release))
@@ -642,10 +624,10 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
 
   const totals = currentEvaluation?.totals;
   const sectionAllowances = useMemo(
-    () => roster && release
-      ? projectSectionAllowances(roster, release.catalog, new Set(release.purchases.filter(access => access.kind === 'top-level').map(access => access.entryId)))
+    () => roster && release && currentEvaluation
+      ? rulesets.require(roster.catalogRef.rulesetId).sectionAllowances(roster, release, currentEvaluation)
       : new Map(),
-    [roster, release],
+    [roster, release, currentEvaluation],
   );
   const notice = state.notice || (
     !load
@@ -759,17 +741,20 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
           <section className="card">
             <h2>{t('home.createTitle')}</h2>
             <CreateForm
+              choices={creationChoices}
+              selected={creationChoice}
+              onSelect={setCreationChoice}
               disabled={!defaultRelease || !storageReady}
               onCreate={create}
             />
           </section>
-          {debugToolsEnabled && (
+          {debugToolsEnabled && creationChoice.runtime.exampleCommands && (
             <section className="card" aria-labelledby="debug-tools-heading">
               <h2 id="debug-tools-heading">{t('debug.title')}</h2>
               <button
                 type="button"
                 disabled={!defaultRelease || !storageReady}
-                onClick={() => create(t('editor.exampleName'), 500, 'platoon', true)}
+                onClick={() => create(t('editor.exampleName'), creationChoice.runtime.settings.defaultBudget, creationChoice.runtime.settings.defaultSize, true)}
               >
                 {t('editor.createExample')}
               </button>
@@ -792,7 +777,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
         <>
           <div className="editor-heading">
             <div>
-              <p className="eyebrow">Classic Cold War · Soviet · V4.1</p>
+              <p className="eyebrow">{rulesets.require(roster.catalogRef.rulesetId).label} · {release.catalog.armyLists.find(list => list.armyListId === roster.armyListId)?.name ?? roster.armyListId}</p>
               <h2>{roster.name}</h2>
               <p className="muted">
                 {t('editor.catalogVersion')}{' '}
@@ -828,6 +813,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
             </div>
           </div>
           <SettingsForm
+            runtime={rulesets.require(roster.catalogRef.rulesetId)}
             key={roster.revision}
             document={roster}
             onApply={(name, patch) =>
@@ -858,7 +844,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
                           ?.focus();
                     }}
                   >
-                      <strong>{issue.ruleId}</strong> {issueMessage(issue.message)}
+                      <strong>{issue.ruleId}</strong> {issueMessage(issue.message, roster.catalogRef.rulesetId)}
                   </button>
                 </li>
               ))}
@@ -1083,142 +1069,12 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
   );
 }
 
-function CreateForm({
-  disabled,
-  onCreate,
-}: {
-  disabled: boolean;
-  onCreate: (name: string, budget: number, size: string) => void;
-}) {
-  const submit = (event: FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    onCreate(
-      String(data.get('name')),
-      Number(data.get('budget')),
-      String(data.get('size')),
-    );
-  };
-  return (
-    <form className="settings-form" onSubmit={submit}>
-      <label>
-        {t('editor.name')}
-        <input name="name" required defaultValue="New Soviet roster" />
-      </label>
-      <label>
-        {t('editor.ruleset')}
-        <select disabled>
-          <option>Classic Cold War</option>
-        </select>
-      </label>
-      <label>
-        {t('editor.army')}
-        <select disabled>
-          <option>Soviet Armoured Division V4.1</option>
-        </select>
-      </label>
-      <label>
-        {t('editor.budget')}
-        <input
-          name="budget"
-          type="number"
-          min="1"
-          required
-          defaultValue="500"
-        />
-      </label>
-      <label>
-        {t('editor.gameSize')}
-        <SizeSelect name="size" defaultValue="platoon" />
-      </label>
-      <button type="submit" disabled={disabled}>
-        {t('editor.create')}
-      </button>
-    </form>
-  );
-}
-function SizeSelect(props: { name: string; defaultValue: string }) {
-  return (
-    <select {...props}>
-      {['squad', 'platoon', 'company', 'battalion'].map((size) => (
-        <option key={size} value={size}>
-          {size}
-        </option>
-      ))}
-    </select>
-  );
-}
-function SettingsForm({
-  document,
-  onApply,
-}: {
-  document: RosterDocument;
-  onApply: (name: string, patch: Partial<RosterDocument['settings']>) => void;
-}) {
-  return (
-    <form
-      className="settings-form card settings-card"
-      onSubmit={(event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        onApply(String(data.get('roster-name')), {
-          budgetPoints: Number(data.get('budget')),
-          gameSizeId: String(data.get('size')),
-          scenarioId: String(data.get('scenario') ?? '') || undefined,
-          playerRoleId: String(data.get('player-role') ?? '') || undefined,
-        });
-      }}
-    >
-      <label>
-        {t('editor.name')}
-        <input name="roster-name" required defaultValue={document.name} />
-      </label>
-      <label>
-        {t('editor.budget')}
-        <input
-          id="budget-input"
-          name="budget"
-          type="number"
-          min="1"
-          required
-          defaultValue={document.settings.budgetPoints}
-        />
-      </label>
-      <label>
-        {t('editor.gameSize')}
-        <SizeSelect name="size" defaultValue={document.settings.gameSizeId} />
-      </label>
-      <label>
-        {t('editor.scenario')}
-        <select
-          name="scenario"
-          defaultValue={document.settings.scenarioId ?? ''}
-        >
-          <option value="">{t('editor.unspecified')}</option>
-          <option value="attack-defence">{t('editor.attackDefence')}</option>
-        </select>
-      </label>
-      <label>
-        {t('editor.playerRole')}
-        <select
-          name="player-role"
-          defaultValue={document.settings.playerRoleId ?? ''}
-        >
-          <option value="">{t('editor.unspecified')}</option>
-          <option value="attacker">{t('editor.attacker')}</option>
-          <option value="defender">{t('editor.defender')}</option>
-        </select>
-      </label>
-      <button type="submit">{t('editor.applySettings')}</button>
-    </form>
-  );
-}
 function CompositionTree({
   node,
   release,
 }: {
   node: EvaluatedCompositionNode;
-  release: ClassicCatalogRelease;
+  release: AppCatalogRelease;
 }) {
   return (
     <ul className="composition-tree">
@@ -1227,7 +1083,7 @@ function CompositionTree({
         {release.catalog.profiles.find(
           (profile) => profile.localId === node.profileLocalId,
         )?.name ?? node.role.replaceAll('-', ' ')}
-        {node.training?.state === 'known' ? ' · ' + node.training.value : ''}
+        {node.training?.state === 'known' ? ' · ' + (rulesets.get(release.catalog.manifest.identity.rulesetId)?.trainingLabels[node.training.value] ?? node.training.value) : ''}
         {node.children?.map((child) => (
           <CompositionTree key={child.nodeId} node={child} release={release} />
         ))}

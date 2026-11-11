@@ -1,6 +1,7 @@
 import { expect, it } from 'vitest';
 import type { EvaluatedCompositionNode } from '@battlegroup/core';
-import { collectUnitProfiles, collectUnitReferenceData } from './unitData';
+import { collectUnitProfiles } from './unitData';
+import { collectUnitReferenceData } from '../../rulesets/classic/unitData';
 
 it('counts selected evaluated members across nested formations, including replacements', () => {
   const node: EvaluatedCompositionNode = {

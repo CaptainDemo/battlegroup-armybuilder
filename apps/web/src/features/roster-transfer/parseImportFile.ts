@@ -1,3 +1,4 @@
+import { rulesets } from '../../rulesets/registry';
 import {
   jsonDepth,
   libraryBackupEntrySchema,
@@ -6,11 +7,10 @@ import {
   rosterOriginalHintSchema,
   singleRosterFileSchema,
   TRANSFER_LIMITS,
-  validateRosterCommandDocument,
   type CatalogIdentity,
   type RosterDocument,
 } from '@battlegroup/core';
-import type { ClassicCatalogRelease } from '@battlegroup/classic-coldwar';
+import type { AppCatalogRelease } from '../../rulesets/types';
 import {
   loadCatalog,
   type CatalogLoadResult,
@@ -37,7 +37,7 @@ export type ImportFatalCode =
 export type OriginalReason = 'unknown-catalog' | 'unknown-format';
 
 export type ImportRecord =
-  | { status: 'ready'; document: RosterDocument; release: ClassicCatalogRelease }
+  | { status: 'ready'; document: RosterDocument; release: AppCatalogRelease }
   | { status: 'original'; document: unknown; reason: OriginalReason; label: string }
   | { status: 'error'; detail: string };
 
@@ -67,6 +67,7 @@ async function classifyDocument(
   document: unknown,
   loader: CatalogLoader,
   cache: Map<string, CatalogLoadResult>,
+  validate: typeof rulesets.validateRoster,
 ): Promise<ImportRecord> {
   const parsed = rosterDocumentSchema.safeParse(document);
   if (!parsed.success) {
@@ -125,7 +126,7 @@ async function classifyDocument(
     // failure instead of guessing the record to be unsupported.
     return { status: 'error', detail: catalog.reason };
   }
-  const issues = validateRosterCommandDocument(data, catalog.release);
+  const issues = validate(data, catalog.release);
   return issues.length
     ? {
         status: 'error',
@@ -149,6 +150,7 @@ async function classifyDocument(
 export async function parseImportFile(
   input: ParseInput,
   loader: CatalogLoader = loadCatalog,
+  validate = rulesets.validateRoster,
 ): Promise<ImportFilePreview> {
   if (input.byteSize > TRANSFER_LIMITS.maxFileBytes)
     return { kind: 'unknown', records: [], fatal: 'too-large' };
@@ -174,7 +176,7 @@ export async function parseImportFile(
     if (overSingleCap) return singleTooLarge();
     return {
       kind: 'single-roster',
-      records: [await classifyDocument(single.data.document, loader, cache)],
+      records: [await classifyDocument(single.data.document, loader, cache, validate)],
       fatal: null,
     };
   }
@@ -187,13 +189,13 @@ export async function parseImportFile(
       const wrapped = libraryBackupEntrySchema.safeParse(entry);
       if (wrapped.success) {
         records.push(
-          await classifyDocument(wrapped.data.document, loader, cache),
+          await classifyDocument(wrapped.data.document, loader, cache, validate),
         );
         continue;
       }
       // Lenient legacy shape: a bare document in the record slot.
       if (rosterDocumentSchema.safeParse(entry).success) {
-        records.push(await classifyDocument(entry, loader, cache));
+        records.push(await classifyDocument(entry, loader, cache, validate));
         continue;
       }
       records.push({
@@ -208,7 +210,7 @@ export async function parseImportFile(
     if (overSingleCap) return singleTooLarge();
     return {
       kind: 'single-roster',
-      records: [await classifyDocument(parsed, loader, cache)],
+      records: [await classifyDocument(parsed, loader, cache, validate)],
       fatal: null,
     };
   }

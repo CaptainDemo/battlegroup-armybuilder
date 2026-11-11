@@ -1,5 +1,5 @@
 import type { RosterDocument } from '@battlegroup/core';
-import type { ClassicCatalogRelease } from '@battlegroup/classic-coldwar';
+import type { AppCatalogRelease } from '../../rulesets/types';
 import type {
   ImportWrite,
   RosterStore,
@@ -15,7 +15,7 @@ export interface ImportApplyResult {
   /** Originals stored verbatim as recovery rows (not editable, re-exportable). */
   originals: StoredRoster[];
   /** Distinct catalog releases of the imported ready documents. */
-  releases: ClassicCatalogRelease[];
+  releases: AppCatalogRelease[];
 }
 
 function sameIdentity(
@@ -69,7 +69,7 @@ export async function applyImportCopy(
   const rows = await store.importBatch(writes);
   const byId = new Map(rows.map((row) => [row.rosterId, row]));
   const sessions: EditorSession[] = [];
-  const releases: ClassicCatalogRelease[] = [];
+  const releases: AppCatalogRelease[] = [];
   for (const { record, document } of ready) {
     queue.restore(document, byId.get(document.rosterId)!.saveRevision);
     sessions.push(makeSession(document));

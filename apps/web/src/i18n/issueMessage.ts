@@ -1,8 +1,7 @@
-import { t } from './index';
+import type { RulesetId } from '@battlegroup/core';
+import { rulesets } from '../rulesets/registry';
 
 /** Keep engine identifiers in diagnostics, with readable resource names in UI. */
-export function issueMessage(message: string): string {
-  return message
-    .replaceAll('army-support-choice', t('editor.armySupportChoice'))
-    .replaceAll('platoon-support-slots', t('editor.platoonSupportSlots'));
+export function issueMessage(message: string, rulesetId: RulesetId): string {
+  return rulesets.get(rulesetId)?.formatIssue?.(message) ?? message;
 }

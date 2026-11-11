@@ -19,6 +19,8 @@ These documents describe maintained behavior and design decisions. Start with th
 | [Base-rulebook review](data/classic-base-rulebook-review.md) | Reviewed passages and the limits of their conclusions |
 | [Classic unit data](data/classic-unit-data.md) | Vehicle/weapon reference bindings and known gaps |
 | [NORTHAG preparation](data/northag-notes.md) | Source distinctions and requirements for the next ruleset |
+| [NORTHAG source baseline](data/northag-baseline.md) | Fingerprinted 2020 sources, reviewed errata, calibration fragments and open decisions |
+| [Ruleset integration handoff](ruleset-integration.md) | Web module registry, independent assets/presentation and remaining NORTHAG implementation |
 
 Raw source files remain local under references/. Completed task dispatches, model responses, review iterations, acceptance reports and tool-limit experiments remain local under docs/implementation/ and docs/consultations/. Those two archive directories are ignored and no longer tracked. Durable contracts and decisions have been consolidated into the documents above; a fresh checkout does not require the archives.
 

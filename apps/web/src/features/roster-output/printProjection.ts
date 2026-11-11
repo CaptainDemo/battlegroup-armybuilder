@@ -16,10 +16,12 @@ import type {
   UnitEntry,
 } from '@battlegroup/core';
 import { manifestVersionIdentity } from '@battlegroup/core';
-import { classicTrainingLevelLabels, findClassicCombatCard, type ClassicCombatCard, type ClassicWeapon, type ClassicCatalogRelease } from '@battlegroup/classic-coldwar';
-import { collectUnitReferenceData, combatReference, weaponReference } from '../roster-editor/unitData';
-import { sectionLabel } from '../roster-editor/sectionLabel';
-import { projectSectionAllowances, type SectionAllowance } from '../roster-editor/sectionAllowances';
+import type { PurchaseAccess, RulesetId } from '@battlegroup/core';
+import { rulesets } from '../../rulesets/registry';
+import { getPresentation } from '../../rulesets/presentation';
+import { unavailableReference, type PrintReferenceView } from '../../rulesets/presentationTypes';
+import { sectionTree, descendantSectionIds } from '../roster-editor/sectionTree';
+import { type SectionAllowance } from '../roster-editor/sectionAllowances';
 
 /**
  * Pure print projection (M11). Everything below derives from ONE evaluation
@@ -35,8 +37,8 @@ import { projectSectionAllowances, type SectionAllowance } from '../roster-edito
 
 export interface PrintSnapshotInput {
   readonly document: RosterDocument;
-  /** The same release the evaluation consumed; ClassicCatalogRelease satisfies this structurally. */
-  readonly release: { readonly catalog: CatalogShell; readonly purchases?: ClassicCatalogRelease['purchases'] };
+  /** The same release the evaluation consumed; Application releases satisfy this structurally. */
+  readonly release: { readonly catalog: CatalogShell; readonly purchases?: readonly PurchaseAccess[] };
   readonly evaluation: Evaluation;
 }
 
@@ -130,6 +132,7 @@ export interface PrintPurchaseView {
 }
 
 export interface PrintSectionView {
+  readonly children: readonly PrintSectionView[];
   readonly sectionId: string;
   readonly label: string;
   readonly allowance?: SectionAllowance | undefined;
@@ -146,37 +149,9 @@ export interface PrintIssueView {
   readonly purchaseHeading: string | null;
 }
 
-export interface PrintReferenceVehicle {
-  readonly key: string;
-  readonly profileLocalId: string;
-  readonly card: ClassicCombatCard | null;
-  readonly additionalWeapons: readonly ClassicWeapon[];
-  readonly quantity: number;
-  readonly label: string;
-  readonly weaponNames: readonly string[];
-  readonly upgraded: boolean;
-}
-
-export interface PrintReferenceWeapon {
-  readonly weapon: ClassicWeapon;
-  readonly quantity: number;
-  readonly label: string;
-  readonly unitEquipment: boolean;
-}
-
-export interface PrintReferenceView {
-  readonly supported: boolean;
-  readonly vehicles: readonly PrintReferenceVehicle[];
-  readonly weapons: readonly PrintReferenceWeapon[];
-  readonly missingWeaponProfiles: readonly string[];
-  readonly unclassifiedProfiles: readonly string[];
-  readonly combatSource: string;
-  readonly weaponSource: string;
-}
-
 export interface PrintVersionsView {
   readonly rosterFormat: string;
-  readonly rulesetId: string;
+  readonly rulesetId: RulesetId;
   readonly catalogId: string;
   readonly catalogRevision: string;
   readonly catalogSchema: string;
@@ -219,9 +194,8 @@ export type PrintProjectionResult =
 const words = (id: string): string => id.replaceAll('-', ' ');
 const pathWords = (path: readonly string[]): string => path.map(words).join(' / ');
 
-function trainingView(token: TrackedToken | undefined): { token: string | null; label: string | null } {
+function trainingView(token: TrackedToken | undefined, labels: Readonly<Record<string, string>>): { token: string | null; label: string | null } {
   if (!token || token.state !== 'known') return { token: null, label: null };
-  const labels = classicTrainingLevelLabels as Readonly<Record<string, string>>;
   return { token: token.value, label: labels[token.value] ?? null };
 }
 
@@ -232,10 +206,12 @@ function measure(values: readonly TrackedValue[]): PrintMeasure {
   };
 }
 
-export function projectPrintableRoster(input: PrintSnapshotInput): PrintProjectionResult {
+export function projectPrintableRoster(input: PrintSnapshotInput, services = {registry: rulesets, presentation: getPresentation}): PrintProjectionResult {
   const { document, release, evaluation } = input;
   const catalog = release.catalog;
   const identity = catalog.manifest.identity;
+  const runtime = services.registry.get(identity.rulesetId);
+  const trainingLabels = runtime?.trainingLabels ?? {};
   const same = (a: { rulesetId: string; catalogId: string; catalogRevision: string }, b: { rulesetId: string; catalogId: string; catalogRevision: string }) =>
     a.rulesetId === b.rulesetId && a.catalogId === b.catalogId && a.catalogRevision === b.catalogRevision;
   if (evaluation.identity.rosterId !== document.rosterId)
@@ -285,7 +261,7 @@ export function projectPrintableRoster(input: PrintSnapshotInput): PrintProjecti
   }
 
   const rowOf = (node: EvaluatedCompositionNode, prefix: string, depth: number): PrintCompositionRow => {
-    const training = trainingView(node.training);
+    const training = trainingView(node.training, trainingLabels);
     return {
       key: prefix + node.nodeId,
       depth,
@@ -303,7 +279,7 @@ export function projectPrintableRoster(input: PrintSnapshotInput): PrintProjecti
   // attachments); their members must therefore NOT repeat in the purchase's
   // own composition rows — every member appears exactly once per purchase.
   const isFixedPlatoon = (child: EvaluatedCompositionNode): boolean =>
-    !!child.configurableSlot && child.role === 'platoon';
+    runtime?.isMemberGroup(child) ?? (!!child.configurableSlot && !!child.children?.length);
 
   const buildPurchase = (selection: RosterSelection, role: PrintPurchaseView['role'], anchorLabel: string | null): PrintPurchaseView => {
     const entry: UnitEntry | undefined = entries.get(selection.entryReference.localId);
@@ -345,7 +321,7 @@ export function projectPrintableRoster(input: PrintSnapshotInput): PrintProjecti
     const ownLines = evaluation.chargeLines.filter((line) => line.selectionId === selection.selectionId);
     const childSelections = document.selections.filter((item) => item.parentSelectionId === selection.selectionId);
     const directAttachments = childSelections.filter((item) => !item.targetMemberPath);
-    const training = trainingView(node?.training);
+    const training = trainingView(node?.training, trainingLabels);
     const compositionNote =
       entry && entry.composition.state !== 'known' ? entry.composition.reason : null;
     const platoonViews =
@@ -367,7 +343,7 @@ export function projectPrintableRoster(input: PrintSnapshotInput): PrintProjecti
                 buildRows(child, `${selection.selectionId}/${platoon.nodeId}/${index}/`, 0),
               ),
             ],
-            trainingLabel: trainingView(platoon.training).label,
+            trainingLabel: trainingView(platoon.training, trainingLabels).label,
             attachments: childSelections
               .filter((item) => (item.targetMemberPath ?? []).length === 1 && item.targetMemberPath?.[0] === platoon.nodeId)
               .map((item, index) => buildPurchase(item, 'attachment', `${heading} — ${words(platoon.nodeId)} · ${index + 1}`)),
@@ -428,80 +404,37 @@ export function projectPrintableRoster(input: PrintSnapshotInput): PrintProjecti
   };
 
   const armyList = catalog.armyLists.find((list) => list.armyListId === document.armyListId);
-  const allowances = release.purchases
-    ? projectSectionAllowances(document, catalog, new Set(release.purchases.filter(access => access.kind === 'top-level').map(access => access.entryId)))
+  const allowances = release.purchases && runtime
+    ? runtime.sectionAllowances(document, {catalog, purchases: release.purchases}, evaluation)
     : new Map<string, SectionAllowance>();
-  const sections: PrintSectionView[] = (armyList?.structure.sections ?? [])
-    .map((section) => ({
-      sectionId: section.sectionId,
-      label: sectionLabel(identity, section),
-      allowance: allowances.get(section.sectionId),
-      purchases: document.selections
-        .filter((item) => item.parentSelectionId === null && item.sectionId === section.sectionId)
-        .map((item) => buildPurchase(item, 'top-level', null)),
-    }))
-    .filter((section) => section.purchases.length > 0);
+  const buildSections = (nodes: ReturnType<typeof sectionTree>): PrintSectionView[] => nodes.map(({section, children}) => ({
+    sectionId: section.sectionId,
+    label: runtime?.sectionLabel(identity, section) ?? section.name,
+    allowance: children.length ? {
+      limits: allowances.get(section.sectionId)?.limits ?? [],
+      selected: document.selections.filter(item => item.parentSelectionId === null && descendantSectionIds({section, children}).includes(item.sectionId!)).length,
+    } : allowances.get(section.sectionId),
+    children: buildSections(children),
+    purchases: document.selections
+      .filter(item => item.parentSelectionId === null && item.sectionId === section.sectionId)
+      .map(item => buildPurchase(item, 'top-level', null)),
+  })).filter(section => section.purchases.length > 0 || section.children.length > 0);
+  const sections = buildSections(sectionTree(armyList?.structure.sections ?? []));
+  const allSections = (items: readonly PrintSectionView[]): PrintSectionView[] => items.flatMap(item => [item, ...allSections(item.children)]);
   // Orphans (structure failures) must not vanish from the printout silently.
   const knownTop = new Set(document.selections.filter((item) => item.parentSelectionId === null).map((item) => item.selectionId));
-  const listed = new Set(sections.flatMap((section) => section.purchases.map((purchase) => purchase.selectionId)));
+  const listed = new Set(allSections(sections).flatMap((section) => section.purchases.map((purchase) => purchase.selectionId)));
   const orphans = [...knownTop].filter((id) => !listed.has(id));
   if (orphans.length)
     sections.push({
       sectionId: 'unplaced',
       label: 'Unplaced purchases',
+      children: [],
       purchases: orphans.map((id) => {
         const selection = document.selections.find((item) => item.selectionId === id)!;
         return buildPurchase(selection, 'top-level', null);
       }),
     });
-
-  // Vehicle/weapon quick reference: reuse the verified reference packages and
-  // the same evaluated composition the editor reads. Aggregation only.
-  const vehicleTotals = new Map<string, { quantity: number; view: Omit<PrintReferenceVehicle, 'quantity'> }>();
-  const weaponTotals = new Map<string, { quantity: number; view: Omit<PrintReferenceWeapon, 'quantity'> }>();
-  const missing = new Map<string, number>();
-  const unclassified = new Set<string>();
-  let referenceSupported = false;
-  for (const item of evaluation.composition) {
-    const data = collectUnitReferenceData(item.node, identity);
-    referenceSupported = referenceSupported || data.supported;
-    for (const group of data.vehicles) {
-      const existing = vehicleTotals.get(group.key);
-      if (existing) {
-        existing.quantity += group.quantity;
-        continue;
-      }
-      vehicleTotals.set(group.key, {
-        quantity: group.quantity,
-        view: {
-          key: group.key,
-          profileLocalId: group.profileLocalId,
-          card: findClassicCombatCard(combatReference, identity, group.profileLocalId) ?? null,
-          additionalWeapons: group.weaponIds.map(id => weaponReference.weapons.find(weapon => weapon.id === id)!),
-          label: profiles.get(group.profileLocalId)?.name ?? group.profileLocalId,
-          weaponNames: group.weaponIds.map((id) => weaponReference.weapons.find((weapon) => weapon.id === id)?.name ?? id),
-          upgraded: group.replacesCardAtgm,
-        },
-      });
-    }
-    for (const group of data.weapons) {
-      const existing = weaponTotals.get(group.key);
-      if (existing) {
-        existing.quantity += group.quantity;
-        continue;
-      }
-      weaponTotals.set(group.key, {
-        quantity: group.quantity,
-        view: {
-          weapon: group.weapon,
-          label: group.weapon.name,
-          unitEquipment: group.quantityMode === 'unit-equipment',
-        },
-      });
-    }
-    for (const group of data.missingWeapons) missing.set(group.profileLocalId, (missing.get(group.profileLocalId) ?? 0) + group.quantity);
-    for (const id of data.unclassified) unclassified.add(id);
-  }
 
   const roster: PrintableRoster = {
     rosterId: document.rosterId,
@@ -545,15 +478,7 @@ export function projectPrintableRoster(input: PrintSnapshotInput): PrintProjecti
     resources: evaluation.resources,
     statistics: evaluation.statistics,
     sections,
-    reference: {
-      supported: referenceSupported,
-      vehicles: [...vehicleTotals.values()].map(({ quantity, view }) => ({ quantity, ...view })),
-      weapons: [...weaponTotals.values()].map(({ quantity, view }) => ({ quantity, ...view })),
-      missingWeaponProfiles: [...missing.entries()].map(([profileLocalId, quantity]) => `${quantity} × ${profiles.get(profileLocalId)?.name ?? profileLocalId}`),
-      unclassifiedProfiles: [...unclassified].map((id) => profiles.get(id)?.name ?? id),
-      combatSource: `${combatReference.source.title} · ${combatReference.revision}`,
-      weaponSource: `${weaponReference.source.title} · ${weaponReference.revision}`,
-    },
+    reference: services.presentation(identity.rulesetId)?.projectReference(catalog, evaluation) ?? unavailableReference(),
   };
   return { status: 'ready', roster };
 }

@@ -1,10 +1,12 @@
+import { rulesets } from '../../rulesets/registry';
+import { sectionTree, descendantSectionIds, type SectionNode } from './sectionTree';
 import type {
   RosterDocument,
   RosterSelection,
   TrackedValue,
   CompositionNode,
 } from '@battlegroup/core';
-import type { ClassicCatalogRelease } from '@battlegroup/classic-coldwar';
+import type { AppCatalogRelease, RulesetRegistration } from '../../rulesets/types';
 import { t } from '../../i18n';
 import { sectionLabel } from './sectionLabel';
 import { SectionCount } from '../../components/SectionCount';
@@ -16,8 +18,9 @@ export type AddTarget =
   | { kind: 'attachment'; parentSelectionId: string; memberPath?: string[] };
 
 interface TreeProps {
+  runtime?: RulesetRegistration;
   document: RosterDocument;
-  release: ClassicCatalogRelease;
+  release: AppCatalogRelease;
   selectedId: string | null;
   selectedMemberPath: string[] | null;
   addTarget: AddTarget | null;
@@ -37,72 +40,39 @@ const cost = (value: TrackedValue): string =>
       );
 
 export function RosterTree(props: TreeProps) {
-  const { document, release, addTarget, onAdd } = props;
-  const sections = release.catalog.armyLists.find(
-    (list) => list.armyListId === document.armyListId,
-  )!.structure.sections;
-  return (
-    <>
-      {!document.selections.length && (
-        <p className="muted">{t('editor.emptyRoster')}</p>
-      )}
-      {sections
-        .filter((section) =>
-          release.catalog.entries.some(
-            (entry) =>
-              entry.sectionIds.includes(section.sectionId) &&
-              release.purchases.some(
-                (access) =>
-                  access.kind === 'top-level' &&
-                  access.entryId === entry.localId,
-              ),
-          ),
-        )
-        .map((section) => {
-          const label = sectionLabel(document.catalogRef, section);
-          return (
-            <section
-              className="roster-section"
-              key={section.sectionId}
-              aria-label={label}
-              data-adding={
-                addTarget?.kind === 'section' &&
-                addTarget.sectionId === section.sectionId
-              }
-            >
-              <div className="roster-section-heading">
-                <h4>{label}</h4>
-                {props.allowances.get(section.sectionId) && <SectionCount allowance={props.allowances.get(section.sectionId)!} />}
-              </div>
-              {document.selections
-                .filter(
-                  (selection) =>
-                    selection.parentSelectionId === null &&
-                    selection.sectionId === section.sectionId,
-                )
-                .map((selection, index) => (
-                  <PurchaseBranch
-                    key={selection.selectionId}
-                    {...props}
-                    selection={selection}
-                    ordinal={index + 1}
-                  />
-                ))}
-              <button
-                type="button"
-                className="add-slot"
-                aria-label={t('editor.addTo') + ' ' + label}
-                onClick={() =>
-                  onAdd({ kind: 'section', sectionId: section.sectionId })
-                }
-              >
-                ＋ {t('editor.addFormation')}
-              </button>
-            </section>
-          );
-        })}
-    </>
-  );
+  const {document, release} = props;
+  const sections = release.catalog.armyLists.find(list => list.armyListId === document.armyListId)!.structure.sections;
+  return <>
+    {!document.selections.length && <p className="muted">{t('editor.emptyRoster')}</p>}
+    {sectionTree(sections).map(node => <SectionBranch key={node.section.sectionId} {...props} node={node} />)}
+  </>;
+}
+
+function SectionBranch(props: TreeProps & {node: SectionNode}) {
+  const {document, release, node, addTarget, onAdd} = props;
+  const {section, children} = node;
+  const canAdd = section.directlyPurchasable && release.catalog.entries.some(entry =>
+    entry.armyListIds.includes(document.armyListId) && entry.sectionIds.includes(section.sectionId) &&
+    release.purchases.some(access => access.kind === 'top-level' && access.entryId === entry.localId));
+  if (!canAdd && !children.length) return null;
+  const label = props.runtime?.sectionLabel(document.catalogRef, section) ?? sectionLabel(document.catalogRef, section);
+  const descendants = new Set(descendantSectionIds(node));
+  const allowance = props.allowances.get(section.sectionId);
+  const displayedAllowance = children.length ? {
+    limits: allowance?.limits ?? [],
+    selected: document.selections.filter(item => item.parentSelectionId === null && descendants.has(item.sectionId!)).length,
+  } : allowance;
+  return <section className="roster-section" aria-label={label} data-adding={addTarget?.kind === 'section' && addTarget.sectionId === section.sectionId}>
+    <div className="roster-section-heading">
+      <h4>{label}</h4>
+      {displayedAllowance && <SectionCount allowance={displayedAllowance} />}
+    </div>
+    {document.selections.filter(selection => selection.parentSelectionId === null && selection.sectionId === section.sectionId)
+      .map((selection, index) => <PurchaseBranch key={selection.selectionId} {...props} selection={selection} ordinal={index+1} />)}
+    {canAdd && <button type="button" className="add-slot" aria-label={t('editor.addTo')+' '+label}
+      onClick={() => onAdd({kind: 'section', sectionId: section.sectionId})}>+ {t('editor.addFormation')}</button>}
+    {children.length > 0 && <div className="roster-subsections">{children.map(child => <SectionBranch key={child.section.sectionId} {...props} node={child} />)}</div>}
+  </section>;
 }
 
 function PurchaseBranch(
@@ -134,11 +104,8 @@ function PurchaseBranch(
       access.parentEntryIds.includes(entry.localId) &&
       !access.parentMemberPaths?.[entry.localId],
   );
-  const hasPlatoonSupport = entry.resourceGrants?.some(
-    (grant) =>
-      grant.resourceKind === 'platoon-support-slots' &&
-      grant.scope === 'parent-formation',
-  );
+  const runtime = props.runtime ?? rulesets.require(document.catalogRef.rulesetId);
+  const hasPlatoonSupport = runtime.usesPlatoonSupportLabel(release, entry.localId);
   return (
     <div className="purchase-branch">
       <div className="purchase-row">
@@ -168,7 +135,7 @@ function PurchaseBranch(
       </div>
       {entry.composition.state === 'known' &&
         entry.composition.root.children
-          ?.filter((node) => node.configurableSlot && node.role === 'platoon')
+          ?.filter(runtime.isMemberGroup)
           .map((member) => (
             <FixedPlatoon
               key={member.nodeId}

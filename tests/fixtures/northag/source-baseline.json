@@ -1,0 +1,73 @@
+{
+  "baselineId": "northag-2020-soviet-errata-v9-review-2026-11-10",
+  "status": "source-baseline-only",
+  "edition": "NORTHAG 2020",
+  "errata": "Official v9, 9 May 2025",
+  "sources": [
+    {
+      "id": "book",
+      "path": "references/NORTHAG/Battlegroup-NorthAG.pdf",
+      "sha256": "a2750592057b1e88bb75d34a5249b56ac617bdc9e20cf89bd3933e0bce635992",
+      "pdfPages": 117,
+      "encrypted": false,
+      "visuallyReviewedPdfPages": [
+        1,
+        11,
+        39,
+        41,
+        52,
+        53,
+        54,
+        57,
+        58,
+        59,
+        60,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        95,
+        96,
+        97,
+        98,
+        99,
+        100,
+        101,
+        114,
+        115
+      ],
+      "reviewScope": "Selected roster facts and targeted correction columns; not full arsenal transcription"
+    },
+    {
+      "id": "errata",
+      "path": "references/NORTHAG/NORTHAG_Soviet_Agent_Reference/sources/NORTHAG_2020_Official_Errata_v9.pdf",
+      "sha256": "1148ff5689e7b405b4a93de2b7f116be765b4e55f4ce62ec1c05dc4b530e105b",
+      "pdfPages": 12,
+      "encrypted": false,
+      "visuallyReviewedPdfPages": [
+        1,
+        6,
+        7,
+        8,
+        9,
+        10,
+        12
+      ],
+      "reviewScope": "Applicability and selected roster/arsenal corrections; not complete combat errata review"
+    },
+    {
+      "id": "cards",
+      "path": "references/NORTHAG/NORTHAG_Soviet_Agent_Reference/sources/WARPAC_Unit_Cards_HWC_v6_UNLOCKED.pdf",
+      "sha256": "5dd97eca786d1111e459321fe870eba6bf0715b7ab61cb9c1c265d9fc9b9035b",
+      "pdfPages": 8,
+      "encrypted": false,
+      "visuallyReviewedPdfPages": [
+        1
+      ],
+      "reviewScope": "Cover and index only; no individual-card approval"
+    }
+  ]
+}

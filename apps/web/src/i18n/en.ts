@@ -22,6 +22,7 @@ export const en = {
     omitted: 'Catalog exclusions',
   },
   editor: {
+    nation: 'Nation',
     loading: 'Loading army lists…',
     loadFailed: 'Catalog verification failed in this browser. Retry loading the catalog.',
     retry: 'Retry catalog loading', updated: 'Roster updated.', created: 'Roster created.',

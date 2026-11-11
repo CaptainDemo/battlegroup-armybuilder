@@ -1,6 +1,6 @@
 import { useState, type ChangeEvent } from 'react';
 import { TRANSFER_LIMITS, type RosterDocument } from '@battlegroup/core';
-import type { ClassicCatalogRelease } from '@battlegroup/classic-coldwar';
+import type { AppCatalogRelease } from '../../rulesets/types';
 import { t } from '../../i18n';
 import type { RosterStore } from '../../adapters/storage/rosterStore';
 import type { SaveQueue } from '../../adapters/storage/saveQueue';
@@ -29,7 +29,7 @@ export interface ImportPanelProps {
   loader?: CatalogLoader;
   onNotice: (message: string) => void;
   onImported: (result: ImportApplyResult) => void;
-  onOverwritten: (document: RosterDocument, release: ClassicCatalogRelease) => void;
+  onOverwritten: (document: RosterDocument, release: AppCatalogRelease) => void;
 }
 
 function recordText(record: ImportRecord): { label: string; detail: string } {
