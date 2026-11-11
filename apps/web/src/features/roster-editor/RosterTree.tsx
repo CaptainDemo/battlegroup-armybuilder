@@ -1,3 +1,4 @@
+import type { SpecialRulesView } from '../../rulesets/specialRules';
 import { rulesets } from '../../rulesets/registry';
 import { sectionTree, descendantSectionIds, type SectionNode } from './sectionTree';
 import type {
@@ -18,6 +19,7 @@ export type AddTarget =
   | { kind: 'attachment'; parentSelectionId: string; memberPath?: string[] };
 
 interface TreeProps {
+  specialRules?: SpecialRulesView;
   runtime?: RulesetRegistration;
   document: RosterDocument;
   release: AppCatalogRelease;
@@ -119,6 +121,7 @@ function PurchaseBranch(
           onClick={() => onSelect(selection.selectionId)}
         >
           <strong>{label}</strong>
+          {props.specialRules && <small>{[...new Set(props.specialRules.uses.filter(use => use.selectionId === selection.selectionId).flatMap(use => use.rules.map(rule => rule.name)))].join(', ')}</small>}
           <span>
             {cost(entry.baseCost.points)} {t('editor.points')} /{' '}
             {cost(entry.baseCost.br)} BR

@@ -36,6 +36,9 @@ import {
 import { ImportPanel } from '../roster-transfer/ImportPanel';
 import type { ImportApplyResult } from '../roster-transfer/applyImport';
 import { downloadSingleRoster } from '../roster-transfer/rosterExport';
+import { SpecialRulesPanel } from '../../components/SpecialRulesPanel';
+import { projectSpecialRules, specialRulesForSelection } from '../../rulesets/specialRules';
+import { getPresentation } from '../../rulesets/presentation';
 import { UnitDataPanel } from './UnitDataPanel';
 import { PrintPreview, type PrintSnapshot } from '../roster-output/PrintPreview';
 import { RosterSummary } from '../../components/RosterSummary';
@@ -221,6 +224,9 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
     evaluation && evaluation.identity.inputRevision === roster?.revision
       ? evaluation
       : null;
+  const specialRulesView = useMemo(() => roster && release && currentEvaluation
+    ? projectSpecialRules(roster, release.catalog, currentEvaluation, getPresentation(roster.catalogRef.rulesetId)?.specialRules)
+    : {supported: false, uses: [], rules: []}, [roster, release, currentEvaluation]);
   const selected = roster?.selections.find(
     (item) => item.selectionId === state.selectedId,
   );
@@ -870,6 +876,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
             >
               <h3>{t('editor.roster')}</h3>
               <RosterTree
+                specialRules={specialRulesView}
                 document={roster}
                 release={release}
                 selectedId={state.selectedId}
@@ -970,6 +977,10 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
                           release={release}
                         />
                       )}
+                      {currentEvaluation && <SpecialRulesPanel view={specialRulesForSelection(
+                        specialRulesView,
+                        roster, selected.selectionId, state.selectedMemberPath ?? [],
+                      )} />}
                       <OptionEditor
                         document={roster}
                         selection={selected}

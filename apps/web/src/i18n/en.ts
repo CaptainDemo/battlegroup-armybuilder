@@ -4,6 +4,13 @@
  * components. Keys are dot paths resolved by `t()` in i18n/index.ts.
  */
 export const en = {
+  specialRules: {
+    title: 'Special Rules',
+    include: 'Include special rule texts',
+    empty: 'No special rules recorded for these units.',
+    unsupported: 'Special rule reference data is not available for this ruleset.',
+    missing: 'Rule text has not been added for this catalog version.',
+  },
   app: {
     title: 'Battlegroup Army Builder',
     tagline: 'Community roster editor for Battlegroup cold-war rulesets',

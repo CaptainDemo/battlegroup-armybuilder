@@ -1,0 +1,10 @@
+{
+  "rulesetId": "classic-coldwar",
+  "revision": "1",
+  "bindings": [
+    { "catalogId": "soviet-armoured-division-v4_1", "catalogRevision": "1.0.0", "rulesRevision": "cw-draft6+sov-v4.1" },
+    { "catalogId": "soviet-armoured-division-v4_1", "catalogRevision": "1.1.0", "rulesRevision": "cw-draft6+sov-v4.1+formations1" }
+  ],
+  "definitions": [],
+  "note": "Rule prose is pending source verification. Existing catalog rule names may be displayed with an explicit missing-text marker. Definitions are independent from every other ruleset."
+}

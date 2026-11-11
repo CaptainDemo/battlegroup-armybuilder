@@ -17,6 +17,7 @@ import type {
 } from '@battlegroup/core';
 import { manifestVersionIdentity } from '@battlegroup/core';
 import type { PurchaseAccess, RulesetId } from '@battlegroup/core';
+import { projectSpecialRules, type SpecialRulesView } from '../../rulesets/specialRules';
 import { rulesets } from '../../rulesets/registry';
 import { getPresentation } from '../../rulesets/presentation';
 import { unavailableReference, type PrintReferenceView } from '../../rulesets/presentationTypes';
@@ -109,6 +110,7 @@ export interface PrintAnchoredAttachmentView {
 }
 
 export interface PrintPurchaseView {
+  readonly specialRules: readonly string[];
   readonly selectionId: string;
   readonly entryLocalId: string;
   readonly name: string;
@@ -164,6 +166,7 @@ export interface PrintVersionsView {
 }
 
 export interface PrintableRoster {
+  readonly specialRules: SpecialRulesView;
   readonly rosterId: string;
   readonly name: string;
   readonly armyListLabel: string;
@@ -235,6 +238,7 @@ export function projectPrintableRoster(input: PrintSnapshotInput, services = {re
   if (evaluation.identity.versions.catalogRevision !== versions.catalogRevision)
     return { status: 'stale', reason: 'evaluation-catalog-revision', detail: `evaluation ${evaluation.identity.versions.catalogRevision} vs catalog ${versions.catalogRevision}` };
 
+  const specialRules = projectSpecialRules(document, catalog, evaluation, services.presentation(identity.rulesetId)?.specialRules);
   const entries = new Map(catalog.entries.map((entry) => [entry.localId, entry]));
   const profiles = new Map(catalog.profiles.map((profile) => [profile.localId, profile]));
   const optionById = (groupId: string, optionId: string): Option | undefined =>
@@ -357,6 +361,7 @@ export function projectPrintableRoster(input: PrintSnapshotInput, services = {re
       ),
     );
     return {
+      specialRules: [...new Set(specialRules.uses.filter(use => use.selectionId === selection.selectionId).flatMap(use => use.rules.map(rule => rule.name)))],
       selectionId: selection.selectionId,
       entryLocalId: selection.entryReference.localId,
       name: entry?.name ?? selection.entryReference.localId,
@@ -437,6 +442,7 @@ export function projectPrintableRoster(input: PrintSnapshotInput, services = {re
     });
 
   const roster: PrintableRoster = {
+    specialRules,
     rosterId: document.rosterId,
     name: document.name,
     armyListLabel: armyList ? `${armyList.nation} · ${armyList.name}` : document.armyListId,

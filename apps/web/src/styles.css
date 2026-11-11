@@ -775,3 +775,8 @@ details ul { padding-left: 1rem; }
     font-weight: 500;
   }
 }
+
+.special-rules .unit-data-card, .special-rules-appendix .unit-data-card { padding: .75rem; overflow-wrap: anywhere; }
+.special-rules-appendix .unit-data-card { break-inside: avoid; }
+.special-rules .print-prewrap, .special-rules-appendix .print-prewrap { white-space: pre-wrap; }
+@media print { .special-rules-appendix .unit-data-card { overflow: visible; } }

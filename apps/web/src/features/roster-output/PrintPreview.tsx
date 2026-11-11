@@ -13,6 +13,7 @@ import {
   type PrintPurchaseView,
   type PrintSectionView,
 } from './printProjection';
+import { SpecialRulesPanel } from '../../components/SpecialRulesPanel';
 import { PrintUnitDataAppendix } from './PrintUnitDataAppendix';
 import { RosterSummary } from '../../components/RosterSummary';
 import { SectionCount } from '../../components/SectionCount';
@@ -31,6 +32,7 @@ export interface PrintSnapshot {
 
 export interface PrintOptions {
   readonly includeUnitData: boolean;
+  readonly includeSpecialRules: boolean;
 }
 
 export function PrintPreview({
@@ -42,7 +44,7 @@ export function PrintPreview({
   onClose: () => void;
   onRefresh: () => void;
 }) {
-  const [options, setOptions] = useState<PrintOptions>({ includeUnitData: false });
+  const [options, setOptions] = useState<PrintOptions>({ includeUnitData: false, includeSpecialRules: false });
   const projection = useMemo(
     () => projectPrintableRoster(snapshot),
     [snapshot],
@@ -76,6 +78,11 @@ export function PrintPreview({
               onChange={event => setOptions({ ...options, includeUnitData: event.target.checked })}
             />
             {t('print.includeUnitData')}
+          </label>
+          <label className="checkbox-label">
+            <input type="checkbox" checked={options.includeSpecialRules}
+              onChange={event => setOptions({...options, includeSpecialRules: event.target.checked})} />
+            {t('specialRules.include')}
           </label>
         </fieldset>
       </div>
@@ -240,6 +247,7 @@ function RosterSheet({ roster, options }: { roster: PrintableRoster; options: Pr
       </section>
 
       {options.includeUnitData && <PrintUnitDataAppendix reference={roster.reference} rulesetId={roster.versions.rulesetId} />}
+      {options.includeSpecialRules && <SpecialRulesPanel view={roster.specialRules} appendix />}
       <footer className="print-footer">
         <p>
           {t('print.footerNote')} · {t('print.meta.snapshot')}: {roster.versions.editRevision}
@@ -278,6 +286,7 @@ function PurchaseBlock({ purchase }: { purchase: PrintPurchaseView }) {
         {t('print.subtotal')} {amount(purchase.subtotal.points)} {t('editor.points')} /{' '}
         {amount(purchase.subtotal.br)} {t('editor.br')}
       </p>
+      {purchase.specialRules.length > 0 && <p><strong>{t('specialRules.title')}:</strong> {purchase.specialRules.join(', ')}</p>}
       {purchase.rows.length > 0 && <CompositionRows rows={purchase.rows} />}
       {purchase.compositionNote && <p className="muted">{purchase.compositionNote}</p>}
       {purchase.platoons.map((platoon) => (

@@ -15,6 +15,7 @@ export interface PrintReferenceView {
   appendix: {format: string; data: unknown} | null;
 }
 export interface RulesetPresentation {
+  specialRules?: import('./specialRules').SpecialRulesAdapter;
   projectReference(catalog: CatalogShell, evaluation: Evaluation): PrintReferenceView;
   UnitData: ComponentType<{node: EvaluatedCompositionNode; release: AppCatalogRelease}>;
   PrintAppendix: ComponentType<{reference: PrintReferenceView}>;
