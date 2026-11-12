@@ -21,7 +21,7 @@ Modules are responsibility and acceptance units, not separate services, reposito
 | M11 | Print/PDF | apps/web/features/roster-output | M07, M08 | Implemented, including optional data appendix |
 | M12 | Combined acceptance/deployment | Browser checks, hosting workflow | M04–M11 | Published and verified on Sites |
 | M13 | AirLand | Independent ruleset and catalog | Stable Classic workflow, sources | Not implemented |
-| M14 | NORTHAG / CENTAG | Independent ruleset and catalog | Stable Classic workflow, sources | Not implemented |
+| M14 | NORTHAG / CENTAG | Independent ruleset and catalog | Stable Classic workflow, sources | NORTHAG Soviet roster release implemented with partial equipment coverage |
 
 Build verification facilities during each module; M12 combines them rather than postponing all tests. M13 and M14 share a readiness prerequisite; M13 is not a technical dependency of M14. The default order remains AirLand then NORTHAG unless the user chooses otherwise. Do not run external implementations concurrently in one checkout.
 
@@ -112,6 +112,8 @@ Audit independent sources and purchase differences before adapting reusable algo
 Acceptance: independent loading/releasing, actual player workflow, isolation and unchanged Classic regressions. Do not open a usable list until sources/data are ready.
 
 ### M14 — NORTHAG / CENTAG
+
+The initial NORTHAG 2020 Soviet roster catalog, v9 corrections, rule checks and Web adapters are available. See [release scope](data/northag-release.md) for the exact coverage and remaining source ambiguities.
 
 Verify source editions/errata, section naming, purchase costs/options, explicit size, one-each limits, training/statistics, non-entity purchases and static reinforcement requests. Add CENTAG only as an explicitly compatible NORTHAG expansion. See [preparation notes](data/northag-notes.md).
 

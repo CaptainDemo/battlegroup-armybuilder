@@ -109,7 +109,9 @@ export function CatalogPanel({
       </label>
       {!entries.length && <p className="muted">{t('editor.noCandidates')}</p>}
       {entries.map((entry) => {
-        const available = rulesets.require(document.catalogRef.rulesetId).availability(
+        const runtime = rulesets.require(document.catalogRef.rulesetId);
+        const badges = runtime.entryBadges?.(entry, release) ?? [];
+        const available = runtime.availability(
           document,
           release,
           entry.localId,
@@ -129,6 +131,7 @@ export function CatalogPanel({
               {cost(entry.baseCost.points)} {t('editor.points')} /{' '}
               {cost(entry.baseCost.br)} BR
             </small>
+            {badges.length > 0 && <small>{badges.join(' · ')}</small>}
             <button
               type="button"
               aria-label={t('editor.add') + ' ' + entry.name}
@@ -144,6 +147,7 @@ export function CatalogPanel({
             >
               {t('editor.add')}
             </button>
+            {available.status === 'blocked' && available.reasons[0] && <small>{available.reasons[0].message}</small>}
           </article>
         );
       })}

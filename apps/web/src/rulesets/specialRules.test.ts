@@ -83,7 +83,7 @@ it('deduplicates rule text and uses evaluated replacement profiles and tags', ()
 it('never uses Classic text for a foreign ruleset or unsupported revision', () => {
   const {document,evaluation}=fixture();
   const foreign=structuredClone(release.catalog);foreign.manifest.identity.rulesetId='northag';
-  expect(getPresentation('northag')).toBeUndefined();
+  expect(getPresentation('northag')?.specialRules?.definition('scout', foreign)).toBeUndefined();
   expect(projectSpecialRules(document,foreign,evaluation).rules).toEqual([]);
   expect(classicSpecialRules.definition('scout',foreign)).toBeUndefined();
   const a:SpecialRulesAdapter={entryRules:()=>['scout'],nodeRules:()=>[],label:id=>id,definition:id=>({id,name:'Scout',text:'Classic-only example',source:'fixture'})};

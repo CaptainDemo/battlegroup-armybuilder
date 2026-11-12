@@ -9,6 +9,8 @@ import {
 
 export interface SectionAllowance {
   readonly selected: number;
+  readonly minimum?: number;
+  readonly included?: number;
   readonly limits: readonly { used: number; capacity: number; shared: boolean }[];
 }
 

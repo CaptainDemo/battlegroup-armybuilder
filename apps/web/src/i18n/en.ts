@@ -30,6 +30,8 @@ export const en = {
   },
   editor: {
     applyToMember: 'Apply to this member',
+    minimumCount: 'Minimum',
+    includedCount: 'included',
     sharedLimit: 'Shared maximum:',
     perMatchingMember: 'per matching member',
     assignedElsewhere: 'Currently assigned to',

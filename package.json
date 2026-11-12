@@ -17,7 +17,7 @@
   "scripts": {
     "dev": "npm run dev --workspace @battlegroup/web",
     "build": "npm run check:catalogs && npm run build --workspace @battlegroup/web",
-    "check:catalogs": "vitest run tools/data-import/catalog-release.test.ts tools/data-import/combat-reference.test.ts tools/data-import/catalog-assets.test.ts",
+    "check:catalogs": "vitest run tools/data-import/catalog-release.test.ts tools/data-import/combat-reference.test.ts tools/data-import/catalog-assets.test.ts packages/rulesets/northag/src/soviet.test.ts",
     "preview": "npm run preview --workspace @battlegroup/web",
     "typecheck": "node tools/typecheck.mjs",
     "test": "vitest run",

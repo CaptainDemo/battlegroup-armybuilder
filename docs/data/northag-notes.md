@@ -1,5 +1,7 @@
 # NORTHAG Preparation and Design Boundaries
 
+The implemented catalog and its remaining gaps are documented in [NORTHAG release scope](northag-release.md).
+
 Current baseline: [NORTHAG 2020 source verification](northag-baseline.md) now records fingerprints, reviewed pages, resolved TCC/FOO errata targets, seven checked numeric samples and remaining ambiguities. [Web integration handoff](../ruleset-integration.md) describes the completed decoupling. The historical preparation notes below are retained for context; their requests to verify those selected facts are superseded by the new baseline, not by a complete-catalog approval.
 
 Updated: 2026-11-10. This consolidates durable conclusions from the 2026-10-29 design assessment. It is preparation for M14, not a claim that NORTHAG rules/data have been implemented. The current inventory contains `references/NORTHAG/Battlegroup-NorthAG.pdf` and `references/NORTHAG/NORTHAG_Soviet_Agent_Reference/`. The old assessment's statement that no local full rulebook existed is no longer a current inventory statement. Verify the actual edition/pages when starting implementation.

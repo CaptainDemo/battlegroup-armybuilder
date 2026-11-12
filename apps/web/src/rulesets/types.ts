@@ -46,6 +46,7 @@ export interface RulesetRegistration {
   evaluate: (document: RosterDocument, release: AppCatalogRelease) => Evaluation;
   availability: (document: RosterDocument, release: AppCatalogRelease, entryId: string, target: EntryTarget) => Availability;
   trainingLabels: Readonly<Record<string, string>>;
+  entryBadges?: (entry: import('@battlegroup/core').UnitEntry, release: AppCatalogRelease) => readonly string[];
   optionBadges?: (option: Option) => readonly string[];
   formatIssue?: (message: string) => string;
   sectionLabel: (identity: CatalogIdentity, section: ArmySection) => string;

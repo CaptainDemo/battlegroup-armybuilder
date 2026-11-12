@@ -2,7 +2,7 @@
 
 A free community browser roster editor for Battlegroup cold-war tabletop games. Choose an army list, buy formations and configure equipment, inspect Points / Battle Rating and rule issues, save locally, transfer JSON backups and print rosters with an optional vehicle/weapon data appendix.
 
-Classic Cold War (Unofficial Battlegroup: Cold War, Draft 6) is supported first, using Soviet Armoured Division V4.1. The default catalog is 1.1.0 with 120 top-level purchases, 31 attachment contexts and 203 options; exact 1.0.0 rosters remain separately supported. Combat data and full-rule coverage are explicitly partial. Classic, AirLand and NORTHAG game records are fully isolated; AirLand/NORTHAG remain future independent implementations, with CENTAG under NORTHAG.
+Classic Cold War (Unofficial Battlegroup: Cold War, Draft 6) supports Soviet Armoured Division V4.1, with the 1.1.0 catalog as the default and exact 1.0.0 roster compatibility. NORTHAG supports the 2020 Russian Armoured Battlegroup with applicable Official Rules Errata v9 corrections. Each ruleset has its own catalog, rules and equipment data. See [NORTHAG release scope](docs/data/northag-release.md) for covered roster checks and remaining source gaps.
 
 The app includes editing, undo/redo, IndexedDB autosave/conflict recovery, JSON import/export and browser print/PDF. See the [deployment guide](docs/deployment.md) for the hosted test site and its release record.
 

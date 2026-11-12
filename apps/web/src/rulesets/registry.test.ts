@@ -87,8 +87,8 @@ it('rejects unsupported contracts before fetch and never falls back to another m
 it('keeps explicit creation defaults when catalog indexes are reordered and hides unimplemented rulesets', () => {
   const reversed = {...catalogIndex,releases:[...catalogIndex.releases].reverse()};
   expect(rulesets.creationChoices(reversed)).toEqual(rulesets.creationChoices(catalogIndex));
-  expect(rulesets.creationChoices(reversed).map(choice => choice.army.identity.catalogRevision)).toEqual(['1.1.0']);
-  expect(rulesets.creationChoices(reversed).map(choice => choice.runtime.id)).toEqual(['classic-coldwar']);
+  expect(rulesets.creationChoices(reversed).map(choice => choice.army.identity.catalogRevision)).toEqual(['1.1.0', '1.0.0']);
+  expect(rulesets.creationChoices(reversed).map(choice => choice.runtime.id)).toEqual(['classic-coldwar', 'northag']);
   expect(registry.creationChoices(index)[0]?.army.identity).toEqual(catalog.manifest.identity);
 });
 it('restores and imports both rulesets, but rejects adapter-specific invalid settings', async () => {
@@ -99,7 +99,7 @@ it('restores and imports both rulesets, but rejects adapter-specific invalid set
   expect((await restoreRoster(row,syntheticLoad,combined.validateRoster))?.document).toEqual(document);
   const bad={...document,settings:{...document.settings,gameSizeId:'platoon'}};
   expect(await restoreRoster({...row,document:bad},syntheticLoad,combined.validateRoster)).toBeNull();
-  const classicRecord=catalogIndex.releases.find(item=>item.identity.catalogRevision==='1.0.0')!;
+  const classicRecord=catalogIndex.releases.find(item=>item.identity.rulesetId==='classic-coldwar' && item.identity.catalogRevision==='1.0.0')!;
   const classicBytes=readFileSync('packages/catalogs/classic-coldwar/public/'+classicRecord.assetPath);
   const classicLoad=await loadCatalog(classicRecord.identity,{baseUrl:'/',fetchCatalog:async()=>({ok:true,arrayBuffer:async()=>Uint8Array.from(classicBytes).buffer})});
   if(classicLoad.status!=='ready')throw Error('Classic fixture failed');

@@ -1,5 +1,6 @@
 import { validateRosterCommandDocument, type CatalogIndex, type RosterDocument, type RulesetId } from '@battlegroup/core';
 import { classicRegistration } from './classic/registration';
+import { northagRegistration } from './northag/registration';
 import type { AppCatalogRelease, RulesetRegistration } from './types';
 
 /** Explicit composition, also injectable in tests. No module discovery or foreign fallback. */
@@ -35,4 +36,4 @@ export function createRulesetRegistry(registrations: readonly RulesetRegistratio
 export function sameCatalogIdentity(a: {rulesetId: string; catalogId: string; catalogRevision: string}, b: {rulesetId: string; catalogId: string; catalogRevision: string}): boolean {
   return a.rulesetId === b.rulesetId && a.catalogId === b.catalogId && a.catalogRevision === b.catalogRevision;
 }
-export const rulesets = createRulesetRegistry([classicRegistration]);
+export const rulesets = createRulesetRegistry([classicRegistration, northagRegistration]);

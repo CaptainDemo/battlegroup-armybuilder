@@ -1,6 +1,6 @@
 # Ruleset integration handoff
 
-Updated: 2026-11-12. Completed scope: NORTHAG source-baseline verification, Web ruleset decoupling and recursive roster-member editing. Production still registers Classic only. Actual NORTHAG rules, released catalogs and combat-reference views are intentionally deferred.
+Updated: 2026-11-12. The application registers Classic and NORTHAG. The first NORTHAG release covers the 2020 Russian Armoured Battlegroup with the applicable v9 corrections and explicitly partial equipment and statistics coverage. See [NORTHAG release scope](data/northag-release.md).
 
 ## Read first
 
@@ -13,7 +13,7 @@ Updated: 2026-11-12. Completed scope: NORTHAG source-baseline verification, Web 
 | Owner | Responsibility / extension point |
 |---|---|
 | `apps/web/src/rulesets/types.ts` | `AppCatalogRelease` shares the command context and coverage envelope. `RulesetRegistration` owns exact supported contracts, parsing, concrete document validation, evaluation, availability, explicit creation defaults and settings, training labels, section presentation, option badges and issue wording. |
-| `apps/web/src/rulesets/registry.ts` | Explicit registry composition; duplicate IDs fail. `creationChoices` uses declared army defaults matched to supported indexed revisions, never `index.releases[0]`. Only Classic is installed. |
+| `apps/web/src/rulesets/registry.ts` | Explicit registry composition; duplicate IDs fail. `creationChoices` uses declared army defaults matched to supported indexed revisions, never `index.releases[0]`. Classic and NORTHAG are installed. |
 | `apps/web/src/rulesets/classic/registration.ts` | All Classic parser/evaluator/settings/label behavior, plus the optional 398/23 debug example. Classic schemas and immutable releases are unchanged. |
 | `apps/web/src/rulesets/presentationTypes.ts`, `presentation.ts` | Optional concrete unit-details/print-reference adapters. Common print summaries contain no concrete armor/weapon types. Appendix payloads are adapter-owned locally derived view data, never persisted or imported. Missing adapters show unavailable reference data; no Classic fallback. |
 | `apps/web/src/rulesets/classic/` | Classic combat JSON imports, unit-card rendering, reference aggregation and print appendix live together here. |
@@ -25,7 +25,7 @@ Updated: 2026-11-12. Completed scope: NORTHAG source-baseline verification, Web 
 | `sectionTree.ts`, `RosterTree.tsx`, `printProjection.ts` | Recursive section hierarchy; grouping parents retained; add actions only on eligible directly purchasable sections; descendant selection counts without double counting. Print totals and composition still come from one frozen evaluation. |
 | `tools/typecheck.mjs` | Checks core, every installed ruleset workspace with a package.json, then Web. No hardcoded Classic-only workspace list. |
 
-`sectionAllowances` receives the current evaluation. The Classic adapter preserves its existing resource-allocation projection. A NORTHAG adapter must provide its own min/max summary from its rules/evaluation; do not synthesize Classic support grants. The current shared counter shape displays selected counts and capacity limits, not a new generic minimum-rule system. Extend it only if the actual NORTHAG UI needs richer constraint text.
+`sectionAllowances` receives the current evaluation. Classic uses its resource-allocation projection. NORTHAG supplies its own Forward Screen minimum, Vanguard capacity, and included/paid request counts. The shared counter displays these values, while the ruleset evaluator enforces them.
 
 Roster members and printed members now share a recursive projection of the evaluated composition. `memberPresentation(node, catalog)` owns each ruleset's visible member roles and labels. Return a label for formations, squads, teams or individual vehicles that should appear in the roster; returning null keeps that node's details within its nearest visible parent while still traversing its children. The older `isMemberGroup` callback remains a compatibility fallback for adapters without `memberPresentation`.
 
@@ -35,7 +35,7 @@ Member-slot options appear at the deepest visible owner of each target. Editing 
 
 An individually configurable model needs its own stable node with quantity one. A quantity-three node represents one addressed group of three models. Existing catalog revisions and stored member paths remain valid; splitting a grouped node into individual models requires a new catalog revision. Infantry personnel and weapon detail nodes need not become selectable roster rows. NORTHAG supplies its own presentation callback and game data while reusing the recursive tree, scoped option editor, details and print components.
 
-## Next implementer's sequence
+## NORTHAG implementation sequence
 
 1. Resolve or explicitly defer NAG-01/02/03/06. Preserve coverage gaps and the disputed 499/66 example. The evidence fixtures are not a complete legal army or a game catalog.
 2. Add an independent `packages/rulesets/northag` workspace with schemas and module rules. It may call generic core operations but must not import Classic rules/data. Declare its own module contract and supported rules revisions. Validate NORTHAG settings at import/restore/create/edit boundaries while keeping ordinary roster violations editable.
@@ -44,7 +44,7 @@ An individually configurable model needs its own stable node with quantity one. 
 5. Implement NORTHAG's independent unit-details and print appendix adapter, including its five-band table and armor shape. Register it in `presentation.ts`; do not reshape Classic records to fit NORTHAG or vice versa.
 6. Replace synthetic-only assurance with real NORTHAG domain and browser cases. Verify mixed Classic/NORTHAG library create/edit/save/restore/import/export/print, exact legacy Classic revisions, selector switching and stale loads, section-local limits, one-each children, per-platoon attachments, whole-company charges, requests with no initial arrival BR, Restricted/statistics coverage and independent reference data.
 
-No core schema, Classic rule thresholds, Classic catalog bytes, persistence schema or transfer envelope was changed by this preparatory refactor. No production NORTHAG menu entry or pretend playable catalog was added.
+The original preparatory refactor left the core schema, Classic thresholds and catalog bytes, persistence schema and transfer envelope intact. The first NORTHAG release uses those existing contracts.
 
 ## Validation
 

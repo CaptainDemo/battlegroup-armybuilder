@@ -1,0 +1,17 @@
+{
+  "indexVersion": 1,
+  "releases": [
+    {
+      "identity": {
+        "rulesetId": "northag",
+        "catalogId": "russian-armoured-battlegroup-2020",
+        "catalogRevision": "1.0.0"
+      },
+      "label": "Russian Armoured Battlegroup · NORTHAG 2020 + v9",
+      "assetPath": "catalogs/northag/russian-armoured-battlegroup/1-0-0/catalog.json",
+      "sha256": "4692ca8389e3e04a7a1711af6556b4b5a2a76633712dd662abaee259fe39655b",
+      "rulesRevision": "northag-2020+errata-v9",
+      "moduleContract": "northag/1"
+    }
+  ]
+}

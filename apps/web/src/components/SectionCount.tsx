@@ -5,6 +5,8 @@ export function SectionCount({ allowance }: { allowance: SectionAllowance }) {
   return (
     <span className="section-count">
       <span>{allowance.selected} {t('editor.selectedCount')}</span>
+      {allowance.minimum !== undefined && <span>{t('editor.minimumCount')} {allowance.minimum}</span>}
+      {allowance.included !== undefined && <span>+{allowance.included} {t('editor.includedCount')}</span>}
       {allowance.limits.length ? allowance.limits.map((limit, index) => (
         <span className={limit.used > limit.capacity ? 'section-count--over' : ''} key={index}>
           {limit.used} / {limit.capacity} {t('editor.choicesCount')}
