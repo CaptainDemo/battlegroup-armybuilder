@@ -309,8 +309,8 @@ test.describe('roster print', () => {
     // Three companies, each with its fixed platoons; attachments anchor to the
     // exact fixed platoon, not to a name guess.
     await expect(sheet).toContainText('T-72 MBT Company · 3');
-    await expect(sheet).toContainText('BMP-1 Motor Rifle Company · 1 — platoon 2');
-    await expect(sheet).toContainText('Included in the company price');
+    await expect(sheet).toContainText('BMP-1 Motor Rifle Company · 1 / platoon 2');
+    await expect(sheet).toContainText('Included in the formation price');
     await expect(sheet).toContainText('Combat Medic');
     await expect(sheet).toContainText('Fire Support Section');
     await expect(sheet).toContainText('Automatic GL Section');

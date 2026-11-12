@@ -1,5 +1,5 @@
 import type {
-  ArmySection, Availability, CatalogIdentity, CatalogIndex, CompositionNode,
+  ArmySection, Availability, CatalogIdentity, CatalogIndex, CatalogShell, CompositionNode, EvaluatedCompositionNode,
   Evaluation, Option, RosterCommand, RosterCommandContext, RosterDocument, RulesetId,
 } from '@battlegroup/core';
 import type { SectionAllowance } from '../features/roster-editor/sectionAllowances';
@@ -51,6 +51,10 @@ export interface RulesetRegistration {
   sectionLabel: (identity: CatalogIdentity, section: ArmySection) => string;
   sectionAllowances: (document: RosterDocument, release: RosterCommandContext, evaluation: Evaluation) => ReadonlyMap<string, SectionAllowance>;
   isMemberGroup: (node: CompositionNode) => boolean;
+  /** Owns visible member roles/labels. Shared UI supplies recursion and stable paths. */
+  memberPresentation?: (node: EvaluatedCompositionNode, catalog: CatalogShell) => {label: string} | null;
+  /** Target cardinality is independent of how many times an option is charged. */
+  memberChoiceMode?: (option: Option) => 'single' | 'multiple';
   usesPlatoonSupportLabel: (release: AppCatalogRelease, entryId: string) => boolean;
   exampleCommands?: (release: AppCatalogRelease, newId: () => string) => readonly RosterCommand[];
 }

@@ -5,6 +5,8 @@ import {
 import { projectSectionAllowances } from '../../features/roster-editor/sectionAllowances';
 import type { RulesetRegistration } from '../types';
 import { t } from '../../i18n';
+import { weaponReference } from './unitData';
+import { findClassicWeaponBinding } from '@battlegroup/classic-coldwar';
 
 export const classicRegistration: RulesetRegistration = {
   id: 'classic-coldwar',
@@ -51,6 +53,18 @@ export const classicRegistration: RulesetRegistration = {
   sectionAllowances: (document, release) => projectSectionAllowances(document, release.catalog,
     new Set(release.purchases.filter(item => item.kind === 'top-level').map(item => item.entryId))),
   isMemberGroup: node => !!node.configurableSlot && node.role === 'platoon',
+  memberChoiceMode: option => option.chargeMode === 'once' ? 'single' : 'multiple',
+  memberPresentation(node, catalog) {
+    const words = node.nodeId.replaceAll('-', ' ');
+    if (node.configurableSlot && node.role === 'platoon') return {label: words};
+    const profile = catalog.profiles.find(item => item.localId === node.profileLocalId);
+    if (node.children?.some(child => child.role === 'crew')) return {label: profile?.name ?? words};
+    const binding = findClassicWeaponBinding(weaponReference, catalog.manifest.identity);
+    if (node.profileLocalId && binding?.vehicleProfileIds.includes(node.profileLocalId)) {
+      return {label: `${words} · ${profile?.name ?? node.profileLocalId}`};
+    }
+    return null;
+  },
   usesPlatoonSupportLabel: (release, entryId) => !!release.catalog.entries.find(entry => entry.localId === entryId)?.resourceGrants?.some(
     grant => grant.resourceKind === 'platoon-support-slots' && grant.scope === 'parent-formation'),
   exampleCommands(release, newId) {

@@ -1,6 +1,6 @@
 # Ruleset integration handoff
 
-Updated: 2026-11-10. Completed scope: NORTHAG source-baseline verification and Web ruleset decoupling. Production still registers Classic only. Actual NORTHAG rules, released catalogs and combat-reference views are intentionally deferred.
+Updated: 2026-11-12. Completed scope: NORTHAG source-baseline verification, Web ruleset decoupling and recursive roster-member editing. Production still registers Classic only. Actual NORTHAG rules, released catalogs and combat-reference views are intentionally deferred.
 
 ## Read first
 
@@ -27,7 +27,13 @@ Updated: 2026-11-10. Completed scope: NORTHAG source-baseline verification and W
 
 `sectionAllowances` receives the current evaluation. The Classic adapter preserves its existing resource-allocation projection. A NORTHAG adapter must provide its own min/max summary from its rules/evaluation; do not synthesize Classic support grants. The current shared counter shape displays selected counts and capacity limits, not a new generic minimum-rule system. Extend it only if the actual NORTHAG UI needs richer constraint text.
 
-The current member-group renderer recognizes groups through the module callback and supports the existing directly nested fixed-platoon/anchored-child shape. Section recursion does not promise arbitrary recursive formation editing. Use stable fixed-platoon member IDs for the Soviet company; test deeper member groups if a later catalog actually needs them.
+Roster members and printed members now share a recursive projection of the evaluated composition. `memberPresentation(node, catalog)` owns each ruleset's visible member roles and labels. Return a label for formations, squads, teams or individual vehicles that should appear in the roster; returning null keeps that node's details within its nearest visible parent while still traversing its children. The older `isMemberGroup` callback remains a compatibility fallback for adapters without `memberPresentation`.
+
+Member paths remain relative to the purchasing selection and retain every stable node ID, including omitted display wrappers. Purchased attachments match their entire `targetMemberPath`. Each adapter should expose its declared member attachment destinations so users can add attachments at those locations. Existing attachments without a displayed destination remain accessible under the purchasing selection. Added, removed and replaced members follow the current evaluation. Removing the currently selected member returns focus to the nearest remaining visible ancestor.
+
+Member-slot options appear at the deepest visible owner of each target. Editing a choice preserves targets in sibling members. An adapter can explicitly return `single` from `memberChoiceMode(option)` to move an assignment instead; the UI names the existing assignment and explains that selecting another member moves it. The shared default is `multiple`: target cardinality is independent of charge mode. Classic declares single-target behavior for its existing once-priced member options. Whole-selection options stay on the purchase, and scope selectors stay at their declared member scope or nearest visible ancestor. Shared group/option limits continue to be evaluated at the original scope. Member rows display inclusion in the formation price, while the purchase retains its base price and aggregate charges.
+
+An individually configurable model needs its own stable node with quantity one. A quantity-three node represents one addressed group of three models. Existing catalog revisions and stored member paths remain valid; splitting a grouped node into individual models requires a new catalog revision. Infantry personnel and weapon detail nodes need not become selectable roster rows. NORTHAG supplies its own presentation callback and game data while reusing the recursive tree, scoped option editor, details and print components.
 
 ## Next implementer's sequence
 
@@ -41,6 +47,8 @@ The current member-group renderer recognizes groups through the module callback 
 No core schema, Classic rule thresholds, Classic catalog bytes, persistence schema or transfer envelope was changed by this preparatory refactor. No production NORTHAG menu entry or pretend playable catalog was added.
 
 ## Validation
+
+Recursive member editing acceptance (2026-11-12): TypeScript checks, all 393 Vitest tests in 35 files, the production build and all 26 browser cases passed. Browser coverage includes independent squad/tank upgrades, preserving sibling choices, nested company members, shared option limits, single-target assignment moves, save/restore, whole-platoon transport replacement, undo after selecting a removed member, 360-pixel layout and real multi-page A4 PDF output. The existing Classic catalog revisions and persisted roster format remain unchanged. Synthetic adapter tests exercise independent member labels and arbitrary nesting; actual NORTHAG rules/data acceptance remains deferred.
 
 Acceptance recorded on 2026-11-11: TypeScript checks passed; all 383 Vitest tests in 33 files passed (including the three local PDF fingerprint checks); the production build and its 11 data/publication checks passed; all 24 existing browser cases passed in system Chrome with the temporary-directory workaround below. Browser coverage includes exact Classic 1.0.0/1.1.0 data, imports/exports, save conflicts, real A4 PDF output and mobile layout. The second ruleset remains a synthetic contract fixture, not an actual NORTHAG browser release.
 

@@ -23,6 +23,7 @@ import { PrintPreview } from './PrintPreview';
 import {
   projectPrintableRoster,
   type PrintPurchaseView,
+  type PrintMemberView,
 } from './printProjection';
 
 /**
@@ -100,11 +101,14 @@ function buildRealisticRoster(): Roster {
   return { document: result.document, evaluation: evaluateClassicRoster(result.document, release) };
 }
 
+function allMembers(members: readonly PrintMemberView[]): PrintMemberView[] {
+  return members.flatMap(member => [member, ...allMembers(member.members)]);
+}
 function allPurchases(views: readonly PrintPurchaseView[]): PrintPurchaseView[] {
   return views.flatMap((view) => [
     view,
     ...allPurchases(view.attachments),
-    ...allPurchases(view.platoons.flatMap((platoon) => platoon.attachments)),
+    ...allPurchases(allMembers(view.members).flatMap((platoon) => platoon.attachments)),
     ...allPurchases(view.otherAnchored.map((item) => item.purchase)),
   ]);
 }
@@ -141,13 +145,13 @@ describe('print projection over the published Classic catalog', () => {
     const company = projection.roster.sections
       .flatMap((section) => section.purchases)
       .find((view) => view.selectionId === 's-bmp-company')!;
-    expect(company.platoons.map((platoon) => platoon.nodeId)).toEqual(['platoon-1', 'platoon-2', 'platoon-3']);
+    expect(company.members.filter(member => member.role === 'platoon').map((platoon) => platoon.nodeId)).toEqual(['platoon-1', 'platoon-2', 'platoon-3']);
     // The medic anchored at platoon-2 prints under that platoon, not platoon-1.
-    const anchored = company.platoons.flatMap((platoon) =>
+    const anchored = company.members.filter(member => member.role === 'platoon').flatMap((platoon) =>
       platoon.attachments.map((attachment) => [platoon.nodeId, attachment.selectionId] as const),
     );
     expect(anchored).toEqual([['platoon-2', 's-company-medic']]);
-    const medic = company.platoons[1]!.attachments[0]!;
+    const medic = company.members.filter(member => member.role === 'platoon')[1]!.attachments[0]!;
     expect(medic.role).toBe('attachment');
     expect(medic.baseKind).toBe('attachment-cost');
     expect(medic.baseCost.points).toEqual({ state: 'known', value: 8 });
@@ -278,7 +282,7 @@ describe('print projection review regressions', () => {
     const projection = projectPrintableRoster(snapshot);
     if (projection.status !== 'ready') throw new Error('projection should be ready');
     const company = projection.roster.sections.flatMap((section) => section.purchases)[0]!;
-    const rows = [...company.rows, ...company.platoons.flatMap((platoon) => platoon.rows)];
+    const rows = [...company.rows, ...allMembers(company.members).flatMap(member => member.rows)];
     // The exact 1.1.0 catalog has 1 command BMP-1 plus 9 platoon BMP-1s;
     // printing both the purchase rows and the platoon blocks must not
     // double them, and dropping members to dedupe would also fail here.
@@ -287,11 +291,11 @@ describe('print projection review regressions', () => {
     expect(new Set(keys).size).toBe(keys.length);
     // Fixed platoons print as titled blocks, not as wrapper rows.
     expect(company.rows.some((row) => row.label === 'platoon')).toBe(false);
-    expect(company.platoons.map((platoon) => platoon.label)).toEqual(['platoon 1', 'platoon 2', 'platoon 3']);
+    expect(company.members.filter(member => member.role === 'platoon').map((platoon) => platoon.label)).toEqual(['platoon 1', 'platoon 2', 'platoon 3']);
     // Members and structure survive on both levels.
-    expect(company.rows.some((row) => row.label === 'BMP-1' && row.quantity === 1)).toBe(true);
-    for (const platoon of company.platoons)
-      expect(platoon.rows.filter((row) => row.label === 'BMP-1')).toHaveLength(3);
+    expect(allMembers(company.members.filter(member => member.nodeId === 'company-command')).flatMap(member => member.rows).some(row => row.label === 'BMP-1' && row.quantity === 1)).toBe(true);
+    for (const platoon of company.members.filter(member => member.role === 'platoon'))
+      expect(allMembers([platoon]).flatMap(member => member.rows).filter((row) => row.label === 'BMP-1')).toHaveLength(3);
   });
 
   it.each(['schemaVersion', 'rulesRevision', 'catalogRevision'] as const)(

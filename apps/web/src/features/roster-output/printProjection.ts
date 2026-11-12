@@ -1,3 +1,4 @@
+import { memberTree, flattenMembers, samePath, type MemberNode } from '../roster-editor/memberTree';
 import type {
   CatalogShell,
   ChargeLine,
@@ -91,7 +92,10 @@ export interface PrintCompositionRow {
   readonly trainingLabel: string | null;
 }
 
-export interface PrintFixedPlatoonView {
+export interface PrintMemberView {
+  readonly path: readonly string[];
+  readonly role: string;
+  readonly members: readonly PrintMemberView[];
   readonly nodeId: string;
   readonly label: string;
   readonly trainingLabel: string | null;
@@ -100,8 +104,8 @@ export interface PrintFixedPlatoonView {
 }
 
 /**
- * Attachments anchored to a member path that is not one of the entry's fixed
- * platoon slots. The editor tree has no branch for them; printing them in a
+ * Attachments anchored to a member path without a visible member branch.
+ * Printing them in a
  * residual group keeps the paper complete without guessing a parent.
  */
 export interface PrintAnchoredAttachmentView {
@@ -124,7 +128,7 @@ export interface PrintPurchaseView {
   readonly trainingLabel: string | null;
   readonly compositionNote: string | null;
   readonly rows: readonly PrintCompositionRow[];
-  readonly platoons: readonly PrintFixedPlatoonView[];
+  readonly members: readonly PrintMemberView[];
   readonly attachments: readonly PrintPurchaseView[];
   readonly otherAnchored: readonly PrintAnchoredAttachmentView[];
   readonly options: readonly PrintOptionChoiceView[];
@@ -275,16 +279,6 @@ export function projectPrintableRoster(input: PrintSnapshotInput, services = {re
       trainingLabel: training.label,
     };
   };
-  const buildRows = (node: EvaluatedCompositionNode, prefix: string, depth: number): PrintCompositionRow[] => [
-    rowOf(node, prefix, depth),
-    ...(node.children ?? []).flatMap((child, index) => buildRows(child, `${prefix}${node.nodeId}/${index}/`, depth + 1)),
-  ];
-  // Fixed platoons print as their own titled blocks (with their anchored
-  // attachments); their members must therefore NOT repeat in the purchase's
-  // own composition rows — every member appears exactly once per purchase.
-  const isFixedPlatoon = (child: EvaluatedCompositionNode): boolean =>
-    runtime?.isMemberGroup(child) ?? (!!child.configurableSlot && !!child.children?.length);
-
   const buildPurchase = (selection: RosterSelection, role: PrintPurchaseView['role'], anchorLabel: string | null): PrintPurchaseView => {
     const entry: UnitEntry | undefined = entries.get(selection.entryReference.localId);
     const heading = headingBySelection.get(selection.selectionId) ?? selection.selectionId;
@@ -328,38 +322,30 @@ export function projectPrintableRoster(input: PrintSnapshotInput, services = {re
     const training = trainingView(node?.training, trainingLabels);
     const compositionNote =
       entry && entry.composition.state !== 'known' ? entry.composition.reason : null;
-    const platoonViews =
-      node?.children
-        ?.filter(isFixedPlatoon)
-        .map((platoon) => ({
-          platoon,
-          view: {
-            nodeId: platoon.nodeId,
-            label: words(platoon.nodeId),
-            // A platoon node that itself carries a profile (a leaf platoon)
-            // is a member too; role-only platoon wrappers are represented by
-            // the block heading alone.
-            rows: [
-              ...(platoon.profileLocalId
-                ? [rowOf(platoon, `${selection.selectionId}/${platoon.nodeId}/`, 0)]
-                : []),
-              ...(platoon.children ?? []).flatMap((child, index) =>
-                buildRows(child, `${selection.selectionId}/${platoon.nodeId}/${index}/`, 0),
-              ),
-            ],
-            trainingLabel: trainingView(platoon.training, trainingLabels).label,
-            attachments: childSelections
-              .filter((item) => (item.targetMemberPath ?? []).length === 1 && item.targetMemberPath?.[0] === platoon.nodeId)
-              .map((item, index) => buildPurchase(item, 'attachment', `${heading} — ${words(platoon.nodeId)} · ${index + 1}`)),
-          } satisfies PrintFixedPlatoonView,
-        })) ?? [];
-    const matchedAnchored = new Set(
-      platoonViews.flatMap(({ platoon }) =>
-        childSelections
-          .filter((item) => (item.targetMemberPath ?? []).length === 1 && item.targetMemberPath?.[0] === platoon.nodeId)
-          .map((item) => item.selectionId),
-      ),
-    );
+    const tree = runtime ? memberTree(node, catalog, runtime) : [];
+    const displayed = flattenMembers(tree);
+    const memberRows = (root: EvaluatedCompositionNode, path: string[]): PrintCompositionRow[] => {
+      const rows: PrintCompositionRow[] = [];
+      const visit = (current: EvaluatedCompositionNode, currentPath: string[], depth: number) => {
+        if (current !== root && displayed.some(member => samePath(member.path, currentPath))) return;
+        if (current.profileLocalId || current !== root) rows.push(rowOf(current, selection.selectionId + '/' + currentPath.join('/') + '/', depth));
+        for (const child of current.children ?? []) visit(child, [...currentPath, child.nodeId], depth + 1);
+      };
+      visit(root, path, 0);
+      return rows;
+    };
+    const buildMembers = (members: MemberNode[]): PrintMemberView[] => members.map(member => ({
+      nodeId: member.node.nodeId,
+      path: member.path,
+      role: member.node.role,
+      label: member.label,
+      trainingLabel: trainingView(member.node.training, trainingLabels).label,
+      rows: memberRows(member.node, member.path),
+      members: buildMembers(member.children),
+      attachments: childSelections.filter(item => item.targetMemberPath && samePath(item.targetMemberPath, member.path))
+        .map(item => buildPurchase(item, 'attachment', heading + ' / ' + member.path.join(' / '))),
+    }));
+    const matchedAnchored = new Set(childSelections.filter(item => item.targetMemberPath && displayed.some(member => samePath(member.path, item.targetMemberPath!))).map(item => item.selectionId));
     return {
       specialRules: [...new Set(specialRules.uses.filter(use => use.selectionId === selection.selectionId).flatMap(use => use.rules.map(rule => rule.name)))],
       selectionId: selection.selectionId,
@@ -377,18 +363,8 @@ export function projectPrintableRoster(input: PrintSnapshotInput, services = {re
       trainingToken: training.token,
       trainingLabel: training.label,
       compositionNote,
-      rows: node
-        ? [
-            // A root that itself carries a profile (e.g. the exact 1.0.0
-            // BRDM-2 leaf) is a composition member in its own right; a
-            // role-only container root is represented by its children only.
-            ...(node.profileLocalId ? [rowOf(node, `${selection.selectionId}/`, 0)] : []),
-            ...(node.children ?? [])
-              .filter((child) => !isFixedPlatoon(child))
-              .flatMap((child, index) => buildRows(child, `${selection.selectionId}/${index}/`, 0)),
-          ]
-        : [],
-      platoons: platoonViews.map(({ view }) => view),
+      rows: node ? memberRows(node, []) : [],
+      members: buildMembers(tree),
       attachments: directAttachments.map((item, index) =>
         buildPurchase(item, 'attachment', `${heading} · ${index + 1}`),
       ),

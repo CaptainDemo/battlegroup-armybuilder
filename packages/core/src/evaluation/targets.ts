@@ -35,3 +35,23 @@ export function uniqueTargets(targets:readonly OptionChoiceTarget[]):OptionChoic
   const seen = new Set<string>();
   return structuredClone(targets.filter(target=>{const key=JSON.stringify(target);if(seen.has(key)) return false;seen.add(key);return true;}));
 }
+
+/** Per-target charges and limits count units from the base composition. */
+export function optionTargetUnits(document: RosterDocument, catalog: CatalogShell, selectionId: string, target: OptionChoiceTarget): number {
+  if (target.kind === 'whole-selection') return 1;
+
+  const ownerId = target.kind === 'attachment-member' ? target.ownerSelectionId : selectionId;
+  const owner = document.selections.find(selection => selection.selectionId === ownerId);
+  const entry = catalog.entries.find(item => item.localId === owner?.entryReference.localId);
+  if (entry?.composition.state !== 'known') return 0;
+
+  let node = entry.composition.root;
+  let quantity = node.quantity;
+  for (const id of target.nodePath) {
+    const child = node.children?.find(member => member.nodeId === id);
+    if (!child) return 0;
+    node = child;
+    quantity *= node.quantity;
+  }
+  return quantity;
+}

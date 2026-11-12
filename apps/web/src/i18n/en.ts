@@ -29,6 +29,12 @@ export const en = {
     omitted: 'Catalog exclusions',
   },
   editor: {
+    applyToMember: 'Apply to this member',
+    sharedLimit: 'Shared maximum:',
+    perMatchingMember: 'per matching member',
+    assignedElsewhere: 'Currently assigned to',
+    moveUpgradeHere: 'Selecting here moves this upgrade.',
+
     nation: 'Nation',
     loading: 'Loading army lists…',
     loadFailed: 'Catalog verification failed in this browser. Retry loading the catalog.',
@@ -37,7 +43,7 @@ export const en = {
     emptyRoster: 'Your roster is empty. Use a section’s add button to choose a formation.',
     open: 'Open', deleteRoster: 'Delete roster',
     exampleName: 'Soviet sample roster', createExample: 'Create the 398 Points / 23 BR example',
-    included: 'Included in the company price; not a separate purchase.', companyCharges: 'Company price breakdown', perTarget: 'per selected target',
+    included: 'Included in the formation price.', companyCharges: 'Formation price breakdown', perTarget: 'per selected target',
     scenario: 'Scenario', playerRole: 'Player role', unspecified: 'Not specified', attackDefence: 'Attack-Defence', attacker: 'Attacker', defender: 'Defender',
     noRoster: 'Create or open a roster first', back: 'Back to My Rosters',
     catalogVersion: 'Catalog', points: 'Points', br: 'Battle rating', remaining: 'Budget remaining',

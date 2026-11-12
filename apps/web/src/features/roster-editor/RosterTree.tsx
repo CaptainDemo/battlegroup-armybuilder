@@ -1,3 +1,4 @@
+import { memberElementId, memberTree, samePath, withinPath, flattenMembers, type MemberNode } from './memberTree';
 import type { SpecialRulesView } from '../../rulesets/specialRules';
 import { rulesets } from '../../rulesets/registry';
 import { sectionTree, descendantSectionIds, type SectionNode } from './sectionTree';
@@ -5,7 +6,7 @@ import type {
   RosterDocument,
   RosterSelection,
   TrackedValue,
-  CompositionNode,
+  Evaluation,
 } from '@battlegroup/core';
 import type { AppCatalogRelease, RulesetRegistration } from '../../rulesets/types';
 import { t } from '../../i18n';
@@ -19,6 +20,7 @@ export type AddTarget =
   | { kind: 'attachment'; parentSelectionId: string; memberPath?: string[] };
 
 interface TreeProps {
+  evaluation?: Evaluation | undefined;
   specialRules?: SpecialRulesView;
   runtime?: RulesetRegistration;
   document: RosterDocument;
@@ -108,6 +110,13 @@ function PurchaseBranch(
   );
   const runtime = props.runtime ?? rulesets.require(document.catalogRef.rulesetId);
   const hasPlatoonSupport = runtime.usesPlatoonSupportLabel(release, entry.localId);
+  const composition = props.evaluation
+    ? props.evaluation.composition.find(item => item.selectionId === selection.selectionId)?.node
+    : entry.composition.state === 'known' ? entry.composition.root : undefined;
+  const members = memberTree(composition, release.catalog, runtime);
+  const displayedPaths = flattenMembers(members).map(member => member.path);
+  const unplaced = document.selections.filter(child => child.parentSelectionId === selection.selectionId && child.targetMemberPath &&
+    !displayedPaths.some(path => samePath(path, child.targetMemberPath!)));
   return (
     <div className="purchase-branch">
       <div className="purchase-row">
@@ -136,18 +145,8 @@ function PurchaseBranch(
           {t('editor.delete')}
         </button>
       </div>
-      {entry.composition.state === 'known' &&
-        entry.composition.root.children
-          ?.filter(runtime.isMemberGroup)
-          .map((member) => (
-            <FixedPlatoon
-              key={member.nodeId}
-              {...props}
-              selection={selection}
-              member={member}
-              parentLabel={label}
-            />
-          ))}
+      {members.map(member => <MemberBranch key={JSON.stringify(member.path)} {...props} selection={selection} member={member} parentLabel={label} />)}
+      {unplaced.map((child, index) => <PurchaseBranch key={child.selectionId} {...props} selection={child} ordinal={index + 1} />)}
       {(children.length > 0 || hasAttachments) && (
         <div className="purchase-children">
           {children.map((child, index) => (
@@ -197,86 +196,28 @@ function PurchaseBranch(
   );
 }
 
-function FixedPlatoon(
-  props: TreeProps & {
-    selection: RosterSelection;
-    member: CompositionNode;
-    parentLabel: string;
-  },
-) {
-  const {
-    selection,
-    member,
-    parentLabel,
-    document,
-    release,
-    onSelect,
-    onAdd,
-    selectedId,
-    selectedMemberPath,
-    addTarget,
-  } = props;
-  const path = [member.nodeId];
-  const label = member.nodeId.replaceAll('-', ' ');
-  const children = document.selections.filter(
-    (child) =>
-      child.parentSelectionId === selection.selectionId &&
-      JSON.stringify(child.targetMemberPath) === JSON.stringify(path),
-  );
-  const hasMenu = release.purchases.some(
-    (access) =>
-      access.kind === 'attachment' &&
-      access.parentMemberPaths?.[selection.entryReference.localId]?.some(
-        (target) => JSON.stringify(target) === JSON.stringify(path),
-      ),
-  );
-  return (
-    <div className="purchase-children fixed-platoon">
-      <button
-        type="button"
-        id={'selection-' + selection.selectionId + '-member-' + path.join('-')}
-        className="purchase-card"
-        aria-label={label + ' — ' + parentLabel}
-        aria-pressed={
-          selectedId === selection.selectionId &&
-          JSON.stringify(selectedMemberPath) === JSON.stringify(path)
-        }
-        onClick={() => onSelect(selection.selectionId, path)}
-      >
-        <strong>{label}</strong>
-        <small>{t('editor.included')}</small>
-      </button>
-      {children.map((child, index) => (
-        <PurchaseBranch
-          key={child.selectionId}
-          {...props}
-          selection={child}
-          ordinal={index + 1}
-        />
-      ))}
-      {hasMenu && (
-        <button
-          type="button"
-          className="add-slot"
-          aria-label={
-            t('editor.addAttachmentTo') + ' ' + label + ' — ' + parentLabel
-          }
-          aria-pressed={
-            addTarget?.kind === 'attachment' &&
-            addTarget.parentSelectionId === selection.selectionId &&
-            JSON.stringify(addTarget.memberPath) === JSON.stringify(path)
-          }
-          onClick={() =>
-            onAdd({
-              kind: 'attachment',
-              parentSelectionId: selection.selectionId,
-              memberPath: path,
-            })
-          }
-        >
-          ＋ {t('editor.addAttachment')}
-        </button>
-      )}
-    </div>
-  );
+function MemberBranch(props: TreeProps & {selection: RosterSelection; member: MemberNode; parentLabel: string}) {
+  const {selection, member, parentLabel, document, release, onSelect, onAdd, selectedId, selectedMemberPath, addTarget} = props;
+  const {path, label, node} = member;
+  const attachments = document.selections.filter(child => child.parentSelectionId === selection.selectionId && child.targetMemberPath && samePath(child.targetMemberPath, path));
+  const hasMenu = release.purchases.some(access => access.kind === 'attachment' && access.parentMemberPaths?.[selection.entryReference.localId]?.some(target => samePath(target, path)));
+  const names = [...new Set(props.specialRules?.uses.filter(use => use.selectionId === selection.selectionId && withinPath(use.path, path)).flatMap(use => use.rules.map(rule => rule.name)) ?? [])];
+  return <div className="purchase-children member-branch" data-member-path={JSON.stringify(path)}>
+    <button type="button" id={memberElementId(selection.selectionId, path)}
+      className="purchase-card" aria-label={label + ' — ' + parentLabel}
+      aria-pressed={selectedId === selection.selectionId && samePath(selectedMemberPath ?? [], path)}
+      onClick={() => onSelect(selection.selectionId, path)}>
+      <strong>{node.quantity > 1 ? node.quantity + ' × ' : ''}{label}</strong>
+      <small>{t('editor.included')}</small>
+      {names.length > 0 && <small>{names.join(', ')}</small>}
+    </button>
+    {member.children.map(child => <MemberBranch key={JSON.stringify(child.path)} {...props} member={child} parentLabel={parentLabel + ' / ' + label} />)}
+    {attachments.map((child, index) => <PurchaseBranch key={child.selectionId} {...props} selection={child} ordinal={index + 1} />)}
+    {hasMenu && <button type="button" className="add-slot"
+      aria-label={t('editor.addAttachmentTo') + ' ' + label + ' — ' + parentLabel}
+      aria-pressed={addTarget?.kind === 'attachment' && addTarget.parentSelectionId === selection.selectionId && samePath(addTarget.memberPath ?? [], path)}
+      onClick={() => onAdd({kind: 'attachment', parentSelectionId: selection.selectionId, memberPath: path})}>
+      + {t('editor.addAttachment')}
+    </button>}
+  </div>;
 }

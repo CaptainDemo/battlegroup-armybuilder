@@ -11,6 +11,7 @@ import {
   type PrintMeasure,
   type PrintOptionChoiceView,
   type PrintPurchaseView,
+  type PrintMemberView,
   type PrintSectionView,
 } from './printProjection';
 import { SpecialRulesPanel } from '../../components/SpecialRulesPanel';
@@ -289,19 +290,7 @@ function PurchaseBlock({ purchase }: { purchase: PrintPurchaseView }) {
       {purchase.specialRules.length > 0 && <p><strong>{t('specialRules.title')}:</strong> {purchase.specialRules.join(', ')}</p>}
       {purchase.rows.length > 0 && <CompositionRows rows={purchase.rows} />}
       {purchase.compositionNote && <p className="muted">{purchase.compositionNote}</p>}
-      {purchase.platoons.map((platoon) => (
-        <div className="print-platoon" key={platoon.nodeId}>
-          <h4>
-            {purchase.heading} — {platoon.label}
-            {platoon.trainingLabel ? <span className="muted"> · {platoon.trainingLabel}</span> : null}
-          </h4>
-          <p className="muted">{t('editor.included')}</p>
-          {platoon.rows.length > 0 && <CompositionRows rows={platoon.rows} />}
-          {platoon.attachments.map((child) => (
-            <PurchaseBlock key={child.selectionId} purchase={child} />
-          ))}
-        </div>
-      ))}
+      {purchase.members.map(member => <MemberBlock key={JSON.stringify(member.path)} member={member} heading={purchase.heading} />)}
       {purchase.attachments.length > 0 && (
         <div className="print-attachments">
           <h4>{t('print.attachedUnits')}</h4>
@@ -331,6 +320,16 @@ function PurchaseBlock({ purchase }: { purchase: PrintPurchaseView }) {
       <ChargeTable charges={purchase.charges} />
     </article>
   );
+}
+
+function MemberBlock({member, heading}: {member: PrintMemberView; heading: string}) {
+  return <div className={member.role === 'platoon' ? 'print-platoon' : 'print-member'}>
+    <h4>{heading} / {member.label}{member.trainingLabel && <span className="muted"> · {member.trainingLabel}</span>}</h4>
+    <p className="muted">{t('editor.included')}</p>
+    {member.rows.length > 0 && <CompositionRows rows={member.rows} />}
+    {member.members.map(child => <MemberBlock key={JSON.stringify(child.path)} member={child} heading={heading + ' / ' + member.label} />)}
+    {member.attachments.map(child => <PurchaseBlock key={child.selectionId} purchase={child} />)}
+  </div>;
 }
 
 function CompositionRows({ rows }: { rows: readonly PrintCompositionRow[] }) {

@@ -1,3 +1,4 @@
+import { memberElementId, memberTree, flattenMembers, samePath, withinPath } from './memberTree';
 import { useEffect, useMemo, useState } from 'react';
 import {
   createRosterDocument,
@@ -240,6 +241,16 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
     selectedComposition = selectedComposition?.children?.find(
       (child) => child.nodeId === id,
     );
+  const selectedRoot = currentEvaluation?.composition.find(item => item.selectionId === selected?.selectionId)?.node;
+  const selectedMemberLabel = release && roster ? flattenMembers(memberTree(selectedRoot, release.catalog, rulesets.require(roster.catalogRef.rulesetId)))
+    .filter(member => withinPath(state.selectedMemberPath ?? [], member.path)).map(member => member.label).join(' / ') : '';
+  useEffect(() => {
+    if (!state.selectedMemberPath || !selectedRoot) return;
+    const path = [...state.selectedMemberPath];
+    const visible = release && roster ? flattenMembers(memberTree(selectedRoot, release.catalog, rulesets.require(roster.catalogRef.rulesetId))) : [];
+    while (path.length && !visible.some(member => samePath(member.path, path))) path.pop();
+    if (!samePath(path, state.selectedMemberPath)) setState(current => ({...current, selectedMemberPath: path.length ? path : null}));
+  }, [selectedRoot, state.selectedMemberPath, release, roster]);
   const selectedOrdinal =
     selected && roster
       ? roster.selections
@@ -255,11 +266,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
     if (editor && !hidden && state.selectedId)
       window.document
         .getElementById(
-          'selection-' +
-            state.selectedId +
-            (state.selectedMemberPath
-              ? '-member-' + state.selectedMemberPath.join('-')
-              : ''),
+          state.selectedMemberPath ? memberElementId(state.selectedId, state.selectedMemberPath) : 'selection-' + state.selectedId,
         )
         ?.scrollIntoView({ block: 'nearest' });
   }, [editor, hidden, state.selectedId, state.selectedMemberPath, tab]);
@@ -876,6 +883,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
             >
               <h3>{t('editor.roster')}</h3>
               <RosterTree
+                evaluation={currentEvaluation ?? undefined}
                 specialRules={specialRulesView}
                 document={roster}
                 release={release}
@@ -926,12 +934,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
                     <>
                       <h4>
                         {selectedEntry.name} · {selectedOrdinal}
-                        {state.selectedMemberPath
-                          ? ' / ' +
-                            state.selectedMemberPath
-                              .join(' / ')
-                              .replaceAll('-', ' ')
-                          : ''}
+                        {state.selectedMemberPath ? ' / ' + (selectedMemberLabel || state.selectedMemberPath.join(' / ').replaceAll('-', ' ')) : ''}
                       </h4>
                       {!state.selectedMemberPath && (
                         <div className="toolbar">
@@ -986,6 +989,7 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
                         selection={selected}
                         entry={selectedEntry}
                         catalog={release.catalog}
+                        composition={currentEvaluation?.composition.find(item => item.selectionId === selected.selectionId)?.node}
                         memberPath={state.selectedMemberPath}
                         onChoices={(choices) =>
                           edit([

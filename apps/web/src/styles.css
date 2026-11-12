@@ -573,7 +573,7 @@ details ul { padding-left: 1rem; }
   color: var(--text-muted);
 }
 
-.print-platoon {
+.print-platoon, .print-member {
   border-left: 3px solid var(--border);
   padding-left: 0.7rem;
   margin: 0.5rem 0;

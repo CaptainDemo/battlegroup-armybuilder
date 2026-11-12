@@ -5,7 +5,7 @@ import { manifestVersionIdentity } from '../contracts/versioning';
 import type { TrackedValue } from '../contracts/values';
 import { validateRosterRelations } from '../validation/rosterRelations';
 import { allocateResources, type ResourceDemand, type ResourcePool } from './resources';
-import { resolveChoiceTargets } from './targets';
+import { optionTargetUnits, resolveChoiceTargets } from './targets';
 
 /** Generic deterministic evaluation over a schema/relation-validated catalog. Game thresholds belong to a ruleset. */
 export function evaluateRoster(document:RosterDocument,catalog:CatalogShell):Evaluation {
@@ -55,7 +55,7 @@ export function evaluateRoster(document:RosterDocument,catalog:CatalogShell):Eva
       const scope=optionScope(document,selection,group.scope);
       const scopedChoices=document.selections.filter(item=>optionScope(document,item,group.scope)===scope).flatMap(item=>item.optionChoices).filter(item=>item.optionGroupLocalId===group.localId);
       if(group.selectionLimit.kind==='unknown'||option.ownLimit.kind==='unknown')optionCoverage=false;
-      const units=targets.reduce((sum,target)=>sum+targetUnits(document,catalog,selection.selectionId,target),0);
+      const units=targets.reduce((sum,target)=>sum+optionTargetUnits(document,catalog,selection.selectionId,target),0);
       if(group.selectionLimit.kind==='limited') addUsage(JSON.stringify(['group',group.localId,scope]),option.chargeMode==='per-target'?units:1,group.selectionLimit.max,selection.selectionId,'option/group-limit');
       if(option.ownLimit.kind==='limited') addUsage(JSON.stringify(['option',group.localId,option.localId,scope]),option.chargeMode==='per-target'?units:1,option.ownLimit.max,selection.selectionId,'option/own-limit');
       for(const required of option.requires??[]) if(!scopedChoices.some(item=>item.optionLocalId===required)) addIssue('option/prerequisite',`Option ${option.localId} requires ${required}.`,selection.selectionId);
@@ -68,7 +68,7 @@ export function evaluateRoster(document:RosterDocument,catalog:CatalogShell):Eva
       applications.push({selection,option,targets});
       const billTargets=option.chargeMode==='once'?[null]:targets;
       for(const target of billTargets) {
-        const chargedUnits=target?targetUnits(document,catalog,selection.selectionId,target):1;
+        const chargedUnits=target?optionTargetUnits(document,catalog,selection.selectionId,target):1;
         const key=JSON.stringify(['option',selection.selectionId,group.localId,option.localId,choiceIndex,target]);
         const scale=(value:TrackedValue):TrackedValue=>value.state==='known'?{state:'known',value:value.value*chargedUnits}:value;
         let points=scale(option.costDelta.points),br=scale(option.costDelta.br);
@@ -158,17 +158,6 @@ function topSelection(document:RosterDocument,selection:RosterSelection):RosterS
 
 function optionScope(document:RosterDocument,selection:RosterSelection,scope:'army'|'section'|'parent-formation'|'selection'):string {
   return scope==='army'?'army':scope==='section'?topSelection(document,selection).sectionId!:scope==='parent-formation'?(selection.parentSelectionId??selection.selectionId):selection.selectionId;
-}
-
-function targetUnits(document:RosterDocument,catalog:CatalogShell,selectionId:string,target:OptionChoiceTarget):number {
-  if(target.kind==='whole-selection') return 1;
-  const owner=target.kind==='attachment-member'?target.ownerSelectionId:selectionId;
-  const selection=document.selections.find(item=>item.selectionId===owner)!;
-  const entry=catalog.entries.find(item=>item.localId===selection.entryReference.localId)!;
-  if(entry.composition.state!=='known')return 0;
-  let node=entry.composition.root;let quantity=node.quantity;
-  for(const id of target.nodePath){node=node.children!.find(child=>child.nodeId===id)!;quantity*=node.quantity;}
-  return quantity;
 }
 
 function replacementKeys(document:RosterDocument,catalog:CatalogShell,selectionId:string,target:OptionChoiceTarget,from:string,to:string):string[] {
