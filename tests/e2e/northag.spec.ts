@@ -127,7 +127,33 @@ test('adds one shared vehicle to a company platoon and converts it without an ex
   await expect(sharedVehicle).toHaveAccessibleName(/BMP-1/);
   await expect(page.getByTestId('points-total')).toHaveText('278');
   await expect(page.getByTestId('br-total')).toHaveText('32');
+
+  await sharedVehicle.click();
+  await page.locator('summary').filter({ hasText: /^Unit data$/ }).click();
+  const unitData = page.getByRole('region', { name: 'Unit data', exact: true });
+  const vehicleCard = unitData.locator('article[data-profile-id="bmp-1"]');
+  await expect(vehicleCard).toContainText('Fast Track');
+  await expect(vehicleCard).toContainText('1 / 0 / 0');
+  await expect(vehicleCard).toContainText('2 stands');
+  const mounted = vehicleCard.getByRole('table', { name: 'Mounted weapons' });
+  await expect(unitData.getByRole('table')).toHaveCount(1);
+  await expect(mounted.locator('tbody[data-weapon-id="grom"] tr').first().locator('td'))
+    .toHaveText(['AP', '—', '—', '2', '2', '2', '—', '—']);
+  await expect(mounted.locator('tbody[data-weapon-id="mg"]')).toContainText('Max 30″');
+  await expect(vehicleCard).toContainText('AT-3 Sagger has no effect under 30″');
+  await page.setViewportSize({ width: 360, height: 760 });
+  await expect(vehicleCard).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth === window.innerWidth)).toBe(true);
+  const scroll = vehicleCard.getByRole('region', { name: 'Mounted weapons' });
+  expect(await scroll.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true);
+  await page.setViewportSize({ width: 1280, height: 720 });
+
   await page.getByRole('button', { name: 'Print / PDF', exact: true }).click();
   await page.getByRole('checkbox', { name: 'Append vehicle and weapon data' }).check();
-  await expect(page.getByTestId('print-data-appendix').getByRole('heading', { name: '10 × BMP-1', exact: true })).toBeVisible();
+  const appendix = page.getByTestId('print-data-appendix');
+  await expect(appendix.getByRole('heading', { name: '10 × BMP-1', exact: true })).toBeVisible();
+  await expect(appendix.locator('tbody[data-weapon-id="grom"]')).toHaveCount(1);
+  await expect(appendix.getByRole('heading', { name: '73mm Grom', exact: true })).toHaveCount(0);
+  await expect(appendix.locator('article[data-profile-id="bmp-1"] tbody[data-weapon-id="at-3"]')).toHaveCount(1);
+  await expect(appendix.locator('article[data-profile-id="at-3-team"] tbody[data-weapon-id="at-3"]')).toHaveCount(1);
 });

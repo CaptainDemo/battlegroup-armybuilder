@@ -1,0 +1,12 @@
+{
+  "identity": {
+    "rulesetId": "northag",
+    "catalogId": "russian-armoured-battlegroup-2020",
+    "catalogRevision": "1.0.0"
+  },
+  "rulesRevision": "northag-2020+errata-v9",
+  "weaponId": "mg",
+  "mounts": ["Co-axial", "Hull"],
+  "range": 30,
+  "sourceRef": { "documentId": "book", "printedPage": 100, "pdfPage": 101 }
+}
