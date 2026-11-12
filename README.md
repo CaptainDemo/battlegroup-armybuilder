@@ -4,7 +4,7 @@ A free community browser roster editor for Battlegroup cold-war tabletop games. 
 
 Classic Cold War (Unofficial Battlegroup: Cold War, Draft 6) supports Soviet Armoured Division V4.1, with the 1.1.0 catalog as the default and exact 1.0.0 roster compatibility. NORTHAG supports the 2020 Russian Armoured Battlegroup with applicable Official Rules Errata v9 corrections. Each ruleset has its own catalog, rules and equipment data. See [NORTHAG release scope](docs/data/northag-release.md) for covered roster checks and remaining source gaps.
 
-The app includes editing, undo/redo, IndexedDB autosave/conflict recovery, JSON import/export and browser print/PDF. See the [deployment guide](docs/deployment.md) for the hosted test site and its release record.
+The app includes editing, undo/redo, IndexedDB autosave/conflict recovery, JSON import/export and browser print/PDF. See the [deployment guide](docs/deployment.md) for the hosted test site and publishing instructions.
 
 ## Quick start
 

@@ -122,7 +122,7 @@ Preparation follows collection → transcription → source review/clarification
 
 ## 9. Hosting
 
-Sites is the initial test host; the main Git checkout remains the application source of truth. The existing hosted snapshot and access history are in [deployment](deployment.md). A source commit does not automatically update the site.
+Sites is the initial test host. The main Git checkout remains the application source of truth, and publishing is a separate step. The [deployment guide](deployment.md) links to the test site and explains how to publish updates and manage access.
 
 Keep a normal Vite static build and explicit release assets. A hosting-specific source snapshot must trace to the main revision rather than become an independent business-code branch. Verify asset bases, direct navigation, refresh, indexed catalog requests and printing on each host. Hash routing does not eliminate asset-path requirements.
 

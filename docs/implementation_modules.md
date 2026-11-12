@@ -101,7 +101,7 @@ Acceptance: totals match the same editor snapshot, collapsed purchases still pri
 
 ### M12 — Combined checks and deployment
 
-Combine source/data gates, core tests, user workflows, artifact inspection and an actual deployed test. Record source/data revisions, supported versions and access audience. See the [deployment guide](deployment.md) for release details and hosted verification.
+Combine source/data gates, core tests, user workflows, artifact inspection and an actual deployed test. Record source/data revisions, supported versions and access audience. See the [deployment guide](deployment.md) for the publication workflow and how to trace the deployed source.
 
 Acceptance: hosted create/configure/check/save/reopen/transfer/print, resource paths, direct routes and refresh, intended access, and no reference-source assets. Distinguish built, deployed and browser-verified states. See [deployment](deployment.md).
 
