@@ -5,6 +5,247 @@
     { "catalogId": "soviet-armoured-division-v4_1", "catalogRevision": "1.0.0", "rulesRevision": "cw-draft6+sov-v4.1" },
     { "catalogId": "soviet-armoured-division-v4_1", "catalogRevision": "1.1.0", "rulesRevision": "cw-draft6+sov-v4.1+formations1" }
   ],
-  "definitions": [],
-  "note": "Rule prose is pending source verification. Existing catalog rule names may be displayed with an explicit missing-text marker. Definitions are independent from every other ruleset."
+  "definitions": [
+    {
+      "id": "air-spotter-2-plus",
+      "name": "Air Spotter (2+)",
+      "text": "While this spotter is on the table and unpinned, use 2+ instead of the usual 5+ on the aircraft availability roll. The Forward Air Controller can mark a point of impact with Request Close Air Support. For a laser-guided strike, the controller must communicate with the aircraft and a designator within 10 inches.",
+      "source": "Soviet Armoured Division V4.1, p. 1. Cold War Draft 6, pp. 30, 33, 42."
+    },
+    {
+      "id": "air-spotter-4-plus",
+      "name": "Air Spotter (4+)",
+      "text": "While this spotter is on the table and unpinned, use 4+ instead of the usual 5+ on the aircraft availability roll. The spotter can mark a point of impact with Request Close Air Support. For a laser-guided strike, the spotter must communicate with the aircraft and a designator within 10 inches.",
+      "source": "Soviet Armoured Division V4.1, p. 10. Cold War Draft 6, pp. 30, 33, 42."
+    },
+    {
+      "id": "ambusher",
+      "name": "Ambusher",
+      "text": "Apply an additional −1 to the enemy's Observation roll against this vehicle if it is in cover and stayed stationary during the previous turn.",
+      "source": "Cold War Draft 6, pp. 6, 19. Soviet Armoured Division V4.1, p. 12."
+    },
+    {
+      "id": "artillery-spotter",
+      "name": "Artillery Spotter",
+      "text": "Use Request Artillery Fire to call in artillery or mortar fire. For precision-guided artillery, the spotter must be able to communicate with the artillery and with a laser designator within 10 inches.",
+      "source": "Battlegroup Rulebook, p. 46. Cold War Draft 6, pp. 27, 30."
+    },
+    {
+      "id": "artillery-spotter-plus",
+      "name": "Artillery Spotter+",
+      "text": "Use Request Artillery Fire to call in artillery or mortar fire. For precision-guided artillery, the spotter must be able to communicate with the artillery and with a laser designator within 10 inches. The observer may also reroll the dice that determine the scatter distance.",
+      "source": "Battlegroup Rulebook, p. 46. Cold War Draft 6, p. 30."
+    },
+    {
+      "id": "battle-drill",
+      "name": "Battle Drill",
+      "text": "Spend one order to activate the eligible WARPAC platoon together. Participating units must perform the same eligible order and stay in line of sight of their Platoon Commander throughout the activation. They can move along different routes or choose separate targets. If the commander is pinned or removed, the platoon loses Battle Drill. Other pinned or lost units do not stop the remaining units from using it.\nEligible orders are Manoeuvre and Fire, Fire and Manoeuvre, Top Speed, Shoot & Track – ATGM, Open Fire!, Disembark/Embark and Ambush Fire.",
+      "source": "New Orders Rules and Special Rules V2, pp. 2–3."
+    },
+    {
+      "id": "behind-enemy-lines",
+      "name": "Behind Enemy Lines",
+      "text": "Deploy this unit after all other Scouts. It can deploy anywhere on the table outside 10 inches of every enemy unit and may begin on Ambush Fire.",
+      "source": "Cold War Draft 6, p. 30."
+    },
+    {
+      "id": "bridging",
+      "name": "Bridging",
+      "text": "Use Engineering orders to build a crossing. Standard bridging adds up to 2.5 inches per full turn, with a maximum of 5 inches for light bridging or 5 inches per heavy truck for heavy bridging. Amphibious bridging adds a 5-inch section per unit per full turn. An armoured vehicle-launched bridge can span a 7.5-inch gap with a single Engineering order.",
+      "source": "Battlegroup Rulebook, pp. 46, 54. Cold War Draft 6, pp. 30, 51."
+    },
+    {
+      "id": "communications",
+      "name": "Communications",
+      "text": "This unit allows one failed Communications check to be rerolled each turn.",
+      "source": "Battlegroup Rulebook, p. 46. Cold War Draft 6, p. 30."
+    },
+    {
+      "id": "dispatches",
+      "name": "Dispatches",
+      "text": "Spend one order to send the rider and automatically pass a Communications check. Remove the rider from play after use.",
+      "source": "Battlegroup Rulebook, p. 46 (Dispatch). Cold War Draft 6, p. 30."
+    },
+    {
+      "id": "displaced-track-and-fire",
+      "name": "Displaced Track and Fire",
+      "text": "Under this optional rule, two crew can dismount to operate the vehicle's ATGM with Shoot & Track. The remote team must be within 10 inches of the vehicle and see both the vehicle and the target. The target must be in the vehicle's forward arc. The vehicle and team can each be observed and targeted separately, but share morale as one unit. If either is destroyed, remove both.",
+      "source": "Cold War Draft 6, p. 56. Soviet Armoured Division V4.1, p. 12."
+    },
+    {
+      "id": "electronic-warfare",
+      "name": "Electronic Warfare",
+      "text": "Once per game, roll a D6 to use the detachment. On 3+, choose one effect from the Electronic Warfare list. The options affect enemy command dice, indirect-fire communications, reserves or reinforcements, or allow targeting an emitting ground radar or adding +2 to friendly counter-battery fire. The Electronic Warfare Battle Counter grants a separate use when drawn.",
+      "source": "Cold War Draft 6, pp. 30, 52."
+    },
+    {
+      "id": "engineers",
+      "name": "Engineers",
+      "text": "An Engineering order lets the unit perform work such as clearing a minefield or placing demolition charges. The unit spends its turn on the engineering task. Use the procedure for the relevant equipment or obstacle.",
+      "source": "Battlegroup Rulebook, p. 15. Cold War Draft 6, pp. 30, 51."
+    },
+    {
+      "id": "ferry",
+      "name": "Ferry",
+      "text": "A ferry in the water can take an eligible vehicle aboard from within 4 inches of the bank using Embark. Move the ferry across the water, then use Disembark to place its load within 4 inches of the destination bank.",
+      "source": "Cold War Draft 6, p. 51."
+    },
+    {
+      "id": "fireteam",
+      "name": "Fireteam",
+      "text": "Keep the squad together or split it into two fireteams of at least two men each. You can split at deployment or declare the split when ordering the squad. Assign weapons to the teams at the split. Each team then receives its own orders, is pinned and tests morale separately, and costs a Battle Counter if destroyed. The teams stay separate for the rest of the game.",
+      "source": "Cold War Draft 6, pp. 30–31."
+    },
+    {
+      "id": "ground-surveillance-radar",
+      "name": "Ground Surveillance Radar",
+      "text": "Use the optional Illuminate Target order to check enemies along a radar sight line. Detect a target on 2+ if it moved last turn or 4+ if stationary, with −1 for infantry teams of three or fewer and −2 in severe weather. Radar reaches the table edge unless blocked by elevated terrain and can see 4 inches into woods. A 3+ Communications check passes the position to the artillery spotter or air controller before their request. Illumination occupies the radar unit for the turn and can expose it to enemy electronic warfare.",
+      "source": "Cold War Draft 6, pp. 52, 54. Soviet Armoured Division V4.1, pp. 1, 10 (also listed as Ground Radar)."
+    },
+    {
+      "id": "laser-designator",
+      "name": "Laser Designator",
+      "text": "Use Designate Target to mark a visible target for a precision-guided artillery or air attack. The designator must be within 10 inches of the spotter or air controller and acts after that unit makes its request or aircraft contact. Designation occupies the unit for the turn. Successful Ambush Fire that pins or hits the designator interrupts the order.",
+      "source": "Cold War Draft 6, pp. 27, 30–31. New Orders Rules and Special Rules V2, p. 1."
+    },
+    {
+      "id": "loader-team",
+      "name": "Loader Team",
+      "text": "The three loaders count as part of the gun or mortar crew for targeting and orders and can replace crew losses. When the gun or mortar receives Open Fire!, roll a D6. On 5+, it gets a third shot.",
+      "source": "Battlegroup Rulebook, pp. 46–47. Cold War Draft 6, p. 31."
+    },
+    {
+      "id": "marksman",
+      "name": "Marksman",
+      "text": "An SVD marksman can select an individual model as a target, such as an officer or a weapon crew member. Use normal cover and last-man pinning rules, and draw the normal Battle Counter if the marksman's unit is lost. A marksman cannot take a spotter and contributes zero Scouts.",
+      "source": "Cold War Draft 6, p. 31. Soviet Armoured Division V4.1, pp. 2, 4, 10."
+    },
+    {
+      "id": "medic",
+      "name": "Medic",
+      "text": "Once per turn, a medic within 5 inches of a friendly unit can attempt to save one casualty. Roll a D6. On 5+, keep the model in play and move the medic to within 1 inch of that unit.",
+      "source": "Battlegroup Rulebook, p. 47. Cold War Draft 6, p. 31."
+    },
+    {
+      "id": "mine-plough",
+      "name": "KMT Mine Plough",
+      "text": "The equipped vehicle can clear a 2-inch-wide lane through a minefield using the Battlefield Engineering procedure. Mark the cleared lane on the table.",
+      "source": "Cold War Draft 6, p. 51. Soviet Armoured Division V4.1, pp. 6–7, 11."
+    },
+    {
+      "id": "mortar-spotter",
+      "name": "Mortar Spotter",
+      "text": "This unit can call in mortar fire using the Request Artillery Fire order.",
+      "source": "Cold War Draft 6, p. 31."
+    },
+    {
+      "id": "mortar-spotter-plus",
+      "name": "Mortar Spotter+",
+      "text": "Use Request Artillery Fire to call in mortars. The controller may also reroll the dice that determine the scatter distance.",
+      "source": "Cold War Draft 6, p. 31. Soviet Armoured Division V4.1, p. 8."
+    },
+    {
+      "id": "nbc",
+      "name": "NBC",
+      "text": "Under the optional NBC rules, a vehicle with this trait is exempt from the vehicle experience test for entering Gas Level Two and from the vehicle penalties to spotting and hitting at that level. The scenario-wide effects still apply.",
+      "source": "Cold War Draft 6, pp. 19, 53."
+    },
+    {
+      "id": "officer",
+      "name": "Officer",
+      "text": "An Officer contributes +1 to the order total while in play. In the V2 WARPAC order procedure, count Senior Officers and Company Commanders toward this bonus.",
+      "source": "Battlegroup Rulebook, p. 47. Cold War Draft 6, p. 31. New Orders Rules and Special Rules V2, p. 2."
+    },
+    {
+      "id": "platoon-commander",
+      "name": "Platoon Commander",
+      "text": "This unit is the platoon's reference point for Battle Drill. Participating units must stay in its line of sight throughout the activation. Battle Drill is unavailable while this commander is pinned or after it is lost. A Platoon Commander contributes zero Officers to the WARPAC order roll.",
+      "source": "New Orders Rules and Special Rules V2, p. 2. Soviet Armoured Division V4.1, pp. 2, 4, 6–7."
+    },
+    {
+      "id": "rear-area-security",
+      "name": "Rear Area Security",
+      "text": "Once per game, reroll one D6 for reserves or reinforcements when the scenario calls for such a roll. Keep the new result.",
+      "source": "Cold War Draft 6, p. 31."
+    },
+    {
+      "id": "resupply",
+      "name": "Re-supply",
+      "text": "Give the supply unit a Re-arm order to replenish a friendly unit in contact that has run out of ammunition. The supply unit spends the turn rearming.",
+      "source": "Battlegroup Rulebook, pp. 15, 48. Cold War Draft 6, p. 32."
+    },
+    {
+      "id": "restricted",
+      "name": "Restricted",
+      "text": "The Restricted allowance is two choices at Squad size, three at Platoon, four at Company and five at Battalion. Repeated Restricted purchases each use an allowance slot. An upgrade applied to a whole platoon or company counts as one upgrade event under the Soviet V4.1 roster interpretation.",
+      "source": "Cold War Draft 6, p. 31. Soviet V4.1 roster clarification A05."
+    },
+    {
+      "id": "sam",
+      "name": "SAM",
+      "text": "Use Lock & Shoot – Surface-to-Air Missile to engage one aircraft or helicopter while remaining stationary for the turn. Make the missile lock roll for the system's rating, then resolve the opposed hit roll and damage using the SAM tables.",
+      "source": "Cold War Draft 6, pp. 32, 49–50."
+    },
+    {
+      "id": "scout",
+      "name": "Scout",
+      "text": "Add this Scout to the first-turn roll and to the pre-game Scout comparison. The side with fewer Scouts draws a Battle Counter in its first turn. This unit gains +1 to Observation when making Aimed Fire and uses any Scout deployment rules in the scenario.",
+      "source": "Battlegroup Rulebook, p. 48. Cold War Draft 6, pp. 6, 32."
+    },
+    {
+      "id": "scout2",
+      "name": "Scout 2",
+      "text": "Count this unit as two Scouts for the first-turn roll and the pre-game Scout comparison. The side with fewer Scouts draws a Battle Counter in its first turn. This unit gains +1 to Observation when making Aimed Fire and uses the scenario's Scout deployment rules. A scout helicopter can instead be held back as reinforcement when the scenario deploys its other Scouts.",
+      "source": "Battlegroup Rulebook, p. 48. Cold War Draft 6, pp. 32, 42. Soviet Armoured Division V4.1, p. 10."
+    },
+    {
+      "id": "senior-officer",
+      "name": "Senior Officer",
+      "text": "Counts as an Officer. Once per game, reroll one Orders die. While the Senior Officer is on the table, you may reroll the scenario's roll for the number of reserves arriving. The Senior Officer may spend a turn on Tactical Co-ordination. Draw a Battle Counter, then have one friendly pinned unit take an experience test to remove its pin.",
+      "source": "Battlegroup Rulebook, pp. 15, 48. Cold War Draft 6, p. 32."
+    },
+    {
+      "id": "sniper-scout",
+      "name": "Sniper Scout",
+      "text": "Counts as a Scout. The sniper stays in play if pinned as the last man. For the sniper's Aimed Fire, treat the target as in the open and let the sniper choose which model a casualty removes. Enemy Observation against the sniper takes −1. Losing this unit costs no Battle Counter.",
+      "source": "Battlegroup Rulebook, p. 48. Cold War Draft 6, pp. 6, 32. Soviet Armoured Division V4.1, p. 10."
+    },
+    {
+      "id": "tactical-operations-centre",
+      "name": "Tactical Operations Centre (TOC)",
+      "text": "A Soviet TOC is available at Battalion size. Draft 6 describes it as providing an Officer and lists Senior Officer, Radio Communications Network and Communications among its rules. Use the TOC's Soviet list entry for its purchase and attachment options.",
+      "source": "Cold War Draft 6, pp. 31–32. Soviet Armoured Division V4.1, p. 1."
+    },
+    {
+      "id": "time-on-target",
+      "name": "Time on Target",
+      "text": "A non-mortar barrage with this rule may reroll results of 1 on the Artillery Barrage Accuracy roll. Keep the new results. A purchased Time on Target barrage uses zero Additional Support Choices. For a timed Soviet barrage, record the turn of fire before the game.",
+      "source": "Cold War Draft 6, p. 28. Soviet Armoured Division V4.1, p. 15."
+    },
+    {
+      "id": "unique",
+      "name": "Unique",
+      "text": "Each Unique choice may appear only once in the battlegroup, at any game size. If it is also Restricted, it uses one Restricted slot.",
+      "source": "Cold War Draft 6, p. 32."
+    },
+    {
+      "id": "vehicle-recovery",
+      "name": "Vehicle Recovery",
+      "text": "Use Recover to prepare to tow one immobilised or destroyed vehicle. Towing begins on the next turn at half speed. If the recovery vehicle tows the casualty off its own table edge, return one randomly selected Battle Counter from its owner's stack to the pot. The recovery vehicle then stays off the table.",
+      "source": "Battlegroup Rulebook, pp. 15, 48, 54. Cold War Draft 6, p. 31."
+    },
+    {
+      "id": "vehicle-repair",
+      "name": "Vehicle Repair",
+      "text": "Start the turn in contact with the damaged vehicle and use the Repair order. An immobilised vehicle is mobile again on 4+. A destroyed vehicle is restored on 6. After two failed attempts the vehicle is beyond battlefield repair.",
+      "source": "Battlegroup Rulebook, pp. 15, 48, 54. Cold War Draft 6, p. 32."
+    },
+    {
+      "id": "wire-communications",
+      "name": "Wire Communications",
+      "text": "A Communications test made with the wire team succeeds on 2+ regardless of the normal target number. Once the check succeeds, remove the team from play.",
+      "source": "Battlegroup Rulebook, p. 48. Cold War Draft 6, p. 32."
+    }
+  ],
+  "note": "Source-checked English summaries for Classic Soviet V4.1. Page references use printed page numbers."
 }

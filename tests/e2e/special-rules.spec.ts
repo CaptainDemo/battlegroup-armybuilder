@@ -6,7 +6,8 @@ test('shows unit rules and independently toggles a deduplicated print appendix',
   await page.locator('.purchase-card').first().click();
   const panel=page.locator('.special-rules');
   await expect(panel).toContainText('Senior Officer');
-  await expect(panel).toContainText('Rule text has not been added for this catalog version.');
+  await expect(panel).toContainText('reroll one Orders die');
+  await expect(panel).toContainText('Battlegroup Rulebook');
   await expect(page.locator('.purchase-card').first()).toContainText('Senior Officer');
   await page.getByRole('button',{name:'Print / PDF',exact:true}).click();
   await expect(page.locator('.special-rules-appendix')).toHaveCount(0);
@@ -14,7 +15,9 @@ test('shows unit rules and independently toggles a deduplicated print appendix',
   await toggle.check();
   const appendix=page.locator('.special-rules-appendix');
   await expect(appendix.getByRole('heading',{name:'Senior Officer',exact:true})).toHaveCount(1);
+  await expect(appendix).toContainText('reroll one Orders die');
   await expect(appendix).toContainText('Scout');
+  await expect(appendix).not.toContainText('Rule text has not been added');
   await expect(appendix).not.toContainText('max-per-parent');
   await page.emulateMedia({media:'print'});
   await expect(appendix).toBeVisible();

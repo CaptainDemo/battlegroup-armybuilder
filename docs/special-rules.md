@@ -10,11 +10,11 @@ Reference identity includes ruleset ID, catalog ID, catalog revision, rules revi
 
 The projection reads the current evaluation's composition: replacement profiles and granted tags are current, zero-quantity nodes are skipped, and rules are not automatically inherited onto every member. Entry rules also cover purchases with no on-table composition. Purchased attachments are separate selections and are collected recursively. The print projection freezes the resolved names/text alongside its existing version-checked evaluation snapshot; toggling appendix visibility does not rerun rule evaluation or modify the roster.
 
-## Classic adapter and deferred content
+## Classic Soviet V4.1 reference
 
-`apps/web/src/rulesets/classic/specialRules.ts` interprets existing Classic entry/profile rule fields and a small set of evaluated Officer/Scout tags. Its filter excludes existing engine hooks such as `max-per-parent:*`, `tank-family:*`, `requires-*`, `toc-battalion-only` and purchase-option constraints. These hooks must not be presented as rulebook paragraphs. A future Classic content pass should review extraction/mapping and human-facing labels as well as prose, especially parameterized rules and selected equipment effects. The adapter receives the selected choices and catalog so conditional rule mappings can be added there without changing common UI.
+`packages/catalogs/classic-coldwar/reference/special-rules-v1.json` contains 40 source-checked English summaries bound to the Soviet 1.0.0 and 1.1.0 releases. Each definition cites printed pages. Cold War Draft 6 supplies the main rules, the Battlegroup Rulebook supplies retained procedures, Soviet V4.1 supplies list-specific labels and values, and New Orders Rules and Special Rules V2 supplies Battle Drill and the WARPAC command context.
 
-`packages/catalogs/classic-coldwar/reference/special-rules-v1.json` is an independent Classic reference set with explicit bindings for the existing 1.0.0/1.1.0 catalogs. Its definitions array is intentionally empty pending the later source/content pass. Existing names therefore display **Rule text has not been added for this catalog version.** An empty rule list says **No special rules recorded**, not that the actual game unit has none. No rules text was invented, borrowed from NORTHAG or asserted to be fully transcribed. Existing immutable catalog releases were not rewritten.
+The Classic adapter uses purchase and profile fields, explicit Soviet catalog IDs, and evaluated member tags. It resolves the printed TOC and company SAM rules from their catalog tokens and uses one definition for Ground Radar and Ground Surveillance Radar. Marksman, BRM-1 radar, loader team and KMT references follow the evaluated equipment or member that supplies the rule. The **Rule text has not been added for this catalog version** fallback covers unresolved IDs and unsupported versions. The separate AFV card panel continues to show the card's recorded traits. This reference pass covers the mapped Soviet roster rules and selected equipment effects. It leaves a full audit of roster rule assignments and AFV traits for separate work.
 
 ## Filling another ruleset
 
@@ -27,4 +27,4 @@ NORTHAG remains unregistered until its actual module/catalog is implemented. Mis
 
 ## Validation
 
-Type checking, the production build and all 388 unit/integration tests passed. All 25 browser cases passed, including the new unit-name/missing-text display, deduplicated appendix toggle and print-media visibility check. Final text-wrapping CSS was followed by another build and targeted browser check. The lookup tests use populated independent fixture texts to prove same-name isolation across rulesets and exact catalog/rules revisions; these fixture texts are not shipped game content.
+The tests check text and source coverage for the two released Classic versions, evaluated equipment placement, the unsupported-version fallback, and exact-version and ruleset isolation. The browser test checks that the editor and the optional deduplicated print appendix both show rule text.
