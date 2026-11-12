@@ -26,11 +26,31 @@ test('creates, configures, prints, and restores a NORTHAG Soviet roster alongsid
   await expect(page.getByRole('checkbox', { name: /Artillery Spotter/ })).toHaveCount(0);
   await add(page, 'Add to: Vanguard', 'Tank Company');
   await page.getByRole('checkbox', { name: 'Replace all T-62s with T-64As', exact: true }).check();
-  await page.locator('[data-member-path=\'["tank-4"]\'] > button').click();
+  const tank = page.locator('[data-member-path=\'["tank-4"]\'] > button');
+  await tank.click();
   await page.getByRole('checkbox', { name: 'KMT Mine Plough', exact: true }).check();
+  await expect(page.getByRole('region', { name: 'Current composition' }).locator('.composition-rule')).toHaveText('KMT Mine Plough');
+  await expect(tank.locator('.rule-tag')).toHaveText('KMT Mine Plough');
+  const selectedRules = page.locator('details.special-rule-cards');
+  await selectedRules.locator('summary').click();
+  await expect(selectedRules).toContainText('The chosen tank carries the KMT mine plough upgrade.');
+  await expect(selectedRules.locator('.special-rule-source')).toHaveText('NORTHAG pp.70–72');
+  await page.locator('summary').filter({ hasText: /^Unit data$/ }).click();
   await expect(page.getByRole('region', { name: 'Unit data' })).toContainText('5 / 3 / 1');
   await expect(page.getByRole('region', { name: 'Unit data' })).toContainText('50–70');
-  await expect(page.locator('.special-rules')).toContainText('KMT Mine Plough');
+  const company = page.getByRole('button', { name: /^Tank Company · 1/ });
+  await company.click();
+  await expect(company).not.toContainText('KMT Mine Plough');
+  const composition = page.getByRole('region', { name: 'Current composition' });
+  const tankComposition = composition.locator('[data-composition-path=\'["tank-4"]\']');
+  await expect(tankComposition.getByText('KMT Mine Plough', { exact: true })).toBeVisible();
+  await expect(composition.locator('details')).toHaveCount(0);
+  await expect(composition).not.toContainText('The chosen tank carries the KMT mine plough upgrade.');
+  const companyRule = selectedRules.getByRole('heading', { name: 'KMT Mine Plough', exact: true });
+  await expect(companyRule).toBeHidden();
+  await selectedRules.locator('summary').click();
+  await expect(companyRule).toHaveCount(1);
+  await expect(companyRule).toBeVisible();
 
   await add(page, 'Add to: Main Column', 'Tactical Command Centre');
   for (const child of ['Forward Air Controller', 'Electronic Warfare Team', 'Supply Truck', 'Ambulance']) {
@@ -58,6 +78,7 @@ test('creates, configures, prints, and restores a NORTHAG Soviet roster alongsid
   await expect(page.getByTestId('print-data-appendix')).toContainText('1 × T-64A · KMT Mine Plough');
   await expect(page.locator('.special-rules-appendix')).toContainText('NORTHAG official v9');
   await expect(page.locator('#print-sheet')).toContainText('northag-2020+errata-v9');
+  await expect(page.locator('#print-sheet .print-composition li').filter({hasText: /tank 4 · T-64A/})).toContainText('KMT Mine Plough');
   await page.getByRole('button', { name: 'Close preview' }).click();
 
   const pending = page.waitForEvent('download');

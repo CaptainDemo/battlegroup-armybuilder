@@ -34,6 +34,7 @@ export interface PrintSnapshot {
 export interface PrintOptions {
   readonly includeUnitData: boolean;
   readonly includeSpecialRules: boolean;
+  readonly includeCharges: boolean;
 }
 
 export function PrintPreview({
@@ -45,7 +46,9 @@ export function PrintPreview({
   onClose: () => void;
   onRefresh: () => void;
 }) {
-  const [options, setOptions] = useState<PrintOptions>({ includeUnitData: false, includeSpecialRules: false });
+  const [options, setOptions] = useState<PrintOptions>({
+    includeUnitData: false, includeSpecialRules: false, includeCharges: false,
+  });
   const projection = useMemo(
     () => projectPrintableRoster(snapshot),
     [snapshot],
@@ -84,6 +87,11 @@ export function PrintPreview({
             <input type="checkbox" checked={options.includeSpecialRules}
               onChange={event => setOptions({...options, includeSpecialRules: event.target.checked})} />
             {t('specialRules.include')}
+          </label>
+          <label className="checkbox-label">
+            <input type="checkbox" checked={options.includeCharges}
+              onChange={event => setOptions({...options, includeCharges: event.target.checked})} />
+            {t('print.includeCharges')}
           </label>
         </fieldset>
       </div>
@@ -204,7 +212,7 @@ function RosterSheet({ roster, options }: { roster: PrintableRoster; options: Pr
         )}
       </section>
 
-      {roster.sections.map(section => <SectionBlock key={section.sectionId} section={section} />)}
+      {roster.sections.map(section => <SectionBlock key={section.sectionId} section={section} includeCharges={options.includeCharges} />)}
 
       <section className="print-block" aria-label={t('print.reference.title')}>
         <h2>{t('print.reference.title')}</h2>
@@ -248,7 +256,7 @@ function RosterSheet({ roster, options }: { roster: PrintableRoster; options: Pr
       </section>
 
       {options.includeUnitData && <PrintUnitDataAppendix reference={roster.reference} rulesetId={roster.versions.rulesetId} />}
-      {options.includeSpecialRules && <SpecialRulesPanel view={roster.specialRules} appendix />}
+      {options.includeSpecialRules && <SpecialRulesPanel view={roster.specialRules} />}
       <footer className="print-footer">
         <p>
           {t('print.footerNote')} · {t('print.meta.snapshot')}: {roster.versions.editRevision}
@@ -258,44 +266,42 @@ function RosterSheet({ roster, options }: { roster: PrintableRoster; options: Pr
   );
 }
 
-function SectionBlock({section}: {section: PrintSectionView}) {
+function SectionBlock({section, includeCharges}: {section: PrintSectionView; includeCharges: boolean}) {
   return <section className="print-block" aria-label={section.label}>
     <div className="print-section-heading"><h2>{section.label}</h2>
       {section.allowance && <SectionCount allowance={section.allowance} />}
     </div>
-    {section.purchases.map(purchase => <PurchaseBlock key={purchase.selectionId} purchase={purchase} />)}
-    {section.children.map(child => <SectionBlock key={child.sectionId} section={child} />)}
+    {section.purchases.map(purchase => <PurchaseBlock key={purchase.selectionId} purchase={purchase} includeCharges={includeCharges} />)}
+    {section.children.map(child => <SectionBlock key={child.sectionId} section={child} includeCharges={includeCharges} />)}
   </section>;
 }
 
-function PurchaseBlock({ purchase }: { purchase: PrintPurchaseView }) {
+function PurchaseBlock({ purchase, includeCharges }: { purchase: PrintPurchaseView; includeCharges: boolean }) {
   return (
     <article className="print-unit" data-selection-id={purchase.selectionId} data-issues={purchase.issueCount}>
-      <h3>
-        {purchase.heading}
-        {purchase.trainingLabel ? <span className="muted"> · {purchase.trainingLabel}</span> : null}
-        {purchase.issueCount > 0 && (
-          <span className="print-issue-badge" data-testid="print-issue-badge">
-            {' '}
-            [{purchase.issueCount} {t('print.issueCountLabel')}]
-          </span>
-        )}
-      </h3>
-      <p className="print-unit-cost">
-        {t(purchase.baseKind === 'base-cost' ? 'editor.baseCost' : 'print.attachmentPrice')} ·{' '}
-        {tracked(purchase.baseCost.points)} {t('editor.points')} / {tracked(purchase.baseCost.br)} {t('editor.br')} ·{' '}
-        {t('print.subtotal')} {amount(purchase.subtotal.points)} {t('editor.points')} /{' '}
-        {amount(purchase.subtotal.br)} {t('editor.br')}
-      </p>
-      {purchase.specialRules.length > 0 && <p><strong>{t('specialRules.title')}:</strong> {purchase.specialRules.join(', ')}</p>}
+      <div className="print-unit-heading">
+        <h3>
+          {purchase.heading}
+          {purchase.trainingLabel && <span className="muted"> · {purchase.trainingLabel}</span>}
+          {purchase.issueCount > 0 && (
+            <span className="print-issue-badge" data-testid="print-issue-badge">
+              {' '}[{purchase.issueCount} {t('print.issueCountLabel')}]
+            </span>
+          )}
+          <PrintRuleNames names={purchase.specialRules} />
+        </h3>
+        <span className="print-unit-cost">
+          {amount(purchase.subtotal.points)} {t('editor.points')} / {amount(purchase.subtotal.br)} BR
+        </span>
+      </div>
       {purchase.rows.length > 0 && <CompositionRows rows={purchase.rows} />}
       {purchase.compositionNote && <p className="muted">{purchase.compositionNote}</p>}
-      {purchase.members.map(member => <MemberBlock key={JSON.stringify(member.path)} member={member} heading={purchase.heading} />)}
+      {purchase.members.map(member => <MemberBlock key={JSON.stringify(member.path)} member={member} includeCharges={includeCharges} />)}
       {purchase.attachments.length > 0 && (
         <div className="print-attachments">
           <h4>{t('print.attachedUnits')}</h4>
           {purchase.attachments.map((child) => (
-            <PurchaseBlock key={child.selectionId} purchase={child} />
+            <PurchaseBlock key={child.selectionId} purchase={child} includeCharges={includeCharges} />
           ))}
         </div>
       )}
@@ -304,7 +310,7 @@ function PurchaseBlock({ purchase }: { purchase: PrintPurchaseView }) {
           <h4>
             {t('print.attachedAt')} {pathLabel}
           </h4>
-          <PurchaseBlock purchase={child} />
+          <PurchaseBlock purchase={child} includeCharges={includeCharges} />
         </div>
       ))}
       {purchase.options.length > 0 && (
@@ -317,18 +323,31 @@ function PurchaseBlock({ purchase }: { purchase: PrintPurchaseView }) {
           </ul>
         </div>
       )}
-      <ChargeTable charges={purchase.charges} />
+      {includeCharges && <ChargeTable charges={purchase.charges} />}
     </article>
   );
 }
 
-function MemberBlock({member, heading}: {member: PrintMemberView; heading: string}) {
-  return <div className={member.role === 'platoon' ? 'print-platoon' : 'print-member'}>
-    <h4>{heading} / {member.label}{member.trainingLabel && <span className="muted"> · {member.trainingLabel}</span>}</h4>
-    <p className="muted">{t('editor.included')}</p>
-    {member.rows.length > 0 && <CompositionRows rows={member.rows} />}
-    {member.members.map(child => <MemberBlock key={JSON.stringify(child.path)} member={child} heading={heading + ' / ' + member.label} />)}
-    {member.attachments.map(child => <PurchaseBlock key={child.selectionId} purchase={child} />)}
+function PrintRuleNames({names}: {names: readonly string[]}) {
+  return names.length > 0 && <span className="print-rule-names"> · {names.join(', ')}</span>;
+}
+
+function MemberBlock({member, includeCharges}: {member: PrintMemberView; includeCharges: boolean}) {
+  const [first, ...rest] = member.rows;
+  const hasOwnRow = first?.depth === 0;
+  const rows = hasOwnRow ? [{...first, label: member.label, specialRules: member.specialRules}, ...rest] : member.rows;
+  return <div className="print-member">
+    {!hasOwnRow && <h4>
+      {member.quantity > 1 && member.quantity + ' × '}{member.label}
+      {member.trainingLabel && <span className="muted"> · {member.trainingLabel}</span>}
+      <PrintRuleNames names={member.specialRules} />
+    </h4>}
+    {rows.length > 0 && <CompositionRows rows={rows} />}
+    {member.members.map(child => <MemberBlock key={JSON.stringify(child.path)} member={child} includeCharges={includeCharges} />)}
+    {member.attachments.length > 0 && <div className="print-attachments">
+      <h4>{t('print.attachedUnits')}</h4>
+      {member.attachments.map(child => <PurchaseBlock key={child.selectionId} purchase={child} includeCharges={includeCharges} />)}
+    </div>}
   </div>;
 }
 
@@ -342,6 +361,7 @@ function CompositionRows({ rows }: { rows: readonly PrintCompositionRow[] }) {
         >
           <span className="print-qty">{row.quantity} ×</span> {row.label}
           {row.trainingLabel ? <span className="muted"> ({row.trainingLabel})</span> : null}
+          <PrintRuleNames names={row.specialRules} />
         </li>
       ))}
     </ul>
@@ -357,16 +377,9 @@ function OptionRow({ option }: { option: PrintOptionChoiceView }) {
         ({option.groupName}
         {option.chargeMode === 'per-target' ? ' · ' + t('editor.perTarget') : ''})
       </span>
-      <ul className="print-option-targets">
-        {option.targetLabels.map((label, index) => (
-          <li key={index}>
-            {label === 'whole-selection' ? t('print.wholeFormation') : label}
-          </li>
-        ))}
-      </ul>
-      <span className="print-option-cost">
-        {option.chargedUnits} × · {amount(option.points)} {t('editor.points')} / {amount(option.br)} {t('editor.br')}
-      </span>
+      {option.targetLabels.length > 0 && <span className="print-option-targets">
+        {' · '}{option.targetLabels.map(label => label === 'whole-selection' ? t('print.wholeFormation') : label).join(', ')}
+      </span>}
     </li>
   );
 }

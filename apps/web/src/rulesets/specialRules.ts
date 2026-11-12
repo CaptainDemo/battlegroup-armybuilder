@@ -59,6 +59,19 @@ export function projectSpecialRules(document: RosterDocument, catalog: CatalogSh
 export function uniqueRules(uses: readonly SpecialRuleUse[]): SpecialRuleView[] {
   return [...new Map(uses.flatMap(use => use.rules.map(rule => [rule.key, rule] as const))).values()];
 }
+
+/** Index only direct uses. A child rule never becomes a rule of its parent. */
+export function rulesByPath(view: SpecialRulesView | undefined, selectionId: string | undefined): ReadonlyMap<string, readonly SpecialRuleView[]> {
+  const byPath = new Map<string, SpecialRuleUse[]>();
+  for (const use of view?.uses ?? []) {
+    if (use.selectionId !== selectionId) continue;
+    const key = JSON.stringify(use.path);
+    const group = byPath.get(key) ?? [];
+    group.push(use);
+    byPath.set(key, group);
+  }
+  return new Map([...byPath].map(([key, group]) => [key, uniqueRules(group)]));
+}
 /** A selected member includes only attachments anchored inside that member. */
 export function specialRulesForSelection(view: SpecialRulesView, document: RosterDocument, selectionId: string, path: readonly string[] = []): SpecialRulesView {
   const descendants = new Set<string>();

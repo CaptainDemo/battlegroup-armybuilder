@@ -20,7 +20,7 @@ function fixture(catalogRelease = release, entryIds = ['fhq', 'brdm2-recon']) {
   if (!added.ok) throw Error('fixture add');
   return {document:added.document, evaluation:evaluateClassicRoster(added.document,catalogRelease)};
 }
-it('renders sourced Classic rule text in unit details and the print projection', () => {
+it('renders sourced Classic rule text in the print appendix', () => {
   const {document,evaluation}=fixture();
   const view=projectSpecialRules(document,release.catalog,evaluation,classicSpecialRules);
   expect(view.rules.map(rule=>rule.id)).toContain('senior-officer');
@@ -76,7 +76,7 @@ it('deduplicates rule text and uses evaluated replacement profiles and tags', ()
   expect(view.rules.filter(rule=>rule.id==='scout')).toHaveLength(1);
   expect(view.rules.find(rule=>rule.id==='replacement-rule')?.text).toBe('Verified replacement-rule');
   expect(view.uses.some(use=>use.path.join('/')==='changed')).toBe(true);
-  expect(renderToStaticMarkup(createElement(SpecialRulesPanel,{view,appendix:true}))).toContain('Verified replacement-rule');
+  expect(renderToStaticMarkup(createElement(SpecialRulesPanel,{view}))).toContain('Verified replacement-rule');
   evaluation.composition[0]!.node.children=[];
   expect(projectSpecialRules(document,release.catalog,evaluation,adapter).rules.some(rule=>rule.id==='replacement-rule')).toBe(false);
 });

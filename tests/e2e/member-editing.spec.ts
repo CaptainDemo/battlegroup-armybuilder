@@ -111,6 +111,14 @@ test('charges whole-company conversions per tank and keeps the real company equi
   await expect(conversionRow).not.toContainText('Shared maximum');
   await conversion.check();
   await expect(page.getByText('700', { exact: true })).toBeVisible();
+  const branch = company.locator('../..');
+  await branch.getByRole('button', { name: /^Collapse composition for T-72 MBT Company/ }).click();
+  await expect(company).toContainText('10 × T-72B');
+  await expect(company).toContainText('700 Points');
+  await expect(member(page, companyId, ['company-command'])).toBeHidden();
+  await branch.getByRole('button', { name: /^Expand composition for T-72 MBT Company/ }).click();
+  await expect(member(page, companyId, ['company-command'])).toBeVisible();
+  await expect(branch).not.toContainText('Included in the formation price');
 
   const kmt = page.getByRole('checkbox', { name: 'KMT mine plough on individual tank', exact: true });
   const svir = page.getByRole('checkbox', { name: '9M119 Svir ATGM load-out', exact: true });

@@ -309,9 +309,10 @@ test.describe('roster print', () => {
     // Three companies, each with its fixed platoons; attachments anchor to the
     // exact fixed platoon, not to a name guess.
     await expect(sheet).toContainText('T-72 MBT Company · 3');
-    await expect(sheet).toContainText('BMP-1 Motor Rifle Company · 1 / platoon 2');
-    await expect(sheet).toContainText('Included in the formation price');
-    await expect(sheet).toContainText('Combat Medic');
+    await expect(sheet).not.toContainText('BMP-1 Motor Rifle Company · 1 / platoon 2');
+    await expect(sheet).not.toContainText('Included in the formation price');
+    const platoon2 = sheet.locator('.print-member > h4', { hasText: /^platoon 2\b/ }).locator('..');
+    await expect(platoon2.filter({ hasText: 'Combat Medic' })).toHaveCount(1);
     await expect(sheet).toContainText('Fire Support Section');
     await expect(sheet).toContainText('Automatic GL Section');
     // Per-target upgrade with its member targets and per-target billing note.
@@ -327,7 +328,7 @@ test.describe('roster print', () => {
     const bmpRows = await page.evaluate(
       () =>
         [...document.querySelectorAll('#print-sheet .print-composition li')].filter((li) =>
-          li.textContent!.replace(/\s+/g, ' ').trim() === '1 × BMP-1',
+          /^1 × (?:[^·]+ · )?BMP-1(?=$| [·(])/.test(li.textContent!.replace(/\s+/g, ' ').trim()),
         ).length,
     );
     expect(bmpRows).toBe(15);
@@ -335,10 +336,15 @@ test.describe('roster print', () => {
     const tankRows = await page.evaluate(
       () =>
         [...document.querySelectorAll('#print-sheet .print-composition li')].filter((li) =>
-          li.textContent!.replace(/\s+/g, ' ').trim() === '1 × T-72A',
+          /^1 × (?:[^·]+ · )?T-72A(?=$| [·(])/.test(li.textContent!.replace(/\s+/g, ' ').trim()),
         ).length,
     );
     expect(tankRows).toBe(30);
+    const charges = page.getByRole('checkbox', { name: 'Include price breakdown' });
+    await expect(sheet.locator('.print-charges')).toHaveCount(0);
+    await charges.check();
+    await expect(sheet.locator('.print-charges').first()).toBeVisible();
+    await charges.uncheck();
     // No-entities purchase prints its reason instead of a roster gap.
     await expect(sheet).toContainText('Off-Table Artillery Support Request');
     // Long notes print and wrap.

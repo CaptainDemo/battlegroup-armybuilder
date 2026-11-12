@@ -18,7 +18,7 @@ import type {
 } from '@battlegroup/core';
 import { manifestVersionIdentity } from '@battlegroup/core';
 import type { PurchaseAccess, RulesetId } from '@battlegroup/core';
-import { projectSpecialRules, type SpecialRulesView } from '../../rulesets/specialRules';
+import { projectSpecialRules, rulesByPath, type SpecialRulesView } from '../../rulesets/specialRules';
 import { rulesets } from '../../rulesets/registry';
 import { getPresentation } from '../../rulesets/presentation';
 import { unavailableReference, type PrintReferenceView } from '../../rulesets/presentationTypes';
@@ -84,6 +84,7 @@ export interface PrintOptionChoiceView {
 }
 
 export interface PrintCompositionRow {
+  readonly specialRules: readonly string[];
   readonly key: string;
   readonly depth: number;
   readonly quantity: number;
@@ -93,6 +94,8 @@ export interface PrintCompositionRow {
 }
 
 export interface PrintMemberView {
+  readonly specialRules: readonly string[];
+  readonly quantity: number;
   readonly path: readonly string[];
   readonly role: string;
   readonly members: readonly PrintMemberView[];
@@ -268,12 +271,13 @@ export function projectPrintableRoster(input: PrintSnapshotInput, services = {re
     headingBySelection.set(selection.selectionId, `${entry?.name ?? selection.entryReference.localId} · ${ordinal}`);
   }
 
-  const rowOf = (node: EvaluatedCompositionNode, prefix: string, depth: number): PrintCompositionRow => {
+  const rowOf = (node: EvaluatedCompositionNode, prefix: string, depth: number, names: readonly string[]): PrintCompositionRow => {
     const training = trainingView(node.training, trainingLabels);
     return {
       key: prefix + node.nodeId,
       depth,
       quantity: node.quantity,
+      specialRules: names,
       label: (node.profileLocalId ? profiles.get(node.profileLocalId)?.name : undefined) ?? words(node.role),
       trainingToken: training.token,
       trainingLabel: training.label,
@@ -283,6 +287,8 @@ export function projectPrintableRoster(input: PrintSnapshotInput, services = {re
     const entry: UnitEntry | undefined = entries.get(selection.entryReference.localId);
     const heading = headingBySelection.get(selection.selectionId) ?? selection.selectionId;
     const node = compositionOf(selection.selectionId);
+    const rules = rulesByPath(specialRules, selection.selectionId);
+    const rulesAt = (path: readonly string[]) => rules.get(JSON.stringify(path))?.map(rule => rule.name) ?? [];
     const charges: PrintChargeLineView[] = evaluation.chargeLines
       .filter((line) => line.selectionId === selection.selectionId)
       .map((line) => ({
@@ -327,8 +333,11 @@ export function projectPrintableRoster(input: PrintSnapshotInput, services = {re
     const memberRows = (root: EvaluatedCompositionNode, path: string[]): PrintCompositionRow[] => {
       const rows: PrintCompositionRow[] = [];
       const visit = (current: EvaluatedCompositionNode, currentPath: string[], depth: number) => {
+        if (current.quantity <= 0) return;
         if (current !== root && displayed.some(member => samePath(member.path, currentPath))) return;
-        if (current.profileLocalId || current !== root) rows.push(rowOf(current, selection.selectionId + '/' + currentPath.join('/') + '/', depth));
+        if (current.profileLocalId || current !== root) {
+          rows.push(rowOf(current, selection.selectionId + '/' + currentPath.join('/') + '/', depth, current === root ? [] : rulesAt(currentPath)));
+        }
         for (const child of current.children ?? []) visit(child, [...currentPath, child.nodeId], depth + 1);
       };
       visit(root, path, 0);
@@ -339,6 +348,8 @@ export function projectPrintableRoster(input: PrintSnapshotInput, services = {re
       path: member.path,
       role: member.node.role,
       label: member.label,
+      quantity: member.node.quantity,
+      specialRules: rulesAt(member.path),
       trainingLabel: trainingView(member.node.training, trainingLabels).label,
       rows: memberRows(member.node, member.path),
       members: buildMembers(member.children),
@@ -347,7 +358,7 @@ export function projectPrintableRoster(input: PrintSnapshotInput, services = {re
     }));
     const matchedAnchored = new Set(childSelections.filter(item => item.targetMemberPath && displayed.some(member => samePath(member.path, item.targetMemberPath!))).map(item => item.selectionId));
     return {
-      specialRules: [...new Set(specialRules.uses.filter(use => use.selectionId === selection.selectionId).flatMap(use => use.rules.map(rule => rule.name)))],
+      specialRules: rulesAt([]),
       selectionId: selection.selectionId,
       entryLocalId: selection.entryReference.localId,
       name: entry?.name ?? selection.entryReference.localId,

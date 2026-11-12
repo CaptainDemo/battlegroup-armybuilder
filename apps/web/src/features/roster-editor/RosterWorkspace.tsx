@@ -7,7 +7,6 @@ import {
   type RosterDocument,
   type RosterSelection,
   type TrackedValue,
-  type EvaluatedCompositionNode,
 } from '@battlegroup/core';
 import type { AppCatalogRelease } from '../../rulesets/types';
 import { rulesets, sameCatalogIdentity as sameIdentity } from '../../rulesets/registry';
@@ -37,12 +36,14 @@ import {
 import { ImportPanel } from '../roster-transfer/ImportPanel';
 import type { ImportApplyResult } from '../roster-transfer/applyImport';
 import { downloadSingleRoster } from '../roster-transfer/rosterExport';
-import { SpecialRulesPanel } from '../../components/SpecialRulesPanel';
-import { projectSpecialRules, specialRulesForSelection } from '../../rulesets/specialRules';
+import { projectSpecialRules, rulesByPath, specialRulesForSelection } from '../../rulesets/specialRules';
+import { SpecialRuleCards } from '../../components/SpecialRulesPanel';
 import { getPresentation } from '../../rulesets/presentation';
 import { UnitDataPanel } from './UnitDataPanel';
 import { PrintPreview, type PrintSnapshot } from '../roster-output/PrintPreview';
 import { RosterSummary } from '../../components/RosterSummary';
+import { CurrentComposition } from './CurrentComposition';
+import { SelectionCost } from './SelectionCost';
 
 function sameCatalogIdentity(
   a: AppCatalogRelease,
@@ -234,6 +235,15 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
   const selectedEntry = release?.catalog.entries.find(
     (item) => item.localId === selected?.entryReference.localId,
   );
+  const selectedRulesByPath = rulesByPath(specialRulesView, selected?.selectionId);
+  const selectedRules = roster && selected
+    ? specialRulesForSelection(specialRulesView, roster, selected.selectionId, state.selectedMemberPath ?? []).rules
+    : [];
+  const selectedCharges = currentEvaluation?.chargeLines.filter(line => line.selectionId === selected?.selectionId) ?? [];
+  const selectedIssues = currentEvaluation?.issues.filter(issue =>
+    issue.selectionId === selected?.selectionId
+    && (!issue.nodePath?.length || withinPath(issue.nodePath, state.selectedMemberPath ?? [])),
+  ) ?? [];
   let selectedComposition = currentEvaluation?.composition.find(
     (item) => item.selectionId === selected?.selectionId,
   )?.node;
@@ -936,6 +946,17 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
                         {selectedEntry.name} · {selectedOrdinal}
                         {state.selectedMemberPath ? ' / ' + (selectedMemberLabel || state.selectedMemberPath.join(' / ').replaceAll('-', ' ')) : ''}
                       </h4>
+                      <div className="selection-summary">
+                        {!state.selectedMemberPath && <SelectionCost lines={selectedCharges} />}
+                        {selectedIssues.length > 0 && <details className="detail-disclosure">
+                          <summary>{t('editor.problems')} ({selectedIssues.length})</summary>
+                          <ul>
+                            {selectedIssues.map((issue, index) => (
+                              <li key={index}>{issueMessage(issue.message, roster.catalogRef.rulesetId)}</li>
+                            ))}
+                          </ul>
+                        </details>}
+                      </div>
                       {!state.selectedMemberPath && (
                         <div className="toolbar">
                           <button
@@ -970,20 +991,20 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
                           </button>
                         </div>
                       )}
-                      {state.selectedMemberPath && (
-                        <p className="muted">{t('editor.included')}</p>
-                      )}
-                      {selectedComposition && (
-                        <UnitDataPanel
-                          key={selected.selectionId + '/' + (state.selectedMemberPath ?? []).join('/')}
+                      <section aria-label={t('editor.composition')}>
+                        <h4>{t('editor.composition')}</h4>
+                        {selectedComposition ? <CurrentComposition
                           node={selectedComposition}
                           release={release}
-                        />
-                      )}
-                      {currentEvaluation && <SpecialRulesPanel view={specialRulesForSelection(
-                        specialRulesView,
-                        roster, selected.selectionId, state.selectedMemberPath ?? [],
-                      )} />}
+                          runtime={rulesets.require(roster.catalogRef.rulesetId)}
+                          rules={selectedRulesByPath}
+                          path={state.selectedMemberPath ?? []}
+                          rootLabel={selectedEntry.name}
+                        /> : (
+                          <p>{selectedEntry.composition.state === 'no-entities'
+                            ? t('editor.noEntities') : t('editor.unknown')}</p>
+                        )}
+                      </section>
                       <OptionEditor
                         document={roster}
                         selection={selected}
@@ -1001,67 +1022,49 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
                           ])
                         }
                       />
-                      <h4>
-                        {t(
-                          state.selectedMemberPath
-                            ? 'editor.companyCharges'
-                            : 'editor.charges',
-                        )}
-                      </h4>
-                      <ul className="charge-list">
-                        {currentEvaluation?.chargeLines
-                          .filter(
-                            (line) => line.selectionId === selected.selectionId,
-                          )
-                          .map((line) => (
-                            <li key={line.chargeLineId}>
-                              {line.optionChoiceRef
-                                ? release.catalog.optionGroups
-                                    .find(
-                                      (group) =>
-                                        group.localId ===
-                                        line.optionChoiceRef
-                                          ?.optionGroupLocalId,
-                                    )
-                                    ?.options.find(
-                                      (option) =>
-                                        option.localId ===
-                                        line.optionChoiceRef?.optionLocalId,
-                                    )?.name
-                                : t('editor.baseCost')}{' '}
-                              · {line.chargedUnits} × · {value(line.points)}{' '}
-                              {t('editor.points')} / {value(line.br)} BR
+                      {selectedComposition && (
+                        <details className="detail-disclosure" key={JSON.stringify([selected.selectionId, state.selectedMemberPath])}>
+                          <summary>{t('unitData.title')}</summary>
+                          <UnitDataPanel node={selectedComposition} release={release} />
+                        </details>
+                      )}
+                      {selectedRules.length > 0 && (
+                        <details className="detail-disclosure special-rule-cards" key={JSON.stringify(['rules', selected.selectionId, state.selectedMemberPath])}>
+                          <summary>{t('specialRules.title')}</summary>
+                          <SpecialRuleCards rules={selectedRules} />
+                        </details>
+                      )}
+                      <details className="detail-disclosure">
+                        <summary>{t(state.selectedMemberPath ? 'editor.companyCharges' : 'editor.charges')}</summary>
+                        {state.selectedMemberPath && <p className="muted">{t('editor.included')}</p>}
+                        <ul className="charge-list">
+                          {selectedCharges.map(line => {
+                            const ref = line.optionChoiceRef;
+                            const option = ref && release.catalog.optionGroups
+                              .find(group => group.localId === ref.optionGroupLocalId)
+                              ?.options.find(item => item.localId === ref.optionLocalId);
+                            return <li key={line.chargeLineId}>
+                              {ref
+                                ? option?.name ?? ref.optionLocalId
+                                : t(line.kind === 'attachment-cost' ? 'print.attachmentPrice' : 'editor.baseCost')}
+                              {' · '}{line.chargedUnits} × · {value(line.points)} {t('editor.points')} / {value(line.br)} BR
+                            </li>;
+                          })}
+                        </ul>
+                      </details>
+                      <details className="detail-disclosure">
+                        <summary>{t('editor.sources')}</summary>
+                        <ul>
+                          {selectedEntry.sourceRefs.map((source, index) => (
+                            <li key={index}>
+                              {release.catalog.manifest.sources.find(item => item.documentId === source.documentId)?.title}
+                              {' · PDF '}{source.pdfPage ?? '—'}
+                              {source.printedPage !== undefined && source.printedPage !== source.pdfPage
+                                ? ` (${source.printedPage})` : ''}
                             </li>
                           ))}
-                      </ul>
-                      <h4>{t('editor.composition')}</h4>
-                      {selectedComposition ? (
-                        <CompositionTree node={selectedComposition} release={release} />
-                      ) : (
-                        <p>
-                          {selectedEntry.composition.state === 'no-entities'
-                            ? t('editor.noEntities')
-                            : t('editor.unknown')}
-                        </p>
-                      )}
-                      <p className="muted">{t('editor.attributesUnknown')}</p>
-                      <h4>{t('editor.sources')}</h4>
-                      <ul>
-                        {selectedEntry.sourceRefs.map((source, index) => (
-                          <li key={index}>
-                            {
-                              release.catalog.manifest.sources.find(
-                                (item) => item.documentId === source.documentId,
-                              )?.title
-                            }{' '}
-                            · PDF {source.pdfPage ?? '—'}
-                            {source.printedPage !== undefined &&
-                            source.printedPage !== source.pdfPage
-                              ? ` (${source.printedPage})`
-                              : ''}
-                          </li>
-                        ))}
-                      </ul>
+                        </ul>
+                      </details>
                     </>
                   ) : (
                     <p className="muted">{t('editor.chooseSelection')}</p>
@@ -1081,28 +1084,5 @@ export function RosterWorkspace({ editor, hidden }: WorkspaceProps) {
         />
       )}
     </div>
-  );
-}
-
-function CompositionTree({
-  node,
-  release,
-}: {
-  node: EvaluatedCompositionNode;
-  release: AppCatalogRelease;
-}) {
-  return (
-    <ul className="composition-tree">
-      <li>
-        {node.quantity} ×{' '}
-        {release.catalog.profiles.find(
-          (profile) => profile.localId === node.profileLocalId,
-        )?.name ?? node.role.replaceAll('-', ' ')}
-        {node.training?.state === 'known' ? ' · ' + (rulesets.get(release.catalog.manifest.identity.rulesetId)?.trainingLabels[node.training.value] ?? node.training.value) : ''}
-        {node.children?.map((child) => (
-          <CompositionTree key={child.nodeId} node={child} release={release} />
-        ))}
-      </li>
-    </ul>
   );
 }
