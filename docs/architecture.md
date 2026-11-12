@@ -1,6 +1,6 @@
 # Battlegroup Army Builder Architecture
 
-Updated: 2026-11-10. Classic editing, local persistence, JSON transfer and printing are implemented. The hosted test site predates printing; see [deployment](deployment.md). Commands and actual source entry points are in the [development guide](development.md), API responsibilities in [domain contracts](contracts/domain.md), and progress in the [module plan](implementation_modules.md).
+Updated: 2026-11-10. Classic editing, local persistence, JSON transfer and printing are implemented. The [deployment guide](deployment.md) records the hosted test site and its source revision. Commands and actual source entry points are in the [development guide](development.md), API responsibilities in [domain contracts](contracts/domain.md), and progress in the [module plan](implementation_modules.md).
 
 This document defines system boundaries, dependencies and domain semantics. The [technical plan](technical_plan.md) describes the product and delivery strategy. Published data and verified source records determine game values; illustrative designs do not override implemented contracts.
 

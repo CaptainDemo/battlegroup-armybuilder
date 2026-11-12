@@ -1,8 +1,31 @@
 # Deployment
 
-This guide retains the existing test-site identity and deployment boundary. Recorded hosted facts below are from the 2026-11-09 deployment; access and hosting state were not queried again during the 2026-11-10 documentation cleanup.
+This guide records the Sites test site's releases and deployment workflow.
 
-## Existing Sites test
+## Current deployment — version 2
+
+| Item | Verified value |
+|---|---|
+| Site | https://battlegroup-armybuilder-test-20261109.w2y3q2.chatgpt.site |
+| Main source | 8606878be13bd6c7344b48b4ce4b3c5741b9d782 |
+| Hosting source snapshot | 6dff4cbafcde46bb116ff58370373cdc7c07d469 |
+| Saved version | appgprj_6af1cc72fcd48191be12838703daf7e1~appgver_cce9c0c004b08191ac5b513081f93e19 |
+| Deployment ID | appgdep_6af2e198863481919734cf858ff14daf |
+| Deployment result | succeeded, 2026-11-10T09:19:33.563264Z |
+| Access | Public, verified after publication on 2026-11-10 |
+| Local archive SHA-256 | 2067bfeb5150961eadef24c490c926cee8e3514c29b01d4be20e4e6e8d930d76 |
+
+Version 2 includes vehicle and weapon reference data, print/PDF with an optional
+data appendix, and the roster overview with Points, BR, Officers, Scouts and
+section allowances.
+
+All six hosted assets returned HTTP 200 and matched the build's SHA-256
+fingerprints. Chrome checks covered the homepage, example roster totals and
+section counters, local save and reopen after reload, layout at 360px, and print
+preview with the vehicle and weapon appendix. Local verification evidence is in
+`.tmp/deploy-8606878/`.
+
+## Initial deployment — 2026-11-09
 
 | Item | Recorded value |
 |---|---|
@@ -18,7 +41,7 @@ This guide retains the existing test-site identity and deployment boundary. Reco
 | Supported catalogs | Exact Classic Soviet V4.1 releases 1.0.0 and 1.1.0 |
 | Archive SHA-256 | d8854490d0d96c75aff98ab67ea54f1f91dd45c4e7485f7360b76a12bfe76484 |
 
-That deployment contains M01–M10. Subsequent vehicle/weapon references, printing/PDF and UI cleanup are local changes until separately published. A local commit or build does not update Sites automatically.
+The initial deployment contained M01–M10. Sites updates through a separate publication step after the local build.
 
 ## Source and artifact boundary
 

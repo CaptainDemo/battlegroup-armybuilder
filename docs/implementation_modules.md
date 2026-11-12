@@ -1,6 +1,6 @@
 # Implementation Modules and Delivery Plan
 
-Updated: 2026-11-10. M01–M11 are implemented and validated locally. M12 has an earlier deployed M01–M10 snapshot; publication and hosted verification of subsequent unit-data/printing changes remain separate work. New Classic rosters use Soviet V4.1 catalog 1.1.0: 151 purchase records and 203 options. See [development](development.md), [deployment](deployment.md) and the [documentation index](README.md).
+Updated: 2026-11-10. M01–M11 are implemented and validated locally. M12 test deployment and targeted hosted checks are complete. New Classic rosters use Soviet V4.1 catalog 1.1.0: 151 purchase records and 203 options. See [development](development.md), [deployment](deployment.md) and the [documentation index](README.md).
 
 Modules are responsibility and acceptance units, not separate services, repositories or published npm packages. Use real samples to evolve the shared contracts. Completed dispatch/review/acceptance reports remain local ignored archives; this plan retains scope and progress rather than individual agent runs or historical test counts.
 
@@ -19,7 +19,7 @@ Modules are responsibility and acceptance units, not separate services, reposito
 | M09 | Local save/restore | apps/web/adapters/storage | M03, M05 | Implemented |
 | M10 | JSON transfer/compatibility | core contracts, Web roster-transfer | M03, M04, M09 | Implemented and accepted |
 | M11 | Print/PDF | apps/web/features/roster-output | M07, M08 | Implemented, including optional data appendix |
-| M12 | Combined acceptance/deployment | Browser checks, hosting workflow | M04–M11 | Initial test deployment complete; newer publication outstanding |
+| M12 | Combined acceptance/deployment | Browser checks, hosting workflow | M04–M11 | Published and verified on Sites |
 | M13 | AirLand | Independent ruleset and catalog | Stable Classic workflow, sources | Not implemented |
 | M14 | NORTHAG / CENTAG | Independent ruleset and catalog | Stable Classic workflow, sources | Not implemented |
 
@@ -101,7 +101,7 @@ Acceptance: totals match the same editor snapshot, collapsed purchases still pri
 
 ### M12 — Combined checks and deployment
 
-Combine source/data gates, core tests, user workflows, artifact inspection and an actual deployed test. Record source/data revisions, supported versions and access audience. Initial Sites publication contains M01–M10; later printing/unit-data work has local validation but needs a separately authorized site update and hosted verification.
+Combine source/data gates, core tests, user workflows, artifact inspection and an actual deployed test. Record source/data revisions, supported versions and access audience. See the [deployment guide](deployment.md) for release details and hosted verification.
 
 Acceptance: hosted create/configure/check/save/reopen/transfer/print, resource paths, direct routes and refresh, intended access, and no reference-source assets. Distinguish built, deployed and browser-verified states. See [deployment](deployment.md).
 

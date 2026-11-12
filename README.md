@@ -4,7 +4,7 @@ A free community browser roster editor for Battlegroup cold-war tabletop games. 
 
 Classic Cold War (Unofficial Battlegroup: Cold War, Draft 6) is supported first, using Soviet Armoured Division V4.1. The default catalog is 1.1.0 with 120 top-level purchases, 31 attachment contexts and 203 options; exact 1.0.0 rosters remain separately supported. Combat data and full-rule coverage are explicitly partial. Classic, AirLand and NORTHAG game records are fully isolated; AirLand/NORTHAG remain future independent implementations, with CENTAG under NORTHAG.
 
-The local app includes editing, undo/redo, IndexedDB autosave/conflict recovery, JSON import/export and browser print/PDF. The existing Sites test deployment is an earlier snapshot; see [deployment](docs/deployment.md) before assuming local changes are online.
+The app includes editing, undo/redo, IndexedDB autosave/conflict recovery, JSON import/export and browser print/PDF. See the [deployment guide](docs/deployment.md) for the hosted test site and its release record.
 
 ## Quick start
 
